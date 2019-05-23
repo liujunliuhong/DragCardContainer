@@ -21,7 +21,7 @@ pod 'YHDragContainer'
 ```
 如果提示未找到，先执行`pod repo update`，再执行`pod install`
 
-### 使用
+## 使用
 1、滑牌属性配置
 ```
 YHDragCardConfig *config = [[YHDragCardConfig alloc] init];
@@ -80,6 +80,6 @@ self.dragContainer.delegate = self; // 设置代理
 
 ```
 
-### 补充
+## 补充
 该仓库会不断进行优化，在使用过程中，有任何建议或问题，欢迎提issue，或者通过邮箱1035841713@qq.com联系我<br>
 喜欢就star❤️一下吧
