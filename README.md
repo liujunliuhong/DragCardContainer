@@ -3,11 +3,11 @@
 `CCDraggableCard`只是对卡片的宽做了缩放，没有对高做缩放，另外，其还可以滑动和点击没有显示在最顶部的卡片，而且其没有提供当前滑动索引的方法，并且其属性在框架内部写死了，不能灵活配置。之前在使用的时候，由于这些原因导致我改动了大量的源代码，因此本人决定自己写一个扩展性好，可以灵活配置各种属性的滑牌库。
 
 ## 效果预览
-<img src="YHDragContainer/GIF/test.gif" width="300">
+<img src="YHDragContainer/GIF/test.gif" width="350">
 
 ## 安装
 
-#### 手动
+### 手动
 Clone代码，把`DragCard`文件夹拖入项目，#import "YHDragCardContainer.h"，就可以使用了
 
 ### CocoaPods
