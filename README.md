@@ -17,22 +17,28 @@ pod 'YHDragContainer'
 如果提示未找到，先执行`pod repo update`，再执行`pod install`
 
 ### 使用
-
-1、初始化
+1、滑牌属性配置
 ```
-self.dragContainer = [[YHDragCardContainer alloc] initWithFrame:CGRectMake(30, 100, [UIScreen mainScreen].bounds.size.width - 30.0 * 2, 400) config:[[YHDragCardConfig alloc] init]];
+YHDragCardConfig *config = [[YHDragCardConfig alloc] init];
+config.visibleCount = 3;
+config.cardEdge = 15.0;
+config.minScale = 0.9;
+```
+2、初始化
+```
+self.dragContainer = [[YHDragCardContainer alloc] initWithFrame:CGRectMake(30, 100, [UIScreen mainScreen].bounds.size.width - 30.0 * 2, 400) config:config];
 self.dragContainer.dataSource = self; // 设置数据源
 self.dragContainer.delegate = self; // 设置代理
 [self.view addSubview:self.dragContainer];
 ```
 
-2、刷新<br>
+3、刷新<br>
 初始化完成之后，请根据自己的实际项目需要，在合适的时机执行刷新
 ```
 [self.dragContainer reloadData];
 ```
 
-3、实现数据源协议（必须实现）
+4、实现数据源协议（必须实现）
 ```
 - (int)numberOfCardWithCardContainer:(YHDragCardContainer *)cardContainer{
     // 滑牌总数量
@@ -42,7 +48,7 @@ self.dragContainer.delegate = self; // 设置代理
 }
 ```
 
-4、实现代理协议（非必须）
+5、实现代理协议（非必须）
 ```
 - (void)cardContainer:(YHDragCardContainer *)cardContainer didScrollToIndex:(int)index{
     // 当前滑动到某一个索引的回调
