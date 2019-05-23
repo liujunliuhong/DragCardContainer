@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.name             = 'YHDragContainer'
   s.version          = '0.1'
   s.summary          = '仿探探滑牌左右滑动，可以自由配置各种属性'
-  s.description      = '仿探探滑牌左右滑动，可以自由配置各种属性'
+  s.description      = '仿探探滑牌左右滑动，可以自由配置各种属性，持续更新中...'
   s.homepage         = 'https://github.com/liujunliuhong/YHDragContainer'
   s.license          = { :type => 'MIT', :file => 'LICENSE' }
   s.author           = { 'liujunliuhong' => '1035841713@qq.com' }
