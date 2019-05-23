@@ -26,7 +26,7 @@ self.dragContainer.delegate = self; // 设置代理
 [self.view addSubview:self.dragContainer];
 ```
 
-2、刷新
+2、刷新<br>
 初始化完成之后，请根据自己的实际项目需要，在合适的时机执行刷新
 ```
 [self.dragContainer reloadData];
