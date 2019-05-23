@@ -13,6 +13,10 @@
 		EEF06C192296E949006946FE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C182296E949006946FE /* Assets.xcassets */; };
 		EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C1A2296E949006946FE /* LaunchScreen.storyboard */; };
 		EEF06C1F2296E949006946FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C1E2296E949006946FE /* main.m */; };
+		EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C262296E991006946FE /* YHDragCardContainer.m */; };
+		EEF06C2B2296E991006946FE /* YHDragCardConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C292296E991006946FE /* YHDragCardConfig.m */; };
+		EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */; };
+		EEF06C312296F116006946FE /* test.gif in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C302296F116006946FE /* test.gif */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +30,13 @@
 		EEF06C1B2296E949006946FE /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		EEF06C1D2296E949006946FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEF06C1E2296E949006946FE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		EEF06C262296E991006946FE /* YHDragCardContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHDragCardContainer.m; sourceTree = "<group>"; };
+		EEF06C272296E991006946FE /* YHDragCardConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHDragCardConfig.h; sourceTree = "<group>"; };
+		EEF06C282296E991006946FE /* YHDragCardContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHDragCardContainer.h; sourceTree = "<group>"; };
+		EEF06C292296E991006946FE /* YHDragCardConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHDragCardConfig.m; sourceTree = "<group>"; };
+		EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrageCardViewController.h; sourceTree = "<group>"; };
+		EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrageCardViewController.m; sourceTree = "<group>"; };
+		EEF06C302296F116006946FE /* test.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,6 +73,10 @@
 				EEF06C102296E948006946FE /* AppDelegate.m */,
 				EEF06C122296E948006946FE /* ViewController.h */,
 				EEF06C132296E948006946FE /* ViewController.m */,
+				EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */,
+				EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */,
+				EEF06C2F2296F10E006946FE /* GIF */,
+				EEF06C252296E991006946FE /* DragCard */,
 				EEF06C152296E948006946FE /* Main.storyboard */,
 				EEF06C182296E949006946FE /* Assets.xcassets */,
 				EEF06C1A2296E949006946FE /* LaunchScreen.storyboard */,
@@ -69,6 +84,25 @@
 				EEF06C1E2296E949006946FE /* main.m */,
 			);
 			path = YHDragContainer;
+			sourceTree = "<group>";
+		};
+		EEF06C252296E991006946FE /* DragCard */ = {
+			isa = PBXGroup;
+			children = (
+				EEF06C282296E991006946FE /* YHDragCardContainer.h */,
+				EEF06C262296E991006946FE /* YHDragCardContainer.m */,
+				EEF06C272296E991006946FE /* YHDragCardConfig.h */,
+				EEF06C292296E991006946FE /* YHDragCardConfig.m */,
+			);
+			path = DragCard;
+			sourceTree = "<group>";
+		};
+		EEF06C2F2296F10E006946FE /* GIF */ = {
+			isa = PBXGroup;
+			children = (
+				EEF06C302296F116006946FE /* test.gif */,
+			);
+			path = GIF;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -128,6 +162,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEF06C312296F116006946FE /* test.gif in Resources */,
 				EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */,
 				EEF06C192296E949006946FE /* Assets.xcassets in Resources */,
 				EEF06C172296E948006946FE /* Main.storyboard in Resources */,
@@ -141,8 +176,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */,
 				EEF06C142296E948006946FE /* ViewController.m in Sources */,
+				EEF06C2B2296E991006946FE /* YHDragCardConfig.m in Sources */,
 				EEF06C1F2296E949006946FE /* main.m in Sources */,
+				EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */,
 				EEF06C112296E948006946FE /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -288,6 +326,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2E8NVCJR97;
 				INFOPLIST_FILE = YHDragContainer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -305,6 +344,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2E8NVCJR97;
 				INFOPLIST_FILE = YHDragContainer/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
