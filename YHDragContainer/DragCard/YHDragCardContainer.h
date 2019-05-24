@@ -56,6 +56,12 @@ typedef NS_ENUM(NSUInteger, YHDragCardDirection) {
  * heightRatio: >0 下滑      <0 上滑
  */
 - (void)cardContainer:(YHDragCardContainer *)cardContainer dragDirection:(YHDragCardDirection)dragDirection widthRatio:(CGFloat)widthRatio heightRatio:(CGFloat)heightRatio;
+
+/**
+ * 卡片滑动出去的回调
+ * currentCardIndex:滑动出去的那张卡片的索引
+ */
+- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection currentCardIndex:(int)currentCardIndex;
 @end
 
 

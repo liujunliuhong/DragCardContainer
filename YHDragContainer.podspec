@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'YHDragContainer'
-  s.version          = '0.1'
+  s.version          = '0.2'
   s.summary          = '仿探探滑牌左右滑动，可以自由配置各种属性'
   s.description      = '仿探探滑牌左右滑动，可以自由配置各种属性，持续更新中...'
   s.homepage         = 'https://github.com/liujunliuhong/YHDragContainer'
