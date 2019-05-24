@@ -62,6 +62,7 @@ typedef NS_ENUM(NSUInteger, YHDragCardDirection) {
  * currentCardIndex:滑动出去的那张卡片的索引
  */
 - (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection currentCardIndex:(int)currentCardIndex;
+
 @end
 
 
