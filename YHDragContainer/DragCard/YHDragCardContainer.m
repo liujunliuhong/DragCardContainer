@@ -58,9 +58,18 @@ static char yh_drag_card_tap_gesture;
 - (void)reloadData{
     self.initialFirstCardCenter = CGPointZero;
     self.loadedIndex = 0;
-    self.currentCards = [NSMutableArray array];
-    self.activeCards = [NSMutableArray array];
-    self.values = [NSMutableArray array];
+    
+    [self.activeCards enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj removeFromSuperview];
+    }];
+    [self.activeCards removeAllObjects];
+    
+    [self.currentCards enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj removeFromSuperview];
+    }];
+    [self.currentCards removeAllObjects];
+    
+    [self.values removeAllObjects];
     
     [self installInitialCards];
     
@@ -138,6 +147,11 @@ static char yh_drag_card_tap_gesture;
     if (self.loadedIndex + self.config.visibleCount < [self.dataSource numberOfCardWithCardContainer:self]) {
         [self installNext];
     }
+    
+    if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidDragOut:withDragDirection:currentCardIndex:)]) {
+        [self.delegate cardContainerDidDragOut:self withDragDirection:direction currentCardIndex:self.loadedIndex];
+    }
+    
     self.loadedIndex ++;
     
     if (self.loadedIndex > [self.dataSource numberOfCardWithCardContainer:self]) {
@@ -417,6 +431,10 @@ static char yh_drag_card_tap_gesture;
             [self removePanGestureForCardView:cardView];
             [self removeTapGestureForCardView:cardView];
             [self.currentCards removeObject:cardView];
+            
+            if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidDragOut:withDragDirection:currentCardIndex:)]) {
+                [self.delegate cardContainerDidDragOut:self withDragDirection:self.direction currentCardIndex:self.loadedIndex];
+            }
             
             self.loadedIndex ++;
             if (self.loadedIndex > [self.dataSource numberOfCardWithCardContainer:self]) {
