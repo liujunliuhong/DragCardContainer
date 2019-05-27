@@ -226,15 +226,18 @@ static char yh_drag_card_tap_gesture;
 - (void)installNext{
     UIView *cardView = [self.dataSource cardContainer:self viewForIndex:self.loadedIndex+self.config.visibleCount];
     cardView.layer.anchorPoint = CGPointMake(0.5, 1);
+    
+    CGAffineTransform tmpTransform;
+    [self.values.lastObject[0] getValue:&tmpTransform];
+    cardView.transform = tmpTransform;
+    
     cardView.frame = [self.values.lastObject[1] CGRectValue];
-    //cardView.transform = self.initialLastCardTransform; // 不需要再设置transform了，因为新添加的元素不需要做缩放
+    
     [self addSubview:cardView];
     [self sendSubviewToBack:cardView];
     
     [self.currentCards addObject:cardView];
     [self.activeCards addObject:cardView];
-    
-    //[self addPanGestureForCarView:cardView];
 }
 
 
