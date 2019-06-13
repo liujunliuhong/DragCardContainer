@@ -34,18 +34,20 @@
     
     UIButton *btn1 = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn1 addTarget:self action:@selector(left) forControlEvents:UIControlEventTouchUpInside];
-    [btn1 setTitle:@"左边" forState:UIControlStateNormal];
+    [btn1 setTitle:@"从左边滑出" forState:UIControlStateNormal];
     btn1.backgroundColor = [UIColor purpleColor];
+    [btn1 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.view addSubview:btn1];
     
     UIButton *btn2 = [UIButton buttonWithType:UIButtonTypeCustom];
     [btn2 addTarget:self action:@selector(right) forControlEvents:UIControlEventTouchUpInside];
-    [btn2 setTitle:@"右边" forState:UIControlStateNormal];
-    btn2.backgroundColor = [UIColor cyanColor];
+    [btn2 setTitle:@"从右边滑出" forState:UIControlStateNormal];
+    btn2.backgroundColor = [UIColor orangeColor];
+    [btn2 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.view addSubview:btn2];
     
-    btn1.frame = CGRectMake(20, CGRectGetMaxY(self.dragContainer.frame) + 40, 100, 50);
-    btn2.frame = CGRectMake(self.view.frame.size.width - 20 - 100, CGRectGetMaxY(self.dragContainer.frame) + 40, 100, 50);
+    btn1.frame = CGRectMake(0, CGRectGetMaxY(self.dragContainer.frame) + 40, 120, 50);
+    btn2.frame = CGRectMake(self.view.frame.size.width - 20 - 100, CGRectGetMaxY(self.dragContainer.frame) + 40, 120, 50);
     
     self.testView = [[UIView alloc] init];
     self.testView.center = CGPointMake(self.view.frame.size.width / 2.0, self.view.frame.size.height - 125);
@@ -54,7 +56,20 @@
     self.testView.layer.masksToBounds = YES;
     self.testView.backgroundColor = [UIColor redColor];
     [self.view addSubview:self.testView];
+    
+    UIButton *btn3 = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn3 addTarget:self action:@selector(revoke) forControlEvents:UIControlEventTouchUpInside];
+    btn3.center = CGPointMake(self.view.frame.size.width / 2.0, btn1.center.y);
+    btn3.bounds = CGRectMake(0, 0, 120, 50);
+    [btn3 setTitle:@"撤销" forState:UIControlStateNormal];
+    btn3.backgroundColor = [UIColor redColor];
+    [btn3 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [self.view addSubview:btn3];
 }
+
+
+
+
 
 - (void)left{
     [self.dragContainer scrollToDirection:YHDragCardDirection_Left];
@@ -63,6 +78,18 @@
 - (void)right{
     [self.dragContainer scrollToDirection:YHDragCardDirection_Right];
 }
+
+- (void)revoke{
+    UIView *cardView = [[UIView alloc] init];
+    cardView.backgroundColor = RandomColor;
+    [self.dragContainer revokeWithCardView:cardView fromDirection:YHDragCardDirection_Right];
+}
+
+
+
+
+
+
 #pragma mark ------------------ YHDragCardContainerDataSource ------------------
 - (int)numberOfCardWithCardContainer:(YHDragCardContainer *)cardContainer{
     return 10;
@@ -77,6 +104,7 @@
 #pragma mark ------------------ YHDragCardContainerDelegate ------------------
 - (void)cardContainer:(YHDragCardContainer *)cardContainer didScrollToIndex:(int)index{
     NSLog(@"当前滑到的索引:%d", index);
+    self.navigationItem.title = [NSString stringWithFormat:@"%d/%d", index+1, 10];
 }
 
 - (void)cardContainerDidFinishDragLastCard:(YHDragCardContainer *)cardContainer{
@@ -94,6 +122,10 @@
         scale = 1.0;
     }
     self.testView.transform = CGAffineTransformMakeScale(1+scale, 1+scale);
+}
+
+- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection withVerticalDragDirection:(YHDragCardDirection)verticalDragDirection currentCardIndex:(int)currentCardIndex{
+    
 }
 
 - (void)cardContainer:(YHDragCardContainer *)cardContainer didSelectedIndex:(int)index{

@@ -17,6 +17,7 @@ static char yh_drag_card_tap_gesture;
 
 @interface YHDragCardContainer()
 @property (nonatomic, assign) CGPoint initialFirstCardCenter;                      // 初始化时，顶部第一个卡片的中心位置
+@property (nonatomic, assign) int sumCardCount;                                    // 总的卡片数量
 @property (nonatomic, assign) int loadedIndex;                                     // 当前已经加载了几个卡片
 @property (nonatomic, strong) NSMutableArray<UIView *> *currentCards;              // 当前可见的卡片数量
 @property (nonatomic, strong) NSMutableArray<UIView *> *activeCards;               // 活跃卡片集合（没有拖动的卡片）
@@ -26,6 +27,7 @@ static char yh_drag_card_tap_gesture;
 @property (nonatomic, strong) YHDragCardConfig *config;                            // 配置
 
 @property (nonatomic, assign) YHDragCardDirection direction;
+@property (nonatomic, assign) YHDragCardDirection verticalDirection;
 
 @end
 
@@ -71,6 +73,12 @@ static char yh_drag_card_tap_gesture;
     
     [self.values removeAllObjects];
     
+    self.sumCardCount = [self.dataSource numberOfCardWithCardContainer:self];
+    
+    if (self.sumCardCount <= 0) {
+        return;
+    }
+    
     [self installInitialCards];
     
     if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:didScrollToIndex:)]) {
@@ -82,9 +90,8 @@ static char yh_drag_card_tap_gesture;
  * 初始化最开始Cards.
  */
 - (void)installInitialCards{
-    NSInteger count = [self.dataSource numberOfCardWithCardContainer:self];
     
-    NSInteger visibleCount = count <= self.config.visibleCount ? count : self.config.visibleCount;
+    NSInteger visibleCount = self.sumCardCount <= self.config.visibleCount ? self.sumCardCount : self.config.visibleCount;
     
     for (int i = 0; i < visibleCount; i ++) {
         UIView *cardView = [self.dataSource cardContainer:self viewForIndex:i];
@@ -129,7 +136,7 @@ static char yh_drag_card_tap_gesture;
     if (direction == YHDragCardDirection_Default) {
         return;
     }
-    if (self.loadedIndex >= [self.dataSource numberOfCardWithCardContainer:self]) {
+    if (self.loadedIndex >= self.sumCardCount) {
         return;
     }
     CGPoint cardCenter = CGPointZero;
@@ -144,22 +151,18 @@ static char yh_drag_card_tap_gesture;
         flag = -1;
     }
     
-    if (self.loadedIndex + self.config.visibleCount < [self.dataSource numberOfCardWithCardContainer:self]) {
+    if (self.loadedIndex + self.config.visibleCount < self.sumCardCount) {
         [self installNext];
-    }
-    
-    if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidDragOut:withDragDirection:currentCardIndex:)]) {
-        [self.delegate cardContainerDidDragOut:self withDragDirection:direction currentCardIndex:self.loadedIndex];
     }
     
     self.loadedIndex ++;
     
-    if (self.loadedIndex > [self.dataSource numberOfCardWithCardContainer:self]) {
-        self.loadedIndex = [self.dataSource numberOfCardWithCardContainer:self];
+    if (self.loadedIndex > self.sumCardCount) {
+        self.loadedIndex = self.sumCardCount;
         return;
     }
     
-    if (self.loadedIndex < [self.dataSource numberOfCardWithCardContainer:self]) {
+    if (self.loadedIndex < self.sumCardCount) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:didScrollToIndex:)]) {
             [self.delegate cardContainer:self didScrollToIndex:self.loadedIndex];
         }
@@ -211,7 +214,7 @@ static char yh_drag_card_tap_gesture;
     }];
     
     
-    if (self.loadedIndex == [self.dataSource numberOfCardWithCardContainer:self]) {
+    if (self.loadedIndex == self.sumCardCount) {
         if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidFinishDragLastCard:)]) {
             [self.delegate cardContainerDidFinishDragLastCard:self];
         }
@@ -232,7 +235,100 @@ static char yh_drag_card_tap_gesture;
     }];
 }
 
-
+- (void)revokeWithCardView:(UIView *)cardView fromDirection:(YHDragCardDirection)direction{
+    if (direction == YHDragCardDirection_Default) {
+        return;
+    }
+    int num = self.sumCardCount;
+    if (num <= 0) {
+        return;
+    }
+    
+    if (self.loadedIndex <= 0) {
+        return;
+    }
+    
+    // 判断是否需要移除底部CardView
+    BOOL isNeedRemoveBottomCard = YES;
+    if (self.sumCardCount - self.loadedIndex < self.config.visibleCount) {
+        isNeedRemoveBottomCard = NO;
+    }
+    
+    self.loadedIndex --;
+    
+    if (self.loadedIndex > self.sumCardCount) {
+        self.loadedIndex = self.sumCardCount;
+        return;
+    }
+    
+    if (self.loadedIndex < self.sumCardCount) {
+        if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:didScrollToIndex:)]) {
+            [self.delegate cardContainer:self didScrollToIndex:self.loadedIndex];
+        }
+    }
+    
+    CGPoint cardCenter = CGPointZero;
+    CGFloat flag = 0;
+    if (direction == YHDragCardDirection_Right) {
+        // 从右边滑入
+        cardCenter = CGPointMake(YHDrageContainer_ScreenWidth * 2, self.initialFirstCardCenter.y);
+        flag = 2;
+    } else if (direction == YHDragCardDirection_Left) {
+        // 从左边滑入
+        cardCenter = CGPointMake(-YHDrageContainer_ScreenWidth, self.initialFirstCardCenter.y);
+        flag = -1;
+    }
+    
+    CGAffineTransform translate = CGAffineTransformTranslate(CGAffineTransformIdentity, flag * 20, 0);
+    cardView.transform = CGAffineTransformRotate(translate, flag * M_PI_4 / 4);
+    cardView.center = cardCenter;
+    
+    
+    // 把顶部card的手势移除
+    if (self.currentCards.count > 0) {
+        [self removePanGestureForCardView:self.currentCards.firstObject];
+        [self removeTapGestureForCardView:self.currentCards.firstObject];
+    }
+    
+    // 给cardView添加手势
+    [self addPanGestureForCarView:cardView];
+    [self addTapGestureForCarView:cardView];
+    
+    // add
+    [self installRevokeCardView:cardView];
+    
+    
+    // 最下层卡片
+    UIView *bottomCardView = self.currentCards.lastObject;
+    
+    // 把数组中的最下层卡片移除
+    if (isNeedRemoveBottomCard) {
+        [self.activeCards removeObject:bottomCardView];
+        [self.currentCards removeObject:bottomCardView];
+    }
+    
+    
+    
+    [UIView animateWithDuration:0.35 animations:^{
+        NSArray *tmps = self.activeCards;
+        if (self.activeCards.count > self.values.count) {
+            tmps = [self.activeCards subarrayWithRange:NSMakeRange(0, self.values.count)];
+        }
+        for (int i = 0; i < tmps.count; i++) {
+            CGAffineTransform tmpTransform;
+            [self.values[i][0] getValue:&tmpTransform];
+            CGRect rect = [self.values[i][1] CGRectValue];
+            
+            UIView *cardView = [tmps objectAtIndex:i];
+            cardView.transform = tmpTransform;
+            cardView.frame = rect;
+        }
+    } completion:^(BOOL finished) {
+        if (isNeedRemoveBottomCard) {
+            [bottomCardView removeFromSuperview];
+        }
+    }];
+}
 
 /**
  * 添加下一张卡片
@@ -252,6 +348,18 @@ static char yh_drag_card_tap_gesture;
     
     [self.currentCards addObject:cardView];
     [self.activeCards addObject:cardView];
+}
+
+/**
+ * 添加Revoke卡片
+ */
+- (void)installRevokeCardView:(UIView *)cardView{
+    cardView.layer.anchorPoint = CGPointMake(0.5, 1);
+    CGRect frame = [self.values.firstObject[1] CGRectValue];
+    cardView.bounds = CGRectMake(0, 0, frame.size.width, frame.size.height);
+    [self addSubview:cardView];
+    [self.currentCards insertObject:cardView atIndex:0];
+    [self.activeCards insertObject:cardView atIndex:0];
 }
 
 
@@ -304,7 +412,7 @@ static char yh_drag_card_tap_gesture;
 
 #pragma mark ------------------ Tap手势 ------------------
 - (void)tapGestureAction:(UITapGestureRecognizer *)gesture{
-    if (self.loadedIndex >= [self.dataSource numberOfCardWithCardContainer:self]) {
+    if (self.loadedIndex >= self.sumCardCount) {
         return;
     }
     if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:didSelectedIndex:)]) {
@@ -331,11 +439,12 @@ static char yh_drag_card_tap_gesture;
     // BEGIN
     if (gesture.state == UIGestureRecognizerStateBegan) {
         // 添加下一个Card
-        if (self.loadedIndex + self.config.visibleCount < [self.dataSource numberOfCardWithCardContainer:self]) {
+        if (self.loadedIndex + self.config.visibleCount < self.sumCardCount) {
             [self installNext];
         }
         // 恢复滑动方向
         self.direction = YHDragCardDirection_Default;
+        self.verticalDirection = YHDragCardVerticalDirection_Default;
         
         // 把当前手指滑动的Card从activeCards移除
         if ([self.activeCards containsObject:cardView]) {
@@ -364,10 +473,13 @@ static char yh_drag_card_tap_gesture;
         
         if (heightRatio > 0.001) {
             // 下滑
+            self.verticalDirection = YHDragCardVerticalDirection_Down;
         } else if (heightRatio < -0.001) {
             // 上滑
+            self.verticalDirection = YHDragCardVerticalDirection_Up;
         } else {
             // 默认
+            self.verticalDirection = YHDragCardVerticalDirection_Default;
         }
         
         if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:dragDirection:widthRatio:heightRatio:)]) {
@@ -377,8 +489,9 @@ static char yh_drag_card_tap_gesture;
         CGFloat tmpHeightRatio = ABS(heightRatio);
         CGFloat tmpWidthRatio = ABS(widthRatio);
         
+        CGFloat ratio = sqrt(pow(tmpWidthRatio, 2) + pow(tmpHeightRatio, 2));
         // 改变所有Card的位置(根据x轴和y轴的位移比例来共同控制)
-        [self panForChangeVisableCardsWithRatio:sqrt(pow(tmpWidthRatio, 2) + pow(tmpHeightRatio, 2))];
+        [self panForChangeVisableCardsWithRatio:ratio];
     }
     
     // END
@@ -414,9 +527,6 @@ static char yh_drag_card_tap_gesture;
             NSInteger flag = self.direction == YHDragCardDirection_Left ? -1 : 2;
             [UIView animateWithDuration:0.5 delay:0 options:UIViewAnimationOptionCurveLinear animations:^{
                 cardView.center = CGPointMake(YHDrageContainer_ScreenWidth * flag, YHDrageContainer_ScreenWidth * flag / scale + self.initialFirstCardCenter.y);
-                if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:dragDirection:widthRatio:heightRatio:)]) {
-                    [self.delegate cardContainer:self dragDirection:self.direction widthRatio:0.0 heightRatio:0.0];
-                }
             } completion:^(BOOL finished) {
                 [cardView removeFromSuperview];
             }];
@@ -432,21 +542,21 @@ static char yh_drag_card_tap_gesture;
             [self removeTapGestureForCardView:cardView];
             [self.currentCards removeObject:cardView];
             
-            if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidDragOut:withDragDirection:currentCardIndex:)]) {
-                [self.delegate cardContainerDidDragOut:self withDragDirection:self.direction currentCardIndex:self.loadedIndex];
+            if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidDragOut:withDragDirection:withVerticalDragDirection:currentCardIndex:)]) {
+                [self.delegate cardContainerDidDragOut:self withDragDirection:self.direction withVerticalDragDirection:self.verticalDirection currentCardIndex:self.loadedIndex];
             }
             
             self.loadedIndex ++;
-            if (self.loadedIndex > [self.dataSource numberOfCardWithCardContainer:self]) {
-                self.loadedIndex = [self.dataSource numberOfCardWithCardContainer:self];
+            if (self.loadedIndex > self.sumCardCount) {
+                self.loadedIndex = self.sumCardCount;
                 return;
             }
-            if (self.loadedIndex == [self.dataSource numberOfCardWithCardContainer:self]) {
+            if (self.loadedIndex == self.sumCardCount) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainerDidFinishDragLastCard:)]) {
                     [self.delegate cardContainerDidFinishDragLastCard:self];
                 }
             }
-            if (self.loadedIndex < [self.dataSource numberOfCardWithCardContainer:self]) {
+            if (self.loadedIndex < self.sumCardCount) {
                 if (self.delegate && [self.delegate respondsToSelector:@selector(cardContainer:didScrollToIndex:)]) {
                     [self.delegate cardContainer:self didScrollToIndex:self.loadedIndex];
                 }
@@ -462,7 +572,7 @@ static char yh_drag_card_tap_gesture;
             
             [self.activeCards insertObject:cardView atIndex:0];
             
-            if (self.loadedIndex + self.config.visibleCount < [self.dataSource numberOfCardWithCardContainer:self]) {
+            if (self.loadedIndex + self.config.visibleCount < self.sumCardCount) {
                     UIView *lastView = self.currentCards.lastObject;
                     [lastView removeFromSuperview];
                     [self.currentCards removeLastObject];
@@ -473,6 +583,7 @@ static char yh_drag_card_tap_gesture;
                 if (self.activeCards.count > self.values.count) {
                     tmps = [self.activeCards subarrayWithRange:NSMakeRange(0, self.values.count)];
                 }
+                
                 for (int i = 0; i < tmps.count; i++) {
                     CGAffineTransform tmpTransform;
                     [self.values[i][0] getValue:&tmpTransform];

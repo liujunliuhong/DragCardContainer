@@ -17,6 +17,12 @@ typedef NS_ENUM(NSUInteger, YHDragCardDirection) {
     YHDragCardDirection_Default,
 };
 
+typedef NS_ENUM(NSUInteger, YHDragCardVerticalDirection) {
+    YHDragCardVerticalDirection_Up,
+    YHDragCardVerticalDirection_Down,
+    YHDragCardVerticalDirection_Default,
+};
+
 @class YHDragCardContainer;
 @protocol YHDragCardContainerDataSource <NSObject>
 @required;
@@ -57,11 +63,16 @@ typedef NS_ENUM(NSUInteger, YHDragCardDirection) {
  */
 - (void)cardContainer:(YHDragCardContainer *)cardContainer dragDirection:(YHDragCardDirection)dragDirection widthRatio:(CGFloat)widthRatio heightRatio:(CGFloat)heightRatio;
 
+
+- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection currentCardIndex:(int)currentCardIndex NS_UNAVAILABLE;
+
 /**
  * 卡片滑动出去的回调
+ * dragDirection:水平方向
+ * verticalDragDirection:垂直方向
  * currentCardIndex:滑动出去的那张卡片的索引
  */
-- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection currentCardIndex:(int)currentCardIndex;
+- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection withVerticalDragDirection:(YHDragCardDirection)verticalDragDirection currentCardIndex:(int)currentCardIndex;
 
 @end
 
@@ -85,6 +96,12 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface YHDragCardContainer : UIView
  * 手动使卡牌滑到指定方向
  */
 - (void)scrollToDirection:(YHDragCardDirection)direction;
+
+/**
+ * 撤销
+ * 只有有卡片滑出去了，才能撤销，框架内部已经做了判断
+ */
+- (void)revokeWithCardView:(UIView *)cardView fromDirection:(YHDragCardDirection)direction;
 
 /**
  * 重新加载数据
