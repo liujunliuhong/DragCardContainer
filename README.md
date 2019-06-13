@@ -7,8 +7,7 @@
 - 通过数据源的方式来控制滑牌，内存占用低
 - 代理丰富，可以根据自己的需要来选择合适的代理
 ## 即将加入的功能
-- 撤销功能
-- 增加往上滑动和往下滑动的回调
+-
 ## 效果预览
 <img src="YHDragContainer/GIF/test.gif" width="350">
 
@@ -80,7 +79,19 @@ self.dragContainer.delegate = self; // 设置代理
     // 点击某个卡片的回调
 }
 
+- (void)cardContainerDidDragOut:(YHDragCardContainer *)cardContainer withDragDirection:(YHDragCardDirection)dragDirection withVerticalDragDirection:(YHDragCardDirection)verticalDragDirection currentCardIndex:(int)currentCardIndex{
+	// 卡片滑动出去的回调
+	// dragDirection:水平方向
+	// verticalDragDirection:垂直方向
+	// currentCardIndex:滑动出去的那张卡片的索引
+}
+
 ```
+
+## 更新记录
+1、0.4.0版本(2019.6.13)
+- 增加撤销功能
+- 增加往上滑动和往下滑动的回调
 
 ## 补充
 该仓库会不断进行优化，在使用过程中，有任何建议或问题，欢迎提issue，或者通过邮箱1035841713@qq.com联系我<br>
