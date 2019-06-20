@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1840499022B2174300FAB5C1 /* test.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1840498F22B2174300FAB5C1 /* test.gif */; };
+		18A9304222BBA548000C0CED /* test.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18A9304122BBA548000C0CED /* test.gif */; };
 		EEF06C112296E948006946FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C102296E948006946FE /* AppDelegate.m */; };
 		EEF06C142296E948006946FE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C132296E948006946FE /* ViewController.m */; };
 		EEF06C172296E948006946FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C152296E948006946FE /* Main.storyboard */; };
@@ -20,7 +20,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		1840498F22B2174300FAB5C1 /* test.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
+		18A9304122BBA548000C0CED /* test.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
 		EEF06C0C2296E948006946FE /* YHDragContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YHDragContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEF06C0F2296E948006946FE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EEF06C102296E948006946FE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -100,7 +100,7 @@
 		EEF06C2F2296F10E006946FE /* GIF */ = {
 			isa = PBXGroup;
 			children = (
-				1840498F22B2174300FAB5C1 /* test.gif */,
+				18A9304122BBA548000C0CED /* test.gif */,
 			);
 			path = GIF;
 			sourceTree = "<group>";
@@ -162,7 +162,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1840499022B2174300FAB5C1 /* test.gif in Resources */,
+				18A9304222BBA548000C0CED /* test.gif in Resources */,
 				EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */,
 				EEF06C192296E949006946FE /* Assets.xcassets in Resources */,
 				EEF06C172296E948006946FE /* Main.storyboard in Resources */,

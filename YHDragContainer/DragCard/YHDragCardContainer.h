@@ -87,6 +87,13 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface YHDragCardContainer : UIView
 
 @property (nonatomic, weak) id<YHDragCardContainerDelegate> delegate;
 
+/**
+ * 是否禁用拖动手势
+ * 默认NO
+ * 不影响卡片的点击事件
+ */
+@property (nonatomic, assign) BOOL isDisablePanGesture;
+
 - (instancetype)initWithFrame:(CGRect)frame config:(YHDragCardConfig *)config;
 - (instancetype)initWithFrame:(CGRect)frame NS_UNAVAILABLE;
 - (instancetype)init NS_UNAVAILABLE;
@@ -99,7 +106,8 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface YHDragCardContainer : UIView
 
 /**
  * 撤销
- * 只有有卡片滑出去了，才能撤销，框架内部已经做了判断
+ * 只有卡片滑出去了，才能撤销，框架内部已经做了判断
+ * 如果当前卡片索引为0，则不能撤销
  */
 - (void)revokeWithCardView:(UIView *)cardView fromDirection:(YHDragCardDirection)direction;
 

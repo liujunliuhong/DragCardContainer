@@ -368,6 +368,9 @@ static char yh_drag_card_tap_gesture;
  * 添加拖动手势
  */
 - (void)addPanGestureForCarView:(UIView *)cardView{
+    if (self.isDisablePanGesture) {
+        return;
+    }
     UIPanGestureRecognizer *pan = objc_getAssociatedObject(cardView, &yh_drag_card_long_gesture);
     if (!pan || ![pan isKindOfClass:[UIPanGestureRecognizer class]]) {
         pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGestureAction:)];
@@ -659,5 +662,18 @@ static char yh_drag_card_tap_gesture;
     }
 }
 
+#pragma mark ------------------ Setter ------------------
+- (void)setIsDisablePanGesture:(BOOL)isDisablePanGesture{
+    _isDisablePanGesture = isDisablePanGesture;
+    if (_isDisablePanGesture) {
+        [self.currentCards enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self removePanGestureForCardView:obj];
+        }];
+    } else {
+        [self.currentCards enumerateObjectsUsingBlock:^(UIView * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            [self addPanGestureForCarView:obj];
+        }];
+    }
+}
 
 @end

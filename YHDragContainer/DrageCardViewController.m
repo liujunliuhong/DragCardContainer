@@ -15,6 +15,9 @@
 @property (nonatomic, strong) YHDragCardContainer *dragContainer;
 @property (nonatomic, strong) UIView *testView;
 
+@property (nonatomic, strong) YHDragCardConfig *config;
+
+@property (nonatomic, assign) BOOL isDisable;
 @end
 
 @implementation DrageCardViewController
@@ -23,9 +26,14 @@
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     
-    self.dragContainer = [[YHDragCardContainer alloc] initWithFrame:CGRectMake(30, 100, [UIScreen mainScreen].bounds.size.width - 30.0 * 2, 400) config:[[YHDragCardConfig alloc] init]];
+    self.isDisable = YES;
+    
+    self.config = [[YHDragCardConfig alloc] init];
+    
+    self.dragContainer = [[YHDragCardContainer alloc] initWithFrame:CGRectMake(30, 100, [UIScreen mainScreen].bounds.size.width - 30.0 * 2, 400) config:self.config];
     self.dragContainer.dataSource = self;
     self.dragContainer.delegate = self;
+    self.dragContainer.isDisablePanGesture = self.isDisable;
     [self.view addSubview:self.dragContainer];
     
     
@@ -65,6 +73,17 @@
     btn3.backgroundColor = [UIColor redColor];
     [btn3 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [self.view addSubview:btn3];
+    
+    UIButton *btn4 = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btn4 addTarget:self action:@selector(disableSwitch:) forControlEvents:UIControlEventTouchUpInside];
+    btn4.center = CGPointMake(self.view.frame.size.width / 2.0, btn3.center.y + 25+25+25);
+    btn4.bounds = CGRectMake(0, 0, 250, 50);
+    btn4.backgroundColor = [UIColor grayColor];
+    [btn4 setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    btn4.tag = 200;
+    [self.view addSubview:btn4];
+    
+    [self setDisableSwitchState];
 }
 
 
@@ -86,9 +105,20 @@
 }
 
 
+- (void)disableSwitch:(UIButton *)sender{
+    self.isDisable = !self.isDisable;
+    self.dragContainer.isDisablePanGesture = self.isDisable;
+    [self setDisableSwitchState];
+}
 
-
-
+- (void)setDisableSwitchState{
+    UIButton *btn = (UIButton *)[self.view viewWithTag:200];
+    if (self.isDisable) {
+        [btn setTitle:@"拖动手势已禁用" forState:UIControlStateNormal];
+    } else {
+        [btn setTitle:@"拖动手势已开启" forState:UIControlStateNormal];
+    }
+}
 
 #pragma mark ------------------ YHDragCardContainerDataSource ------------------
 - (int)numberOfCardWithCardContainer:(YHDragCardContainer *)cardContainer{
