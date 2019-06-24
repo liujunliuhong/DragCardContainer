@@ -7,7 +7,7 @@
 - 通过数据源的方式来控制滑牌，内存占用低
 - 代理丰富，可以根据自己的需要来选择合适的代理
 ## 即将加入的功能
-- 
+- 集成Swift版本
 ## 效果预览
 <img src="YHDragContainer/GIF/test.gif" width="350">
 
