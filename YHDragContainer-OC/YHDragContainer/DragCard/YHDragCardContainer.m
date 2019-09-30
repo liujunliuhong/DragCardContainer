@@ -8,7 +8,7 @@
 
 #import "YHDragCardContainer.h"
 #import <objc/message.h>
-
+#import <QuickLook/QuickLook.h>
 #define YHDrageContainer_ScreenWidth          [UIScreen mainScreen].bounds.size.width
 #define YHDrageContainer_ScreenHeight         [UIScreen mainScreen].bounds.size.height
 

@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		18A9304222BBA548000C0CED /* test.gif in Resources */ = {isa = PBXBuildFile; fileRef = 18A9304122BBA548000C0CED /* test.gif */; };
 		EEF06C112296E948006946FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C102296E948006946FE /* AppDelegate.m */; };
 		EEF06C142296E948006946FE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C132296E948006946FE /* ViewController.m */; };
 		EEF06C172296E948006946FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C152296E948006946FE /* Main.storyboard */; };
@@ -20,7 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		18A9304122BBA548000C0CED /* test.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = test.gif; sourceTree = "<group>"; };
+		189C9607233C5FD200092049 /* YHDragContainer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YHDragContainer-Bridging-Header.h"; sourceTree = "<group>"; };
 		EEF06C0C2296E948006946FE /* YHDragContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YHDragContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEF06C0F2296E948006946FE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EEF06C102296E948006946FE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -75,7 +74,7 @@
 				EEF06C132296E948006946FE /* ViewController.m */,
 				EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */,
 				EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */,
-				EEF06C2F2296F10E006946FE /* GIF */,
+				189C9607233C5FD200092049 /* YHDragContainer-Bridging-Header.h */,
 				EEF06C252296E991006946FE /* DragCard */,
 				EEF06C152296E948006946FE /* Main.storyboard */,
 				EEF06C182296E949006946FE /* Assets.xcassets */,
@@ -95,14 +94,6 @@
 				EEF06C292296E991006946FE /* YHDragCardConfig.m */,
 			);
 			path = DragCard;
-			sourceTree = "<group>";
-		};
-		EEF06C2F2296F10E006946FE /* GIF */ = {
-			isa = PBXGroup;
-			children = (
-				18A9304122BBA548000C0CED /* test.gif */,
-			);
-			path = GIF;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,6 +127,7 @@
 				TargetAttributes = {
 					EEF06C0B2296E948006946FE = {
 						CreatedOnToolsVersion = 10.2.1;
+						LastSwiftMigration = 1100;
 					};
 				};
 			};
@@ -162,7 +154,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				18A9304222BBA548000C0CED /* test.gif in Resources */,
 				EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */,
 				EEF06C192296E949006946FE /* Assets.xcassets in Resources */,
 				EEF06C172296E948006946FE /* Main.storyboard in Resources */,
@@ -323,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2E8NVCJR97;
 				INFOPLIST_FILE = YHDragContainer/Info.plist;
@@ -333,6 +325,9 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHDragContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "YHDragContainer/YHDragContainer-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
@@ -341,6 +336,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 2E8NVCJR97;
 				INFOPLIST_FILE = YHDragContainer/Info.plist;
@@ -351,6 +347,8 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHDragContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "YHDragContainer/YHDragContainer-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
