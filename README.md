@@ -1,7 +1,7 @@
 # YHDragContainer
 ## 👉Swift版本已经写好，但是还没有上传pod，等我进行了全面细致的检查之后，会上传pod；OC版本暂时没做改动，但是之后会做优化。
 高度还原类似探探等社交应用的滑牌效果<br><br>
-本人参考了一些其他开源库，给了我很多灵感，在此表示感谢，:
+本人参考了一些其他开源库，给了我很多灵感，在此表示感谢:<br>
 [CCDraggableCard](https://github.com/liuzechen/CCDraggableCard-Master)<br>
 [QiCardView](https://github.com/QiShare/QiCardView)<br>
 但是我觉得这些开源库有些不足的地方:
