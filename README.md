@@ -9,7 +9,7 @@
 ## 即将加入的功能
 - 集成Swift版本
 ## 效果预览
-<img src="YHDragContainer/GIF/test.gif" width="350">
+<img src="GIF/test.gif" width="350">
 
 ## 安装
 
