@@ -20,6 +20,7 @@
 ## 效果预览
 <img src="GIF/test.gif" width="350">
 
+
 ## 安装
 
 ### 手动
