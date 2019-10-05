@@ -18,7 +18,7 @@
 - OC版本重构
 - Swift版本
 ## 效果预览
-<img src="GIF/test.gif" width="350">
+<img src="MP4/test.MP4" width="400">
 
 ## 安装
 
