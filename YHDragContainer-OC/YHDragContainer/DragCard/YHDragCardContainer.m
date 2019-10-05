@@ -7,35 +7,272 @@
 //
 
 #import "YHDragCardContainer.h"
-#import <objc/message.h>
-#import <QuickLook/QuickLook.h>
+#import "UIView+YHDragCardExtension.h"
+#import "YHDragCardInfo.h"
+
 #define YHDrageContainer_ScreenWidth          [UIScreen mainScreen].bounds.size.width
 #define YHDrageContainer_ScreenHeight         [UIScreen mainScreen].bounds.size.height
 
-static char yh_drag_card_long_gesture;
-static char yh_drag_card_tap_gesture;
 
 @interface YHDragCardContainer()
-@property (nonatomic, assign) CGPoint initialFirstCardCenter;                      // 初始化时，顶部第一个卡片的中心位置
-@property (nonatomic, assign) int sumCardCount;                                    // 总的卡片数量
-@property (nonatomic, assign) int loadedIndex;                                     // 当前已经加载了几个卡片
-@property (nonatomic, strong) NSMutableArray<UIView *> *currentCards;              // 当前可见的卡片数量
-@property (nonatomic, strong) NSMutableArray<UIView *> *activeCards;               // 活跃卡片集合（没有拖动的卡片）
-
-@property (nonatomic, strong) NSMutableArray<NSArray<NSValue *> *> *values;
-
-@property (nonatomic, strong) YHDragCardConfig *config;                            // 配置
-
-@property (nonatomic, assign) YHDragCardDirection direction;
-@property (nonatomic, assign) YHDragCardDirection verticalDirection;
-
+@property (nonatomic, assign) int currentIndex;
+@property (nonatomic, assign) CGPoint initialFirstCardCenter;
+@property (nonatomic, strong) NSMutableArray<YHDragCardInfo *> *infos;
+@property (nonatomic, strong) NSMutableArray<YHDragCardStableInfo *> *stableInfos;
+@property (nonatomic, assign) BOOL isRevoking;
+@property (nonatomic, assign) BOOL isNexting;
 @end
 
 @implementation YHDragCardContainer
 
 - (void)dealloc{
-    //NSLog(@"%@ dealloc",NSStringFromClass([self class]));
+    NSLog(@"%@ dealloc",NSStringFromClass([self class]));
 }
+
+
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.visibleCount = 3;
+        self.cardSpacing = 10.0;
+        self.minScale = 0.8;
+        self.removeDirection = YHDragCardRemoveDirectionHorizontal;
+        self.horizontalRemoveDistance = YHDrageContainer_ScreenWidth / 4.0;
+        self.horizontalRemoveVelocity = 1000.0;
+        self.verticalRemoveDistance = YHDrageContainer_ScreenHeight / 4.0;
+        self.verticalRemoveVelocity = 500.0;
+        self.removeMaxAngle = 10.0;
+        self.demarcationAngle = 5.0;
+        self.infiniteLoop = NO;
+        
+        self.currentIndex = 0;
+        self.initialFirstCardCenter = CGPointZero;
+        self.infos = [NSMutableArray array];
+        self.stableInfos = [NSMutableArray array];
+        self.isRevoking = NO;
+        self.isNexting = NO;
+        
+    }
+    return self;
+}
+
+- (void)didMoveToWindow{
+    
+}
+
+#pragma mark Public Methods
+- (void)reloadData:(BOOL)animation{
+    [self _reloadData:animation];
+}
+
+- (void)nextCard:(YHDragCardDirectionType)direction{
+    [self _nextCard:direction];
+}
+
+- (void)revoke:(YHDragCardDirectionType)direction{
+    [self _revoke:direction];
+}
+
+
+#pragma mark Private Methods
+- (void)_reloadData:(BOOL)animation{
+    [self.infos enumerateObjectsUsingBlock:^(YHDragCardInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+        [obj.card removeFromSuperview];
+    }];
+    [self.infos removeAllObjects];
+    [self.stableInfos removeAllObjects];
+    self.currentIndex = 0;
+    
+    NSAssert([self.dataSource respondsToSelector:@selector(numberOfCountInDragCard:)], @"必须实现数据源协议");
+    
+    int maxCount = [self.dataSource numberOfCountInDragCard:self];
+    int showCount = MIN(maxCount, self.visibleCount);
+    
+    if (showCount <= 0) { return; }
+    
+    CGFloat scale = 1.0;
+    if (showCount > 1) {
+        scale = (1 - [self correctScale]) / (showCount - 1);
+    }
+    
+    CGFloat cardWidth = self.bounds.size.width;
+    CGFloat cardHeight = self.bounds.size.height - ((showCount - 1) * [self correctCardSpacing]);
+    
+    for (int index = 0; index < showCount; index ++) {
+        CGFloat y = [self correctCardSpacing] * index;
+        CGRect frame = CGRectMake(0, y, cardWidth, cardHeight);
+        
+        CGFloat tmpScale = 1.0 - (scale * index);
+        CGAffineTransform transform = CGAffineTransformMakeScale(tmpScale, tmpScale);
+        
+        NSAssert([self.dataSource respondsToSelector:@selector(dragCard:indexOfCard:)], @"必须实现数据源协议");
+                  
+        UIView *card = [self.dataSource dragCard:self indexOfCard:index];
+        
+        card.userInteractionEnabled = NO;
+        card.layer.anchorPoint = CGPointMake(0.5, 1.0);
+        [self insertSubview:card atIndex:0];
+        
+        card.transform = CGAffineTransformIdentity;
+        card.frame = frame;
+        
+        if (animation) {
+            [UIView animateWithDuration:0.25 animations:^{
+                card.transform = transform;
+            } completion:nil];
+        } else {
+            card.transform = transform;
+        }
+        
+        
+        YHDragCardInfo *info = [[YHDragCardInfo alloc] initWithCard:card transform:transform frame:frame];
+        [self.infos addObject:info];
+        
+        YHDragCardStableInfo *stableInfo = [[YHDragCardStableInfo alloc] initWithTransform:transform frame:frame];
+        [self.stableInfos addObject:stableInfo];
+        
+        if (!self.disableDrag) {
+            [self addPanGesture:card];
+        }
+        if (!self.disableClick) {
+            [self addTapGesture:card];
+        }
+        if (index == 0) {
+            self.initialFirstCardCenter = card.center;
+        }
+    }
+    
+    self.infos.firstObject.card.userInteractionEnabled = true;
+    
+    [self.delegate dragCard:self didDisplayCard:self.infos.firstObject.card withIndex:self.currentIndex];
+}
+
+
+- (void)_nextCard:(YHDragCardDirectionType)direction{
+    if (_isNexting) { return; }
+    switch (direction) {
+        case YHDragCardDirectionTypeRight:
+        {
+            
+        }
+            break;
+        case YHDragCardDirectionTypeLeft:
+        {
+            
+        }
+            break;
+        case YHDragCardDirectionTypeUp:
+        {
+            
+        }
+            break;
+        case YHDragCardDirectionTypeDown:
+        {
+            
+        }
+            break;
+        default:
+            break;
+    }
+}
+
+- (void)_revoke:(YHDragCardDirectionType)direction{
+    
+}
+
+- (void)horizontalNextCard:(BOOL)isRight{
+    
+}
+
+- (void)verticalNextCard:(BOOL)isUp{
+    
+}
+
+
+#pragma mark 纠正
+- (CGFloat)correctScale{
+    CGFloat scale = self.minScale;
+    if (scale > 1.0) { scale = 1.0; }
+    if (scale < 0.1) { scale = 0.1; }
+    return scale;
+}
+
+- (CGFloat)correctCardSpacing{
+    CGFloat spacing = self.cardSpacing;
+    if (spacing < 0) { spacing = 0.0; }
+    if (spacing > self.bounds.size.height / 2.0) { spacing = self.bounds.size.height / 2.0; }
+}
+
+- (CGFloat)correctRemoveMaxAngleAndToRadius{
+    CGFloat angle = self.removeMaxAngle;
+    if (angle < 0.0) { angle = 0.0; }
+    if (angle > 90.0) { angle = 90.0; }
+    return angle / 180.0 * M_PI;
+}
+
+- (CGFloat)correctHorizontalRemoveDistance{
+    return self.horizontalRemoveDistance < 10.0 ? 10.0 : self.horizontalRemoveDistance;
+}
+
+- (CGFloat)correctHorizontalRemoveVelocity{
+    return self.horizontalRemoveVelocity < 100.0 ? 100.0 : self.horizontalRemoveVelocity;
+}
+
+- (CGFloat)correctVerticalRemoveDistance{
+    return self.verticalRemoveDistance < 50.0 ? 50.0 : self.verticalRemoveDistance;
+}
+
+- (CGFloat)correctVerticalRemoveVelocity{
+    return self.verticalRemoveVelocity < 100.0 ? 100.0 : self.verticalRemoveVelocity;
+}
+
+- (CGFloat)correctDemarcationAngle{
+    CGFloat angle = self.demarcationAngle;
+    if (angle < 5.0) { angle = 5.0; }
+    if (angle > 85.0) { angle = 85.0; }
+    return angle / 180.0 * M_PI;
+}
+
+#pragma mark 手势
+- (void)addPanGesture:(UIView *)card{
+    [self removePanGesture:card];
+    UIPanGestureRecognizer *pan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(panGesture:)];
+    [card addGestureRecognizer:pan];
+    card.yh_drag_card_panGesture = pan;
+}
+
+- (void)addTapGesture:(UIView *)card{
+    [self removeTapGesture:card];
+    UITapGestureRecognizer *tap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(tapGesture:)];
+    [card addGestureRecognizer:tap];
+    card.yh_drag_card_tapGesture = tap;
+}
+
+- (void)removePanGesture:(UIView *)card{
+    [card removeGestureRecognizer:card.yh_drag_card_panGesture];
+}
+
+- (void)removeTapGesture:(UIView *)card{
+    [card removeGestureRecognizer:card.yh_drag_card_tapGesture];
+}
+
+#pragma mark Action
+- (void)tapGesture:(UITapGestureRecognizer *)gesture{
+    
+}
+
+- (void)panGesture:(UIPanGestureRecognizer *)gesture{
+    
+}
+
+
+
+
+
+
+
+
 
 - (instancetype)initWithFrame:(CGRect)frame config:(YHDragCardConfig *)config
 {

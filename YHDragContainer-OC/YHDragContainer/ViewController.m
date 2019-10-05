@@ -9,7 +9,7 @@
 #import "ViewController.h"
 #import "DrageCardViewController.h"
 
-@interface ViewController ()
+@interface ViewController ()<UITableViewDataSource>
 @property (nonatomic, strong) UILabel *label;
 @end
 

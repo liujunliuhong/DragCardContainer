@@ -354,10 +354,10 @@ extension YHDragCard {
         }
         
         let cardWidth = self.bounds.size.width
-        let cardHeight: CGFloat = self.bounds.size.height - CGFloat(showCount - 1) * self.cardSpacing
+        let cardHeight: CGFloat = self.bounds.size.height - CGFloat(showCount - 1) * correctCardSpacing()
         
         for index in 0..<showCount {
-            let y = cardSpacing * CGFloat(index)
+            let y = correctCardSpacing() * CGFloat(index)
             let frame = CGRect(x: 0, y: y, width: cardWidth, height: cardHeight)
             
             let tmpScale: CGFloat = 1.0 - (scale * CGFloat(index))
@@ -670,12 +670,8 @@ extension YHDragCard {
     /// 纠正minScale   [0.1, 1.0]
     private func correctScale() -> CGFloat {
         var scale = self.minScale
-        if scale > 1.0 {
-            scale = 1.0
-        }
-        if scale <= 0.1 {
-            scale = 0.1
-        }
+        if scale > 1.0 { scale = 1.0 }
+        if scale <= 0.1 { scale = 0.1 }
         return scale
     }
     

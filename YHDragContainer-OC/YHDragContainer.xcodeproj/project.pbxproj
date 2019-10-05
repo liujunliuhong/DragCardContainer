@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		EE3C6F3E23489EFD00F521B1 /* YHDragCardInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F3D23489EFD00F521B1 /* YHDragCardInfo.m */; };
+		EE3C6F412348A08500F521B1 /* UIView+YHDragCardExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F402348A08500F521B1 /* UIView+YHDragCardExtension.m */; };
+		EE3C6F442348C23500F521B1 /* YHDragCardDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F432348C23500F521B1 /* YHDragCardDirection.m */; };
 		EEF06C112296E948006946FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C102296E948006946FE /* AppDelegate.m */; };
 		EEF06C142296E948006946FE /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C132296E948006946FE /* ViewController.m */; };
 		EEF06C172296E948006946FE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C152296E948006946FE /* Main.storyboard */; };
@@ -14,12 +17,19 @@
 		EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C1A2296E949006946FE /* LaunchScreen.storyboard */; };
 		EEF06C1F2296E949006946FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C1E2296E949006946FE /* main.m */; };
 		EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C262296E991006946FE /* YHDragCardContainer.m */; };
-		EEF06C2B2296E991006946FE /* YHDragCardConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C292296E991006946FE /* YHDragCardConfig.m */; };
 		EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		189C9607233C5FD200092049 /* YHDragContainer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YHDragContainer-Bridging-Header.h"; sourceTree = "<group>"; };
+		EE3C6F3723489E0C00F521B1 /* YHDragCardDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDataSource.h; sourceTree = "<group>"; };
+		EE3C6F3823489E4700F521B1 /* YHDragCardDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDelegate.h; sourceTree = "<group>"; };
+		EE3C6F3C23489EFD00F521B1 /* YHDragCardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardInfo.h; sourceTree = "<group>"; };
+		EE3C6F3D23489EFD00F521B1 /* YHDragCardInfo.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHDragCardInfo.m; sourceTree = "<group>"; };
+		EE3C6F3F2348A08500F521B1 /* UIView+YHDragCardExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UIView+YHDragCardExtension.h"; sourceTree = "<group>"; };
+		EE3C6F402348A08500F521B1 /* UIView+YHDragCardExtension.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "UIView+YHDragCardExtension.m"; sourceTree = "<group>"; };
+		EE3C6F422348C23500F521B1 /* YHDragCardDirection.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDirection.h; sourceTree = "<group>"; };
+		EE3C6F432348C23500F521B1 /* YHDragCardDirection.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = YHDragCardDirection.m; sourceTree = "<group>"; };
 		EEF06C0C2296E948006946FE /* YHDragContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = YHDragContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		EEF06C0F2296E948006946FE /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		EEF06C102296E948006946FE /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
@@ -31,9 +41,7 @@
 		EEF06C1D2296E949006946FE /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EEF06C1E2296E949006946FE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		EEF06C262296E991006946FE /* YHDragCardContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHDragCardContainer.m; sourceTree = "<group>"; };
-		EEF06C272296E991006946FE /* YHDragCardConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHDragCardConfig.h; sourceTree = "<group>"; };
 		EEF06C282296E991006946FE /* YHDragCardContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHDragCardContainer.h; sourceTree = "<group>"; };
-		EEF06C292296E991006946FE /* YHDragCardConfig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHDragCardConfig.m; sourceTree = "<group>"; };
 		EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrageCardViewController.h; sourceTree = "<group>"; };
 		EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrageCardViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -90,8 +98,14 @@
 			children = (
 				EEF06C282296E991006946FE /* YHDragCardContainer.h */,
 				EEF06C262296E991006946FE /* YHDragCardContainer.m */,
-				EEF06C272296E991006946FE /* YHDragCardConfig.h */,
-				EEF06C292296E991006946FE /* YHDragCardConfig.m */,
+				EE3C6F3C23489EFD00F521B1 /* YHDragCardInfo.h */,
+				EE3C6F3D23489EFD00F521B1 /* YHDragCardInfo.m */,
+				EE3C6F422348C23500F521B1 /* YHDragCardDirection.h */,
+				EE3C6F432348C23500F521B1 /* YHDragCardDirection.m */,
+				EE3C6F3F2348A08500F521B1 /* UIView+YHDragCardExtension.h */,
+				EE3C6F402348A08500F521B1 /* UIView+YHDragCardExtension.m */,
+				EE3C6F3723489E0C00F521B1 /* YHDragCardDataSource.h */,
+				EE3C6F3823489E4700F521B1 /* YHDragCardDelegate.h */,
 			);
 			path = DragCard;
 			sourceTree = "<group>";
@@ -169,10 +183,12 @@
 			files = (
 				EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */,
 				EEF06C142296E948006946FE /* ViewController.m in Sources */,
-				EEF06C2B2296E991006946FE /* YHDragCardConfig.m in Sources */,
+				EE3C6F442348C23500F521B1 /* YHDragCardDirection.m in Sources */,
+				EE3C6F3E23489EFD00F521B1 /* YHDragCardInfo.m in Sources */,
 				EEF06C1F2296E949006946FE /* main.m in Sources */,
 				EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */,
 				EEF06C112296E948006946FE /* AppDelegate.m in Sources */,
+				EE3C6F412348A08500F521B1 /* UIView+YHDragCardExtension.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
