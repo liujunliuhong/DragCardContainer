@@ -20,4 +20,14 @@
     }
     return self;
 }
+- (instancetype)initWithHorizontal:(YHDragCardDirectionType)horizontal vertical:(YHDragCardDirectionType)vertical horizontalRatio:(CGFloat)horizontalRatio verticalRatio:(CGFloat)verticalRatio{
+    self = [super init];
+    if (self) {
+        self.horizontal = horizontal;
+        self.vertical = vertical;
+        self.horizontalRatio = horizontalRatio;
+        self.verticalRatio = verticalRatio;
+    }
+    return self;
+}
 @end

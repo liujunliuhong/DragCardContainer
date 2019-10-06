@@ -946,59 +946,58 @@ extension YHDragCard {
             animation()
         }) { [weak self] (isFinish) in
             guard let _self = self else { return }
-            if isFinish {
-                // 交换每个info的位置信息
-                for (index, info) in _self.infos.enumerated().reversed() { // 倒叙交换位置
-                    if _self.infos.count <= _self.visibleCount {
-                        if index == 0 { continue }
-                    } else {
-                        if index == _self.infos.count - 1 || index == 0 { continue }
-                    }
-                    let willInfo = _self.infos[index - 1]
-                    
-                    let willTransform = willInfo.transform
-                    let willFrame = willInfo.frame
-                    
-                    info.transform = willTransform
-                    info.frame = willFrame
-                }
-                
-                _self.isNexting = false
-                
-                guard let info = _self.infos.first else { return }
-                
-                info.card.removeFromSuperview()
-                _self.infos.removeFirst()
-                
-                // 卡片滑出去的回调
-                _self.delegate?.dragCard(_self, didRemoveCard: info.card, withIndex: _self.currentIndex)
-                
-                
-                // 顶部的卡片Remove
-                if _self.currentIndex == (_self.dataSource?.numberOfCount(_self) ?? 0) - 1 {
-                    // 卡片只有最后一张了，此时闭包不回调出去
-                    // 最后一张卡片移除出去的回调
-                    _self.delegate?.dragCard(_self, didFinishRemoveLastCard: info.card)
-                    
-                    if _self.infiniteLoop {
-                        if let _tmpTopCard = _self.infos.first?.card {
-                            _self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
-                            _tmpTopCard.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
-                            _self.delegate?.dragCard(_self, didDisplayCard: _tmpTopCard, withIndexAt: _self.currentIndex)
-                        }
-                    }
-                    
+            if !isFinish { return }
+            // 交换每个info的位置信息
+            for (index, info) in _self.infos.enumerated().reversed() { // 倒叙交换位置
+                if _self.infos.count <= _self.visibleCount {
+                    if index == 0 { continue }
                 } else {
-                    // 如果不是最后一张卡片移出去，则把索引+1
-                    _self.currentIndex = _self.currentIndex + 1
-                    _self.infos.first?.card.isUserInteractionEnabled = true
-                    
-                    // 显示当前卡片的回调
+                    if index == _self.infos.count - 1 || index == 0 { continue }
+                }
+                let willInfo = _self.infos[index - 1]
+                
+                let willTransform = willInfo.transform
+                let willFrame = willInfo.frame
+                
+                info.transform = willTransform
+                info.frame = willFrame
+            }
+            
+            _self.isNexting = false
+            
+            guard let info = _self.infos.first else { return }
+            
+            info.card.removeFromSuperview()
+            _self.infos.removeFirst()
+            
+            // 卡片滑出去的回调
+            _self.delegate?.dragCard(_self, didRemoveCard: info.card, withIndex: _self.currentIndex)
+            
+            
+            // 顶部的卡片Remove
+            if _self.currentIndex == (_self.dataSource?.numberOfCount(_self) ?? 0) - 1 {
+                // 卡片只有最后一张了，此时闭包不回调出去
+                // 最后一张卡片移除出去的回调
+                _self.delegate?.dragCard(_self, didFinishRemoveLastCard: info.card)
+                
+                if _self.infiniteLoop {
                     if let _tmpTopCard = _self.infos.first?.card {
+                        _self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
+                        _tmpTopCard.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
                         _self.delegate?.dragCard(_self, didDisplayCard: _tmpTopCard, withIndexAt: _self.currentIndex)
                     }
-                    closure?() // 闭包回调
                 }
+                
+            } else {
+                // 如果不是最后一张卡片移出去，则把索引+1
+                _self.currentIndex = _self.currentIndex + 1
+                _self.infos.first?.card.isUserInteractionEnabled = true
+                
+                // 显示当前卡片的回调
+                if let _tmpTopCard = _self.infos.first?.card {
+                    _self.delegate?.dragCard(_self, didDisplayCard: _tmpTopCard, withIndexAt: _self.currentIndex)
+                }
+                closure?() // 闭包回调
             }
         }
     }

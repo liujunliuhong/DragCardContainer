@@ -178,6 +178,135 @@
 }
 
 - (void)_revoke:(YHDragCardDirectionType)direction{
+    __weak typeof(self) weakSelf = self;
+    
+    if (self.currentIndex <= 0) { return; }
+    if (direction == YHDragCardDirectionTypeDefault) { return; }
+    if (self.isRevoking) { return; }
+    if (self.removeDirection == YHDragCardRemoveDirectionHorizontal) {
+        if (direction == YHDragCardDirectionTypeUp || direction == YHDragCardDirectionTypeDown) { return; }
+    }
+    if (self.removeDirection == YHDragCardRemoveDirectionVertical) {
+        if (direction == YHDragCardDirectionTypeLeft || direction == YHDragCardDirectionTypeRight) { return; }
+    }
+    
+    UIView *topCard = self.infos.firstObject.card;
+    
+    UIView *card = [self.dataSource dragCard:self indexOfCard:self.currentIndex - 1];
+    card.userInteractionEnabled = NO;
+    card.layer.anchorPoint = CGPointMake(0.5, 1.0);
+    [self addSubview:card];
+    
+    if (!self.disableDrag) {
+        [self addPanGesture:card];
+    }
+    if (!self.disableClick) {
+        [self addTapGesture:card];
+    }
+    
+    card.transform = CGAffineTransformIdentity;
+    card.frame = topCard.frame;
+    
+    if (self.removeDirection == YHDragCardRemoveDirectionHorizontal) {
+        CGFloat flag = 1.0;
+        if (direction == YHDragCardDirectionTypeLeft) {
+            flag = -1.0;
+        } else if (direction == YHDragCardDirectionTypeRight) {
+            flag = 1.0;
+        }
+        card.transform = CGAffineTransformMakeRotation([self correctRemoveMaxAngleAndToRadius] * flag);
+    } else {
+        // 垂直方向不做处理
+        card.transform = CGAffineTransformIdentity;
+    }
+    
+    if (self.removeDirection == YHDragCardRemoveDirectionHorizontal) {
+        CGFloat flag = 2.0;
+        if (direction == YHDragCardDirectionTypeLeft) {
+            flag = -0.5;
+        } else if (direction == YHDragCardDirectionTypeRight) {
+            flag = 1.5;
+        }
+        CGFloat tmpWidth = YHDrageContainer_ScreenWidth * flag;
+        CGFloat tmpHeight = self.initialFirstCardCenter.y - 20.0;
+        card.center = CGPointMake(tmpWidth, tmpHeight);
+    } else {
+        CGFloat flag = 2.0;
+        if (direction == YHDragCardDirectionTypeUp) {
+            flag = -1.0;
+        } else if (direction == YHDragCardDirectionTypeDown) {
+            flag = 2.0;
+        }
+        CGFloat tmpWidth = self.initialFirstCardCenter.x;
+        CGFloat tmpHeight = YHDrageContainer_ScreenHeight * flag;
+        card.center = CGPointMake(tmpWidth, tmpHeight);
+    }
+    
+    self.infos.firstObject.card.userInteractionEnabled = NO;
+    
+    YHDragCardInfo *info = [[YHDragCardInfo alloc] initWithCard:card transform:topCard.transform frame:topCard.frame];
+    [self.infos insertObject:info atIndex:0];
+    
+    self.isRevoking = YES;
+    
+    void(^animation)(void) = ^() {
+        card.center = weakSelf.initialFirstCardCenter;
+        card.transform = CGAffineTransformIdentity;
+        
+        for (int index = 0; index < weakSelf.infos.count; index ++) {
+            YHDragCardInfo *info = weakSelf.infos[index];
+            if (weakSelf.infos.count <= weakSelf.visibleCount) {
+                if (index == 0) { continue; }
+            } else {
+                if (index == weakSelf.infos.count - 1 || index == 0) { continue; }
+            }
+            
+            YHDragCardStableInfo *willInfo = weakSelf.stableInfos[index];
+            
+            info.card.transform = willInfo.transform;
+            
+            CGRect frame = info.card.frame;
+            frame.origin.y = willInfo.frame.origin.y;
+            info.card.frame = frame;
+        }
+    };
+    
+    [UIView animateWithDuration:0.4 animations:^{
+        animation();
+    } completion:^(BOOL finished) {
+        for (int index = 0; index < weakSelf.infos.count; index ++) {
+            YHDragCardInfo *info = weakSelf.infos[index];
+            if (weakSelf.infos.count <= weakSelf.visibleCount) {
+                if (index == 0) { continue; }
+            } else {
+                if (index == weakSelf.infos.count - 1 || index == 0) { continue; }
+            }
+            
+            YHDragCardStableInfo *willInfo = weakSelf.stableInfos[index];
+            CGAffineTransform willTransform = willInfo.transform;
+            CGRect willFrame = willInfo.frame;
+            
+            info.transform = willTransform;
+            info.frame = willFrame;
+        }
+        
+        UIView *bottomCard = weakSelf.infos.lastObject.card;
+        
+        // 移除最底部的卡片
+        if (weakSelf.infos.count > weakSelf.visibleCount) {
+            [bottomCard removeFromSuperview];
+            [weakSelf.infos removeLastObject];
+        }
+        
+        weakSelf.currentIndex --;
+        
+        card.userInteractionEnabled = YES;
+        
+        weakSelf.isRevoking = NO;
+        
+        // 显示顶层卡片的回调
+        [weakSelf.delegate dragCard:weakSelf didDisplayCard:card withIndex:weakSelf.currentIndex];
+    }];
     
 }
 
@@ -266,6 +395,230 @@
     
 }
 
+#pragma mark Pan Gesture Methods
+- (void)moving:(CGFloat)_ratio{
+    CGFloat ratio = 0.0;
+    if (_ratio < 0.0) {
+        ratio = 0.0;
+    } else if (_ratio > 1.0) {
+        ratio = 1.0;
+    }
+    
+    for (int index = 0; index < self.infos.count; index ++) {
+        YHDragCardInfo *info = self.infos[index];
+        if (self.infos.count <= self.visibleCount) {
+            if (index == 0) { continue; }
+        } else {
+            if (index == 0 || index == self.infos.count - 1) { continue; }
+        }
+        YHDragCardInfo *willInfo = self.infos[index - 1];
+        
+        CGAffineTransform currentTransform = info.transform;
+        CGAffineTransform willTransform = willInfo.transform;
+        CGRect currentFrame = info.frame;
+        CGRect willFrame = willInfo.frame;
+        
+        info.card.transform = CGAffineTransformMakeScale(currentTransform.a - (currentTransform.a - willTransform.a) * ratio, currentTransform.d - (currentTransform.d - willTransform.d) * ratio);
+        
+        CGRect frame = info.card.frame;
+        frame.origin.y = currentFrame.origin.y - (currentFrame.origin.y - willFrame.origin.y) * ratio;
+        info.card.frame = frame;
+    }
+}
+
+
+- (void)disappear:(CGFloat)horizontalMoveDistance verticalMoveDistance:(CGFloat)verticalMoveDistance isAuto:(BOOL)isAuto completionBlock:(void(^_Nullable)(void))completionBlock{
+    __weak typeof(self) weakSelf = self;
+    void(^animation)(void) = ^(void) {
+        UIView *topCard = weakSelf.infos.firstObject.card;
+        if (topCard) {
+            if (weakSelf.removeDirection == YHDragCardRemoveDirectionHorizontal) {
+                int flag = 0;
+                if (horizontalMoveDistance > 0.0) {
+                    flag = 2; // 右边滑出
+                } else {
+                    flag = -1; // 左边滑出
+                }
+                CGFloat tmpWidth = YHDrageContainer_ScreenWidth * flag;
+                CGFloat tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + weakSelf.initialFirstCardCenter.y;
+                topCard.center = CGPointMake(tmpWidth, tmpHeight);
+            } else {
+                int flag = 0;
+                if (verticalMoveDistance > 0.0) {
+                    flag = 2; // 向下滑出
+                } else {
+                    flag = -1; // 向上滑出
+                }
+                CGFloat tmpHeight = YHDrageContainer_ScreenHeight * flag;
+                CGFloat tmpWidth = (horizontalMoveDistance / verticalMoveDistance * tmpHeight) + weakSelf.initialFirstCardCenter.x;
+                topCard.center = CGPointMake(tmpWidth, tmpHeight);
+            }
+        }
+        // 1、infos数量小于等于visibleCount，表明不会再增加新卡片了
+        // 2、infos数量大于visibleCount（infos数量最多只比visibleCount多1）
+        for (int index = 0; index < weakSelf.infos.count; index ++) {
+            YHDragCardInfo *info = weakSelf.infos[index];
+            if (weakSelf.infos.count <= weakSelf.visibleCount) {
+                if (index == 0) { continue; }
+            } else {
+                if (index == 0 || index == weakSelf.infos.count - 1) { continue; }
+            }
+            YHDragCardInfo *willInfo = weakSelf.infos[index - 1];
+            info.card.transform = willInfo.transform;
+            
+            CGRect frame = info.card.frame;
+            frame.origin.y = willInfo.frame.origin.y;
+            info.frame = frame;
+        }
+    };
+    
+    if (isAuto) {
+        [UIView animateWithDuration:0.2 animations:^{
+            UIView *topCard = weakSelf.infos.firstObject.card;
+            if (topCard) {
+                if (self.removeDirection == YHDragCardRemoveDirectionHorizontal) {
+                    topCard.transform = CGAffineTransformMakeRotation(horizontalMoveDistance > 0.0 ? [self correctRemoveMaxAngleAndToRadius] : -[self correctRemoveMaxAngleAndToRadius]);
+                } else {
+                    // 垂直方向不做处理
+                }
+            }
+        } completion:nil];
+    }
+    
+    if (isAuto) {
+        [self zoomInAndOut:horizontalMoveDistance verticalMoveDistance:verticalMoveDistance canRemove:true];
+    } else {
+        [self zoomIn:true];
+    }
+    
+    [UIView animateWithDuration:0.5 animations:^{
+        animation();
+    } completion:^(BOOL finished) {
+        if (!finished) { return ; }
+        // 交换每个info的位置信息
+        for (int index = self.infos.count - 1; index >= 0; index --) { // 倒叙
+            YHDragCardInfo *info = self.infos[index];
+            if (self.infos.count <= self.visibleCount) {
+                if (index == 0) { continue; }
+            } else {
+                if (index == 0 || index == self.infos.count - 1) { continue; }
+            }
+            YHDragCardInfo *willInfo = weakSelf.infos[index - 1];
+            
+            CGAffineTransform willTransform = willInfo.transform;
+            CGRect willFrame = willInfo.frame;
+            
+            info.transform = willTransform;
+            info.frame = willFrame;
+        }
+        
+        self.isNexting = NO;
+        
+        YHDragCardInfo *info = self.infos.firstObject;
+        if (!info) { return; }
+        
+        [info.card removeFromSuperview];
+        [self.infos removeObjectAtIndex:0];
+        
+        // 卡片滑出去的回调
+        if (self.delegate && [self.delegate respondsToSelector:@selector(dragCard:didRemoveCard:withIndex:)]) {
+            [self.delegate dragCard:self didRemoveCard:info.card withIndex:self.currentIndex];
+        }
+        
+        // 顶部的卡片Remove
+        if (self.currentIndex == [self.dataSource numberOfCountInDragCard:self] - 1) {
+            // 卡片只有最后一张了，此时闭包不回调出去
+            // 最后一张卡片移除出去的回调
+            if (self.delegate && [self.delegate respondsToSelector:@selector(dragCard:didFinishRemoveLastCard:)]) {
+                [self.delegate dragCard:self didFinishRemoveLastCard:info.card];
+            }
+            
+            if (self.infiniteLoop) {
+                UIView *tmpTopCard = self.infos.firstObject.card;
+                if (tmpTopCard) {
+                    self.currentIndex = 0; // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
+                    tmpTopCard.userInteractionEnabled = YES;
+                    if (self.delegate && [self.delegate respondsToSelector:@selector(dragCard:didDisplayCard:withIndex:)]) {
+                        [self.delegate dragCard:self didDisplayCard:tmpTopCard withIndex:self.currentIndex];
+                    }
+                }
+            }
+        } else {
+            // 如果不是最后一张卡片移出去，则把索引+1
+            self.currentIndex ++;
+            self.infos.firstObject.card.userInteractionEnabled = YES;
+            // 显示当前卡片的回调
+            UIView *tmpTopCard = self.infos.firstObject.card;
+            if (tmpTopCard) {
+                if (self.delegate && [self.delegate respondsToSelector:@selector(dragCard:didDisplayCard:withIndex:)]) {
+                    [self.delegate dragCard:self didDisplayCard:tmpTopCard withIndex:self.currentIndex];
+                }
+            }
+            if (completionBlock) {
+                completionBlock();
+            }
+        }
+    }];
+}
+
+- (void)restore{
+    [self zoomIn:NO];
+    [UIView animateWithDuration:0.5 delay:0 usingSpringWithDamping:0.5 initialSpringVelocity:0.8 options:UIViewAnimationOptionCurveEaseInOut animations:^{
+        [self.infos enumerateObjectsUsingBlock:^(YHDragCardInfo * _Nonnull obj, NSUInteger idx, BOOL * _Nonnull stop) {
+            obj.card.transform = obj.transform;
+            obj.card.frame = obj.frame;
+        }];
+    } completion:^(BOOL finished) {
+        if (!finished) { return ; }
+        if (self.infos.count > self.visibleCount) {
+            YHDragCardInfo *info = self.infos.lastObject;
+            [info.card removeFromSuperview];
+            [self.infos removeLastObject];
+        }
+    }];
+}
+
+
+#pragma mark Zoom
+- (void)zoomIn:(BOOL)canRemove{
+    UIView *topCard = self.infos.firstObject.card;
+    if (!topCard) { return; }
+    [UIView animateWithDuration:0.2 animations:^{
+        YHDragCardDirection *direction = [[YHDragCardDirection alloc] initWithHorizontal:YHDragCardDirectionTypeDefault vertical:YHDragCardDirectionTypeDefault horizontalRatio:0.0 verticalRatio:0.0];
+        if ([self.delegate respondsToSelector:@selector(dragCard:currentCard:withIndex:currentCardDirection:canRemove:)]) {
+            [self.delegate dragCard:self currentCard:topCard withIndex:self.currentIndex currentCardDirection:direction canRemove:canRemove];
+        }
+    } completion:nil];
+}
+
+- (void)zoomInAndOut:(CGFloat)horizontalMoveDistance verticalMoveDistance:(CGFloat)verticalMoveDistance canRemove:(BOOL)canRemove{
+    UIView *topCard = self.infos.firstObject.card;
+    if (!topCard) { return; }
+    
+    YHDragCardDirectionType horizontal = horizontalMoveDistance > 0.0 ? YHDragCardDirectionTypeLeft : YHDragCardDirectionTypeLeft;
+    YHDragCardDirectionType vertical = verticalMoveDistance > 0.0 ? YHDragCardDirectionTypeDown : YHDragCardDirectionTypeUp;
+    CGFloat horizontalRatio = horizontalMoveDistance > 0.0 ? 1.0 : -1.0;
+    CGFloat verticalRatio = verticalMoveDistance > 0.0 ? 1.0 : -1.0;
+    
+    YHDragCardDirection *direction = [[YHDragCardDirection alloc] initWithHorizontal:horizontal vertical:vertical horizontalRatio:horizontalRatio verticalRatio:verticalRatio];
+    
+    YHDragCardDirection *direction1 = [[YHDragCardDirection alloc] initWithHorizontal:YHDragCardDirectionTypeDefault vertical:YHDragCardDirectionTypeDefault horizontalRatio:0.0 verticalRatio:0.0];
+    
+    
+    [UIView animateWithDuration:0.2 animations:^{
+        if ([self.delegate respondsToSelector:@selector(dragCard:currentCard:withIndex:currentCardDirection:canRemove:)]) {
+            [self.delegate dragCard:self currentCard:topCard withIndex:self.currentIndex currentCardDirection:direction canRemove:canRemove];
+        }
+    } completion:^(BOOL finished) {
+        if (!finished) { return ; }
+        // 复原
+        [UIView animateWithDuration:0.2 animations:^{
+            if ([self.delegate respondsToSelector:@selector(dragCard:currentCard:withIndex:currentCardDirection:canRemove:)]) {
+                [self.delegate dragCard:self currentCard:topCard withIndex:self.currentIndex currentCardDirection:direction1 canRemove:canRemove];
+            }
+        } completion:nil];
+    }];
+}
 
 
 
@@ -273,7 +626,7 @@
 
 
 
-
+#pragma mark 😄
 - (instancetype)initWithFrame:(CGRect)frame config:(YHDragCardConfig *)config
 {
     self = [super initWithFrame:frame];

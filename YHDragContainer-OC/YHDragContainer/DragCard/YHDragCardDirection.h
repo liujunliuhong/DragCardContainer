@@ -24,6 +24,7 @@ typedef NS_ENUM(NSUInteger, YHDragCardDirectionType) {
 @property (nonatomic, assign) YHDragCardDirectionType vertical;
 @property (nonatomic, assign) CGFloat horizontalRatio;
 @property (nonatomic, assign) CGFloat verticalRatio;
+- (instancetype)initWithHorizontal:(YHDragCardDirectionType)horizontal vertical:(YHDragCardDirectionType)vertical horizontalRatio:(CGFloat)horizontalRatio verticalRatio:(CGFloat)verticalRatio;
 @end
 
 NS_ASSUME_NONNULL_END
