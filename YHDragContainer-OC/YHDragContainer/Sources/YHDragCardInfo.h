@@ -11,6 +11,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 存储卡片的位置信息
 @interface YHDragCardStableInfo : NSObject
 @property (nonatomic) CGAffineTransform transform;
 @property (nonatomic) CGRect frame;
@@ -18,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
+/// 存储卡片的位置信息
 @interface YHDragCardInfo : YHDragCardStableInfo
 @property (nonatomic, strong) UIView *card;
 - (instancetype)initWithCard:(UIView *)card transform:(CGAffineTransform)transform frame:(CGRect)frame;

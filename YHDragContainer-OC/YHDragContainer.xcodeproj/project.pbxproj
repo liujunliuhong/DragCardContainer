@@ -17,11 +17,9 @@
 		EEF06C1C2296E949006946FE /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = EEF06C1A2296E949006946FE /* LaunchScreen.storyboard */; };
 		EEF06C1F2296E949006946FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C1E2296E949006946FE /* main.m */; };
 		EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C262296E991006946FE /* YHDragCardContainer.m */; };
-		EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		189C9607233C5FD200092049 /* YHDragContainer-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "YHDragContainer-Bridging-Header.h"; sourceTree = "<group>"; };
 		EE3C6F3723489E0C00F521B1 /* YHDragCardDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDataSource.h; sourceTree = "<group>"; };
 		EE3C6F3823489E4700F521B1 /* YHDragCardDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDelegate.h; sourceTree = "<group>"; };
 		EE3C6F3C23489EFD00F521B1 /* YHDragCardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardInfo.h; sourceTree = "<group>"; };
@@ -42,8 +40,6 @@
 		EEF06C1E2296E949006946FE /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		EEF06C262296E991006946FE /* YHDragCardContainer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YHDragCardContainer.m; sourceTree = "<group>"; };
 		EEF06C282296E991006946FE /* YHDragCardContainer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YHDragCardContainer.h; sourceTree = "<group>"; };
-		EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DrageCardViewController.h; sourceTree = "<group>"; };
-		EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = DrageCardViewController.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,10 +76,7 @@
 				EEF06C102296E948006946FE /* AppDelegate.m */,
 				EEF06C122296E948006946FE /* ViewController.h */,
 				EEF06C132296E948006946FE /* ViewController.m */,
-				EEF06C2C2296E9A6006946FE /* DrageCardViewController.h */,
-				EEF06C2D2296E9A6006946FE /* DrageCardViewController.m */,
-				189C9607233C5FD200092049 /* YHDragContainer-Bridging-Header.h */,
-				EEF06C252296E991006946FE /* DragCard */,
+				EEF06C252296E991006946FE /* Sources */,
 				EEF06C152296E948006946FE /* Main.storyboard */,
 				EEF06C182296E949006946FE /* Assets.xcassets */,
 				EEF06C1A2296E949006946FE /* LaunchScreen.storyboard */,
@@ -93,7 +86,7 @@
 			path = YHDragContainer;
 			sourceTree = "<group>";
 		};
-		EEF06C252296E991006946FE /* DragCard */ = {
+		EEF06C252296E991006946FE /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				EEF06C282296E991006946FE /* YHDragCardContainer.h */,
@@ -107,7 +100,7 @@
 				EE3C6F3723489E0C00F521B1 /* YHDragCardDataSource.h */,
 				EE3C6F3823489E4700F521B1 /* YHDragCardDelegate.h */,
 			);
-			path = DragCard;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -136,7 +129,7 @@
 		EEF06C042296E948006946FE /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1100;
 				ORGANIZATIONNAME = yinhe;
 				TargetAttributes = {
 					EEF06C0B2296E948006946FE = {
@@ -186,7 +179,6 @@
 				EE3C6F442348C23500F521B1 /* YHDragCardDirection.m in Sources */,
 				EE3C6F3E23489EFD00F521B1 /* YHDragCardInfo.m in Sources */,
 				EEF06C1F2296E949006946FE /* main.m in Sources */,
-				EEF06C2E2296E9A6006946FE /* DrageCardViewController.m in Sources */,
 				EEF06C112296E948006946FE /* AppDelegate.m in Sources */,
 				EE3C6F412348A08500F521B1 /* UIView+YHDragCardExtension.m in Sources */,
 			);
@@ -341,7 +333,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHDragContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "YHDragContainer/YHDragContainer-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -363,7 +355,7 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yinhe.YHDragContainer;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "YHDragContainer/YHDragContainer-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};

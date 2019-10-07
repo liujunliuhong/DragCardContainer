@@ -10,6 +10,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// runtime动态添加属性
 @interface UIView (YHDragCardExtension)
 @property (nonatomic, strong) UIPanGestureRecognizer *yh_drag_card_panGesture;
 @property (nonatomic, strong) UITapGestureRecognizer *yh_drag_card_tapGesture;

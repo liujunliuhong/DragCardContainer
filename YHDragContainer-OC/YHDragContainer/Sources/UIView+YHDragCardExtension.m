@@ -22,14 +22,11 @@ static const char *tap_gesture_key = "com.yinhe.yh_dragcontainer.tapgesture";
 }
 
 
-
 - (void)setYh_drag_card_tapGesture:(UITapGestureRecognizer *)yh_drag_card_tapGesture{
     objc_setAssociatedObject(self, &tap_gesture_key, yh_drag_card_tapGesture, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 - (UITapGestureRecognizer *)yh_drag_card_tapGesture{
     return objc_getAssociatedObject(self, &tap_gesture_key);
 }
-
-
-
 @end
+

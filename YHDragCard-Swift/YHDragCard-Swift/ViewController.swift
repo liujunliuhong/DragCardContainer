@@ -20,6 +20,7 @@ class ViewController: UIViewController {
         let tableView = UITableView(frame: self.view.bounds, style: .plain)
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "cellID")
         return tableView
     }()
     
@@ -33,7 +34,6 @@ class ViewController: UIViewController {
         } else {
             self.automaticallyAdjustsScrollViewInsets = true
         }
-        tableView.register(UITableViewCell.classForCoder(), forCellReuseIdentifier: "cellID")
         view.addSubview(tableView)
     }
 }

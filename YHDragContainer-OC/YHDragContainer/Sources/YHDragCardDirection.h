@@ -11,12 +11,13 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+/// 卡片方向
 typedef NS_ENUM(NSUInteger, YHDragCardDirectionType) {
-    YHDragCardDirectionTypeDefault,
-    YHDragCardDirectionTypeLeft,
-    YHDragCardDirectionTypeRight,
-    YHDragCardDirectionTypeUp,
-    YHDragCardDirectionTypeDown,
+    YHDragCardDirectionTypeDefault,  // default
+    YHDragCardDirectionTypeLeft,     // left
+    YHDragCardDirectionTypeRight,    // right
+    YHDragCardDirectionTypeUp,       // up
+    YHDragCardDirectionTypeDown,     // down
 };
 
 @interface YHDragCardDirection : NSObject

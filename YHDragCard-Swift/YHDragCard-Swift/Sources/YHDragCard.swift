@@ -8,7 +8,6 @@
 
 import UIKit
 
-
 /// 数据源
 protocol YHDragCardDataSource: NSObjectProtocol {
     
@@ -206,7 +205,7 @@ class YHDragCard: UIView {
     /// 如果垂直方向上能够移除卡片，请设置该属性的值
     public var verticalRemoveDistance: CGFloat = UIScreen.main.bounds.size.height / 4.0
     
-    /// 垂直方向上最大移除速度，默认1000.0
+    /// 垂直方向上最大移除速度，默认500.0
     /// 取值范围:大于100.0。如果小于100.0，默认100.0
     /// 如果垂直方向上能够移除卡片，请设置该属性的值
     public var verticalRemoveVelocity: CGFloat = 500.0
@@ -229,10 +228,8 @@ class YHDragCard: UIView {
     /// 如果垂直方向能够移除卡片，请把该值设置的大点
     public var demarcationAngle: CGFloat = 5.0
     
-    
     /// 是否无限滑动
     public var infiniteLoop: Bool = false
-    
     
     /// 是否禁用拖动
     public var disableDrag: Bool = false {
@@ -355,6 +352,8 @@ extension YHDragCard {
         
         let cardWidth = self.bounds.size.width
         let cardHeight: CGFloat = self.bounds.size.height - CGFloat(showCount - 1) * correctCardSpacing()
+        
+        assert(cardHeight > 0, "请检查`cardSpacing`的取值")
         
         for index in 0..<showCount {
             let y = correctCardSpacing() * CGFloat(index)
@@ -589,7 +588,7 @@ extension YHDragCard {
                     // 还有剩余卡片可以滑动
                     card = self.dataSource?.dragCard(self, indexOfCard: self.currentIndex + showCount)
                 }
-            } else {
+            } else { // 最多只是`maxCount = showCount`，比如总数是3张，一次性显示3张3
                 // 滑出去的那张，放在最下面
                 card = self.dataSource?.dragCard(self, indexOfCard: self.currentIndex)
             }
