@@ -107,6 +107,18 @@ NS_CLASS_AVAILABLE_IOS(8_0) @interface YHDragCardContainer : UIView
 - (instancetype)init NS_UNAVAILABLE;
 + (instancetype)new NS_UNAVAILABLE;
 
+/// 刷新
+/// @param animation 是否需要动画
+- (void)reloadData:(BOOL)animation;
+
+/// 下一张卡片
+/// @param direction 方向
+- (void)nextCard:(YHDragCardDirectionType)direction;
+
+/// 撤销
+/// @param direction 方向
+- (void)revoke:(YHDragCardDirectionType)direction;
+
 @end
 
 NS_ASSUME_NONNULL_END

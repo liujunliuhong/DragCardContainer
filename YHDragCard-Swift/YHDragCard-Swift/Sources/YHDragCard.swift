@@ -676,7 +676,7 @@ extension YHDragCard {
     
     /// 纠正cardSpacing  [0.0, bounds.size.height / 2.0]
     func correctCardSpacing() -> CGFloat {
-        var spacing: CGFloat = 0.0
+        var spacing: CGFloat = cardSpacing
         if cardSpacing < 0.0 {
             spacing = 0.0
         } else if cardSpacing > bounds.size.height / 2.0 {
@@ -858,9 +858,9 @@ extension YHDragCard {
             let willInfo = self.infos[index - 1]
             
             let currentTransform = info.transform
-            let willTransform = willInfo.transform
-            
             let currentFrame = info.frame
+            
+            let willTransform = willInfo.transform
             let willFrame = willInfo.frame
             
             info.card.transform = CGAffineTransform(scaleX:currentTransform.a - (currentTransform.a - willTransform.a) * ratio,

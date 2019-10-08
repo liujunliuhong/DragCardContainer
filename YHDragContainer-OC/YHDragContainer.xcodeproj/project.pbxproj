@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1800BA57234C36280059D9C1 /* InfiniteLoopDragViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1800BA56234C36280059D9C1 /* InfiniteLoopDragViewController.m */; };
+		1800BA5A234C37300059D9C1 /* VerticalDragViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 1800BA59234C37300059D9C1 /* VerticalDragViewController.m */; };
+		18796D01234C1C54007718C5 /* HorizontalDragViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 18796D00234C1C54007718C5 /* HorizontalDragViewController.m */; };
 		EE3C6F3E23489EFD00F521B1 /* YHDragCardInfo.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F3D23489EFD00F521B1 /* YHDragCardInfo.m */; };
 		EE3C6F412348A08500F521B1 /* UIView+YHDragCardExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F402348A08500F521B1 /* UIView+YHDragCardExtension.m */; };
 		EE3C6F442348C23500F521B1 /* YHDragCardDirection.m in Sources */ = {isa = PBXBuildFile; fileRef = EE3C6F432348C23500F521B1 /* YHDragCardDirection.m */; };
@@ -20,6 +23,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		1800BA55234C36280059D9C1 /* InfiniteLoopDragViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = InfiniteLoopDragViewController.h; sourceTree = "<group>"; };
+		1800BA56234C36280059D9C1 /* InfiniteLoopDragViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = InfiniteLoopDragViewController.m; sourceTree = "<group>"; };
+		1800BA58234C37300059D9C1 /* VerticalDragViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = VerticalDragViewController.h; sourceTree = "<group>"; };
+		1800BA59234C37300059D9C1 /* VerticalDragViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = VerticalDragViewController.m; sourceTree = "<group>"; };
+		18796CFF234C1C54007718C5 /* HorizontalDragViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = HorizontalDragViewController.h; sourceTree = "<group>"; };
+		18796D00234C1C54007718C5 /* HorizontalDragViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = HorizontalDragViewController.m; sourceTree = "<group>"; };
 		EE3C6F3723489E0C00F521B1 /* YHDragCardDataSource.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDataSource.h; sourceTree = "<group>"; };
 		EE3C6F3823489E4700F521B1 /* YHDragCardDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardDelegate.h; sourceTree = "<group>"; };
 		EE3C6F3C23489EFD00F521B1 /* YHDragCardInfo.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = YHDragCardInfo.h; sourceTree = "<group>"; };
@@ -76,6 +85,12 @@
 				EEF06C102296E948006946FE /* AppDelegate.m */,
 				EEF06C122296E948006946FE /* ViewController.h */,
 				EEF06C132296E948006946FE /* ViewController.m */,
+				18796CFF234C1C54007718C5 /* HorizontalDragViewController.h */,
+				18796D00234C1C54007718C5 /* HorizontalDragViewController.m */,
+				1800BA58234C37300059D9C1 /* VerticalDragViewController.h */,
+				1800BA59234C37300059D9C1 /* VerticalDragViewController.m */,
+				1800BA55234C36280059D9C1 /* InfiniteLoopDragViewController.h */,
+				1800BA56234C36280059D9C1 /* InfiniteLoopDragViewController.m */,
 				EEF06C252296E991006946FE /* Sources */,
 				EEF06C152296E948006946FE /* Main.storyboard */,
 				EEF06C182296E949006946FE /* Assets.xcassets */,
@@ -174,8 +189,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1800BA5A234C37300059D9C1 /* VerticalDragViewController.m in Sources */,
+				18796D01234C1C54007718C5 /* HorizontalDragViewController.m in Sources */,
 				EEF06C2A2296E991006946FE /* YHDragCardContainer.m in Sources */,
 				EEF06C142296E948006946FE /* ViewController.m in Sources */,
+				1800BA57234C36280059D9C1 /* InfiniteLoopDragViewController.m in Sources */,
 				EE3C6F442348C23500F521B1 /* YHDragCardDirection.m in Sources */,
 				EE3C6F3E23489EFD00F521B1 /* YHDragCardInfo.m in Sources */,
 				EEF06C1F2296E949006946FE /* main.m in Sources */,

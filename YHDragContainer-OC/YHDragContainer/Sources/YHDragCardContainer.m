@@ -35,12 +35,13 @@
 /// 是否正在调用`nextCard`方法
 /// 避免在短时间内多次调用nextCard方法，必须`nextCard`完成，才能继续下一次`nextCard`
 @property (nonatomic, assign) BOOL isNexting;
+
 @end
 
 @implementation YHDragCardContainer
 
 - (void)dealloc{
-    NSLog(@"%@ dealloc",NSStringFromClass([self class]));
+    //NSLog(@"%@ dealloc",NSStringFromClass([self class]));
 }
 
 - (instancetype)initWithFrame:(CGRect)frame
@@ -612,7 +613,7 @@
 
 #pragma mark Pan Gesture Methods
 - (void)moving:(CGFloat)_ratio{
-    CGFloat ratio = 0.0;
+    CGFloat ratio = _ratio;
     if (_ratio < 0.0) {
         ratio = 0.0;
     } else if (_ratio > 1.0) {
@@ -629,8 +630,9 @@
         YHDragCardInfo *willInfo = self.infos[index - 1];
         
         CGAffineTransform currentTransform = info.transform;
-        CGAffineTransform willTransform = willInfo.transform;
         CGRect currentFrame = info.frame;
+        
+        CGAffineTransform willTransform = willInfo.transform;
         CGRect willFrame = willInfo.frame;
         
         info.card.transform = CGAffineTransformMakeScale(currentTransform.a - (currentTransform.a - willTransform.a) * ratio, currentTransform.d - (currentTransform.d - willTransform.d) * ratio);
@@ -644,6 +646,7 @@
 
 - (void)disappear:(CGFloat)horizontalMoveDistance verticalMoveDistance:(CGFloat)verticalMoveDistance isAuto:(BOOL)isAuto completionBlock:(void(^_Nullable)(void))completionBlock{
     __weak typeof(self) weakSelf = self;
+    
     void(^animation)(void) = ^(void) {
         UIView *topCard = weakSelf.infos.firstObject.card;
         if (topCard) {
@@ -683,13 +686,14 @@
             
             CGRect frame = info.card.frame;
             frame.origin.y = willInfo.frame.origin.y;
-            info.frame = frame;
+            info.card.frame = frame;
         }
     };
     
+    
     if (isAuto) {
         [UIView animateWithDuration:0.2 animations:^{
-            UIView *topCard = weakSelf.infos.firstObject.card;
+            UIView *topCard = self.infos.firstObject.card;
             if (topCard) {
                 if (self.removeDirection == YHDragCardRemoveDirectionHorizontal) {
                     topCard.transform = CGAffineTransformMakeRotation(horizontalMoveDistance > 0.0 ? [self correctRemoveMaxAngleAndToRadius] : -[self correctRemoveMaxAngleAndToRadius]);
