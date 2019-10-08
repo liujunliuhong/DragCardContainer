@@ -30,7 +30,7 @@
 - OC<br>
 Clone代码，把OC Demo里面的`Sources`文件夹拖入项目，#import "YHDragCardContainer.h"，就可以使用了
 - Swift<br>
-Clone代码，把Swift Demo里面的`Sources`文件夹拖入项目，#import "YHDragCardContainer.h"，就可以使用了
+Clone代码，把Swift Demo里面的`Sources`文件夹拖入项目就可以使用了
 
 ### CocoaPods
 - OC
@@ -76,7 +76,7 @@ self.view.addSubview(card)
 ###### OC 0.6.0版本<br>
 - OC版本重构，优化代码<br>
 
-###### Swift 0.1.0版本<br>
+###### Swift 0.6.0版本<br>
 - 增加Swift版本
 
 ### 2、OC 0.5.0版本(2019.6.20)
