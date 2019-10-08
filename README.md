@@ -76,7 +76,7 @@ self.view.addSubview(card)
 ###### OC 0.6.0版本<br>
 - OC版本重构，优化代码<br>
 
-###### Swift 0.6.0版本<br>
+###### Swift 0.6.1版本<br>
 - 增加Swift版本
 
 ### 2、OC 0.5.0版本(2019.6.20)
