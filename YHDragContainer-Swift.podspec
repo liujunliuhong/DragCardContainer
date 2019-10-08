@@ -9,6 +9,8 @@ Pod::Spec.new do |s|
   s.author           = { 'liujunliuhong' => '1035841713@qq.com' }
   s.source           = { :git => 'https://github.com/liujunliuhong/YHDragContainer.git', :tag => s.version.to_s }
 
+  s.module_name = 'YHDragContainer.Swift'
+  s.swift_version = '5.0'
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
   s.source_files = 'YHDragCard-Swift/YHDragCard-Swift/Sources/*.swift'
