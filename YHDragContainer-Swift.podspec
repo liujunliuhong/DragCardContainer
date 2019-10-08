@@ -1,6 +1,6 @@
 
 Pod::Spec.new do |s|
-  s.name             = 'YHDragContainer-Swift'
+  s.name             = 'YHDragCard.Swift'
   s.version          = '0.6.0'
   s.summary          = '仿探探滑牌左右滑动，可以自由配置各种属性(Swift版本)'
   s.description      = '仿探探滑牌左右滑动，可以自由配置各种属性，持续更新中...(Swift版本)'
@@ -9,6 +9,7 @@ Pod::Spec.new do |s|
   s.author           = { 'liujunliuhong' => '1035841713@qq.com' }
   s.source           = { :git => 'https://github.com/liujunliuhong/YHDragContainer.git', :tag => s.version.to_s }
 
+  s.requires_arc = true
   s.module_name = 'YHDragContainerSwift'
   s.swift_version = '5.0'
   s.ios.deployment_target = '8.0'
