@@ -9,7 +9,7 @@
 import UIKit
 
 /// 数据源
-protocol YHDragCardDataSource: NSObjectProtocol {
+public protocol YHDragCardDataSource: NSObjectProtocol {
     
     /// 卡片总数
     /// - Parameter dragCard: 容器
@@ -22,7 +22,7 @@ protocol YHDragCardDataSource: NSObjectProtocol {
 }
 
 /// 代理
-protocol YHDragCardDelegate: NSObjectProtocol {
+public protocol YHDragCardDelegate: NSObjectProtocol {
     
     /// 显示顶层卡片的回调
     /// - Parameter dragCard: 容器
@@ -60,7 +60,7 @@ protocol YHDragCardDelegate: NSObjectProtocol {
     func dragCard(_ dragCard: YHDragCard, currentCard card: UIView, withIndex index: Int, currentCardDirection direction: YHDragCardDirection, canRemove: Bool)
 }
 
-extension YHDragCardDelegate {
+public extension YHDragCardDelegate {
     func dragCard(_ dragCard: YHDragCard, didDisplayCard card: UIView, withIndexAt index: Int) {}
     func dragCard(_ dragCard: YHDragCard, didSelectIndexAt index: Int, with card: UIView) {}
     func dragCard(_ dragCard: YHDragCard, didFinishRemoveLastCard card: UIView) {}
@@ -69,9 +69,9 @@ extension YHDragCardDelegate {
 }
 
 /// 卡片的滑动信息
-struct YHDragCardDirection {
+public struct YHDragCardDirection {
     /// 卡片方向
-    enum Direction {
+    public enum Direction {
         case `default`   // default
         case left        // 向左
         case right       // 向右
@@ -79,16 +79,16 @@ struct YHDragCardDirection {
         case down        // 向下
     }
     
-    var horizontal: YHDragCardDirection.Direction = .default
-    var vertical: YHDragCardDirection.Direction = .default
-    var horizontalRatio: CGFloat = 0.0
-    var verticalRatio: CGFloat = 0.0
+    public var horizontal: YHDragCardDirection.Direction = .default
+    public var vertical: YHDragCardDirection.Direction = .default
+    public var horizontalRatio: CGFloat = 0.0
+    public var verticalRatio: CGFloat = 0.0
 }
 
 /// 存储卡片的位置信息
-class YHDragCardStableInfo: NSObject {
-    var transform: CGAffineTransform
-    var frame: CGRect
+public class YHDragCardStableInfo: NSObject {
+    public var transform: CGAffineTransform
+    public var frame: CGRect
     init(transform: CGAffineTransform, frame: CGRect) {
         self.transform = transform
         self.frame = frame
@@ -96,15 +96,15 @@ class YHDragCardStableInfo: NSObject {
     }
 }
 
-class YHDragCardInfo: YHDragCardStableInfo {
-    let card: UIView
+public class YHDragCardInfo: YHDragCardStableInfo {
+    public let card: UIView
     init(card: UIView, transform: CGAffineTransform, frame: CGRect) {
         self.card = card
         super.init(transform: transform, frame: frame)
     }
 }
 
-extension YHDragCardInfo {
+public extension YHDragCardInfo {
     override var description: String {
         return getInfo()
     }
@@ -119,7 +119,7 @@ extension YHDragCardInfo {
 }
 
 
-enum YHDragCardRemoveDirection {
+public enum YHDragCardRemoveDirection {
     case horizontal
     case vertical
 }
@@ -156,7 +156,7 @@ extension UIView {
 /// 对比Swift和OC版本，个人还是更喜欢Swift
 /// 语法简洁
 /// 框架难点:如何在滑动的过程中动态的控制下面几张卡片的位置形变(很多其他三方库都未实现该功能)
-class YHDragCard: UIView {
+public class YHDragCard: UIView {
     deinit {
         //print("YHDragCard deinit")
     }
@@ -280,7 +280,7 @@ class YHDragCard: UIView {
     
     /// 目前暂时只支持纯frame的方式初始化
     /// - Parameter frame: frame
-    override init(frame: CGRect) {
+    override public init(frame: CGRect) {
         super.init(frame: frame)
         //backgroundColor = .gray
     }
@@ -295,17 +295,17 @@ class YHDragCard: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func didMoveToSuperview() {
+    override public func didMoveToSuperview() {
         reloadData(animation: false)
     }
     
 }
 
-extension YHDragCard {
+public extension YHDragCard {
     
     /// 刷新整个卡片，回到初始状态
     /// - Parameter animation: 是否动画
-    public func reloadData(animation: Bool) {
+    func reloadData(animation: Bool) {
         _reloadData(animation: animation)
     }
     
@@ -315,7 +315,7 @@ extension YHDragCard {
     /// left   向左移除顶层卡片
     /// up     向上移除顶层卡片
     /// down   向下移除顶层卡片
-    public func nextCard(direction: YHDragCardDirection.Direction) {
+    func nextCard(direction: YHDragCardDirection.Direction) {
         _nextCard(direction: direction)
     }
     
@@ -325,7 +325,7 @@ extension YHDragCard {
     /// left   从左撤销卡片
     /// up     从上撤销卡片
     /// down   从下撤销卡片
-    public func revoke(direction: YHDragCardDirection.Direction) {
+    func revoke(direction: YHDragCardDirection.Direction) {
         _revoke(direction: direction)
     }
 }
