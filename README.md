@@ -41,7 +41,7 @@ pod 'YHDragContainer'
 - Swift
 
 ```
-pod 'YHDragContainer-Swift'
+pod 'YHDragCard.swift'
 ```
 如果提示未找到，先执行`pod repo update`，再执行`pod install`
 
