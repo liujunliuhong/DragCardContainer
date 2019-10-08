@@ -10,7 +10,6 @@ Pod::Spec.new do |s|
   s.source           = { :git => 'https://github.com/liujunliuhong/YHDragContainer.git', :tag => s.version.to_s }
 
   s.requires_arc = true
-  s.module_name = 'YHDragContainerSwift'
   s.swift_version = '5.0'
   s.ios.deployment_target = '8.0'
   s.requires_arc = true
