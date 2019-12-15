@@ -30,6 +30,9 @@ class InfiniteLoopDragViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         view.addSubview(self.card)
+        
+        // 请根据具体项目情况在合适的时机进行刷新
+        self.card.reloadData(animation: false)
     }
 }
 
@@ -59,6 +62,8 @@ extension InfiniteLoopDragViewController: YHDragCardDelegate {
     
     func dragCard(_ dragCard: YHDragCard, didSelectIndexAt index: Int, with card: UIView) {
         print("点击卡片:\(index)")
+        let vc = NextViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
     }
     
     func dragCard(_ dragCard: YHDragCard, didRemoveCard card: UIView, withIndex index: Int) {
