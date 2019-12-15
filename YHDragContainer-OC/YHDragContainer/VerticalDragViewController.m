@@ -27,6 +27,7 @@
                     @"火星",
                     @"木星"];
     
+    
     [self.view addSubview:self.card];
     
     
