@@ -55,6 +55,8 @@ card.dataSource = self;
 card.minScale = 0.9;
 card.removeDirection = YHDragCardRemoveDirectionHorizontal;
 [self.view addSubview:card];
+
+[card reloadData:NO]; // 这一步千万别忘了，否则界面上是没有卡片的
 ```
 
 - 👉Swift（具体用法请看Demo，以及框架里面的注释，写的很详细）
@@ -66,6 +68,8 @@ card.delegate = self
 card.minScale = 0.9
 card.removeDirection = .horizontal
 self.view.addSubview(card)
+
+card.reloadData(animation: false) // 这一步千万别忘了，否则界面上是没有卡片的
 ```
 
 
