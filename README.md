@@ -20,7 +20,7 @@
 - 代理丰富，可以根据自己的需要来选择合适的代理
 
 ## 即将加入的功能
-- 解决push后返回导致卡片刷新的bug；
+- 暂无
 ## 效果预览
 <img src="GIF/test.gif" width="350">
 
@@ -70,6 +70,13 @@ self.view.addSubview(card)
 
 
 ## 更新记录(倒叙)
+### 4、(2019.12.15)<br>
+
+###### OC 0.6.2版本<br>
+- 解决push下一个界面之后，卡片reload的bug<br>
+
+###### Swift 0.6.3版本<br>
+- 移除`didMoveToSuperview`方法，由开发者自行选择合适时机reload
 
 ### 3、(2019.10.08)<br>
 
