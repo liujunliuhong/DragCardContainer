@@ -8,6 +8,7 @@
 
 #import "InfiniteLoopDragViewController.h"
 #import "YHDragCardContainer.h"
+#import "NextViewController.h"
 
 @interface InfiniteLoopDragViewController () <YHDragCardDataSource, YHDragCardDelegate>
 @property (nonatomic, strong) NSArray<NSString *> *models;
@@ -27,6 +28,9 @@
                     @"木星"];
     
     [self.view addSubview:self.card];
+    
+    // 请根据具体项目情况在合适的时机进行刷新
+    [self.card reloadData:NO];
 }
 
 #pragma mark YHDragCardDataSource
@@ -50,6 +54,11 @@
 #pragma mark YHDragCardDelegate
 - (void)dragCard:(YHDragCardContainer *)dragCard didDisplayCard:(UIView *)card withIndex:(int)index{
     self.navigationItem.title = [NSString stringWithFormat:@"%d/%d", index + 1, (int)self.models.count];
+}
+
+- (void)dragCard:(YHDragCardContainer *)dragCard didSlectCard:(UIView *)card withIndex:(int)index{
+    NextViewController *vc = [[NextViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark Getter

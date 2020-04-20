@@ -70,9 +70,6 @@
     return self;
 }
 
-- (void)didMoveToWindow{
-    [self reloadData:NO];
-}
 
 #pragma mark Setter
 - (void)setDisableDrag:(BOOL)disableDrag{

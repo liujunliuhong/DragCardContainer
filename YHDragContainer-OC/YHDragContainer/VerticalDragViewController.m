@@ -8,6 +8,7 @@
 
 #import "VerticalDragViewController.h"
 #import "YHDragCardContainer.h"
+#import "NextViewController.h"
 
 @interface VerticalDragViewController () <YHDragCardDataSource, YHDragCardDelegate>
 @property (nonatomic, strong) NSArray<NSString *> *models;
@@ -26,7 +27,12 @@
                     @"火星",
                     @"木星"];
     
+    
     [self.view addSubview:self.card];
+    
+    
+    // 请根据具体项目情况在合适的时机进行刷新
+    [self.card reloadData:NO];
 }
 
 #pragma mark YHDragCardDataSource
@@ -54,6 +60,11 @@
 
 - (void)dragCard:(YHDragCardContainer *)dragCard didFinishRemoveLastCard:(UIView *)card{
     [self.card reloadData:YES];
+}
+
+- (void)dragCard:(YHDragCardContainer *)dragCard didSlectCard:(UIView *)card withIndex:(int)index{
+    NextViewController *vc = [[NextViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 #pragma mark Getter

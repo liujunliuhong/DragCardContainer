@@ -8,6 +8,7 @@
 
 #import "HorizontalDragViewController.h"
 #import "YHDragCardContainer.h"
+#import "NextViewController.h"
 
 @interface HorizontalDragViewController () <YHDragCardDataSource, YHDragCardDelegate> {
     BOOL _disableDrag;
@@ -40,6 +41,9 @@
     [self.view addSubview:self.nextButton];
     [self.view addSubview:self.disableButton];
     [self.view addSubview:self.stateView];
+    
+    // 请根据具体项目情况在合适的时机进行刷新
+    [self.card reloadData:NO];
 }
 
 #pragma mark YHDragCardDataSource
@@ -67,6 +71,8 @@
 
 - (void)dragCard:(YHDragCardContainer *)dragCard didSlectCard:(UIView *)card withIndex:(int)index{
     NSLog(@"点击卡片索引:%d", index);
+    NextViewController *vc = [[NextViewController alloc] init];
+    [self.navigationController pushViewController:vc animated:YES];
 }
 
 - (void)dragCard:(YHDragCardContainer *)dragCard didRemoveCard:(UIView *)card withIndex:(int)index{

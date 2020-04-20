@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'YHDragCard.swift'
-  s.version          = '0.6.1'
+  s.version          = '0.6.3'
   s.summary          = '仿探探滑牌左右滑动，可以自由配置各种属性(Swift版本)'
   s.description      = '仿探探滑牌左右滑动，可以自由配置各种属性，持续更新中...(Swift版本)'
   s.homepage         = 'https://github.com/liujunliuhong/YHDragContainer'

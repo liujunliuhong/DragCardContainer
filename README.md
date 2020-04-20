@@ -20,7 +20,7 @@
 - 代理丰富，可以根据自己的需要来选择合适的代理
 
 ## 即将加入的功能
-暂无
+- 模仿tableView实现卡片的重用机制
 ## 效果预览
 <img src="GIF/test.gif" width="350">
 
@@ -55,6 +55,8 @@ card.dataSource = self;
 card.minScale = 0.9;
 card.removeDirection = YHDragCardRemoveDirectionHorizontal;
 [self.view addSubview:card];
+
+[card reloadData:NO]; // 这一步千万别忘了，否则界面上是没有卡片的
 ```
 
 - 👉Swift（具体用法请看Demo，以及框架里面的注释，写的很详细）
@@ -66,10 +68,19 @@ card.delegate = self
 card.minScale = 0.9
 card.removeDirection = .horizontal
 self.view.addSubview(card)
+
+card.reloadData(animation: false) // 这一步千万别忘了，否则界面上是没有卡片的
 ```
 
 
 ## 更新记录(倒叙)
+### 4、(2019.12.15)<br>
+
+###### OC 0.6.2版本<br>
+- 解决push下一个界面之后，卡片reload的bug<br>
+
+###### Swift 0.6.3版本<br>
+- 移除`didMoveToSuperview`方法，由开发者自行选择合适时机reload
 
 ### 3、(2019.10.08)<br>
 

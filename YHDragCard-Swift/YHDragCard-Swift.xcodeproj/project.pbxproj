@@ -17,6 +17,7 @@
 		18DEF6BD2341E377000FBDA4 /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DEF6BC2341E377000FBDA4 /* HorizontalDragViewController.swift */; };
 		18DEF6BF2342019A000FBDA4 /* VerticalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DEF6BE2342019A000FBDA4 /* VerticalDragViewController.swift */; };
 		18DEF6C12342028B000FBDA4 /* InfiniteLoopDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 18DEF6C02342028B000FBDA4 /* InfiniteLoopDragViewController.swift */; };
+		8558983F23A67D4D0050A8D2 /* NextViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8558983E23A67D4D0050A8D2 /* NextViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,6 +33,7 @@
 		18DEF6BC2341E377000FBDA4 /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
 		18DEF6BE2342019A000FBDA4 /* VerticalDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalDragViewController.swift; sourceTree = "<group>"; };
 		18DEF6C02342028B000FBDA4 /* InfiniteLoopDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InfiniteLoopDragViewController.swift; sourceTree = "<group>"; };
+		8558983E23A67D4D0050A8D2 /* NextViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NextViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,6 +72,7 @@
 				18DEF6BC2341E377000FBDA4 /* HorizontalDragViewController.swift */,
 				18DEF6BE2342019A000FBDA4 /* VerticalDragViewController.swift */,
 				18DEF6C02342028B000FBDA4 /* InfiniteLoopDragViewController.swift */,
+				8558983E23A67D4D0050A8D2 /* NextViewController.swift */,
 				18DEF6B82341E31C000FBDA4 /* Sources */,
 				18DEF6A92341DC0F000FBDA4 /* Main.storyboard */,
 				18DEF6AC2341DC12000FBDA4 /* Assets.xcassets */,
@@ -159,6 +162,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				18DEF6BA2341E331000FBDA4 /* YHDragCard.swift in Sources */,
+				8558983F23A67D4D0050A8D2 /* NextViewController.swift in Sources */,
 				18DEF6A82341DC0F000FBDA4 /* ViewController.swift in Sources */,
 				18DEF6C12342028B000FBDA4 /* InfiniteLoopDragViewController.swift in Sources */,
 				18DEF6A42341DC0F000FBDA4 /* AppDelegate.swift in Sources */,
