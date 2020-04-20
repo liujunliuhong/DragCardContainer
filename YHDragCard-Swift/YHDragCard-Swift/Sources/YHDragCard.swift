@@ -591,6 +591,8 @@ private extension YHDragCard {
 
 
 private extension YHDragCard {
+    
+    /// 把下一张卡片添加到`container`的最底部
     private func installNextCard() {
         let maxCount: Int = self.dataSource?.numberOfCount(self) ?? 0
         let showCount: Int = min(maxCount, visibleCount)
@@ -631,7 +633,7 @@ private extension YHDragCard {
         _card.frame = bottomCard.frame
 
         let info = YHDragCardInfo(card: _card, transform: _card.transform, frame: _card.frame)
-        self.infos.append(info)
+        self.infos.append(info) // append
 
         if !self.disableDrag {
             self.addPanGesture(for: _card)
@@ -782,8 +784,8 @@ private extension YHDragCard {
             cardView.center = currentPoint
             
             // 垂直方向上的滑动比例
-            let verticalMoveDistance: CGFloat = cardView.center.y - initialFirstCardCenter.y
-            var verticalRatio = verticalMoveDistance / correctVerticalRemoveDistance()
+            let verticalMoveDistance: CGFloat = cardView.center.y - self.initialFirstCardCenter.y
+            var verticalRatio = verticalMoveDistance / self.correctVerticalRemoveDistance()
             if verticalRatio < -1.0 {
                 verticalRatio = -1.0
             } else if verticalRatio > 1.0 {
@@ -791,8 +793,8 @@ private extension YHDragCard {
             }
             
             // 水平方向上的滑动比例
-            let horizontalMoveDistance: CGFloat = cardView.center.x - initialFirstCardCenter.x
-            var horizontalRatio = horizontalMoveDistance / correctHorizontalRemoveDistance()
+            let horizontalMoveDistance: CGFloat = cardView.center.x - self.initialFirstCardCenter.x
+            var horizontalRatio = horizontalMoveDistance / self.correctHorizontalRemoveDistance()
             
             if horizontalRatio < -1.0 {
                 horizontalRatio = -1.0
@@ -801,7 +803,7 @@ private extension YHDragCard {
             }
             
             // 设置手指拖住的那张卡牌的旋转角度
-            let rotationAngle = horizontalRatio * correctRemoveMaxAngleAndToRadius()
+            let rotationAngle = horizontalRatio * self.correctRemoveMaxAngleAndToRadius()
             cardView.transform = CGAffineTransform(rotationAngle: rotationAngle)
             // 复位
             panGesture.setTranslation(.zero, in: self)
@@ -871,12 +873,14 @@ private extension YHDragCard {
         // 1、infos数量小于等于visibleCount
         // 2、infos数量大于visibleCount（infos数量最多只比visibleCount多1）
         var ratio = ratio
-        if ratio < 0.0 {
+        if ratio.isLess(than: .zero) {
             ratio = 0.0
         } else if ratio > 1.0 {
             ratio = 1.0
         }
         
+        // index = 0 是最顶部的卡片
+        // index = info.count - 1 是最下面的卡片
         for (index, info) in self.infos.enumerated() {
             if self.infos.count <= self.visibleCount {
                 if index == 0 { continue }
@@ -936,9 +940,9 @@ private extension YHDragCard {
             // 2、infos数量大于visibleCount（infos数量最多只比visibleCount多1）
             for (index, info) in self.infos.enumerated() {
                 if self.infos.count <= self.visibleCount {
-                    if index == 0 { continue }
+                    if index == 0 { continue } // index = 0   最上面的卡片
                 } else {
-                    if index == self.infos.count - 1 || index == 0 { continue }
+                    if index == self.infos.count - 1 || index == 0 { continue } //  self.infos.count - 1   最下面的卡片
                 }
                 let willInfo = self.infos[index - 1]
                 
