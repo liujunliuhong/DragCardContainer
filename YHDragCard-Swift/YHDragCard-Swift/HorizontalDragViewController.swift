@@ -14,7 +14,12 @@ class HorizontalDragViewController: UIViewController {
                             "金星",
                             "地球",
                             "火星",
-                            "木星"]
+                            "木星",
+                            "土星",
+                            "天王星",
+                            "海王星",
+                            "木卫一",
+                            "土卫一"]
     lazy var card: YHDragCard = {
         let card = YHDragCard(frame: CGRect(x: 50, y: UIApplication.shared.statusBarFrame.size.height + 44.0 + 40.0, width: self.view.frame.size.width - 100 , height: 400))
         card.dataSource = self
