@@ -8,7 +8,7 @@
 
 import UIKit
 
-/// 数据源
+// MARK: - 数据源
 public protocol YHDragCardDataSource: NSObjectProtocol {
     
     /// 卡片总数
@@ -21,7 +21,7 @@ public protocol YHDragCardDataSource: NSObjectProtocol {
     func dragCard(_ dragCard: YHDragCard, indexOfCard index: Int) -> UIView
 }
 
-/// 代理
+// MARK: - 代理
 public protocol YHDragCardDelegate: NSObjectProtocol {
     
     /// 显示顶层卡片的回调
@@ -45,8 +45,9 @@ public protocol YHDragCardDelegate: NSObjectProtocol {
     /// - Parameter dragCard: 容器
     /// - Parameter card: 滑出去的卡片
     /// - Parameter index: 滑出去的卡片的索引
+    /// - Parameter removeDirection: 卡片移除方向
     /// 当最后一个卡片滑出去时，会和`didFinishRemoveLastCard`代理同时回调
-    func dragCard(_ dragCard: YHDragCard, didRemoveCard card:UIView, withIndex index: Int)
+    func dragCard(_ dragCard: YHDragCard, didRemoveCard card:UIView, withIndex index: Int, removeDirection: YHDragCardDirection.Direction)
     
     /// 当前卡片的滑动位置信息的回调
     /// - Parameter dragCard: 容器
@@ -64,7 +65,7 @@ public extension YHDragCardDelegate {
     func dragCard(_ dragCard: YHDragCard, didDisplayCard card: UIView, withIndexAt index: Int) {}
     func dragCard(_ dragCard: YHDragCard, didSelectIndexAt index: Int, with card: UIView) {}
     func dragCard(_ dragCard: YHDragCard, didFinishRemoveLastCard card: UIView) {}
-    func dragCard(_ dragCard: YHDragCard, didRemoveCard card:UIView, withIndex index: Int) {}
+    func dragCard(_ dragCard: YHDragCard, didRemoveCard card:UIView, withIndex index: Int, removeDirection: YHDragCardDirection.Direction) {}
     func dragCard(_ dragCard: YHDragCard, currentCard card: UIView, withIndex index: Int, currentCardDirection direction: YHDragCardDirection, canRemove: Bool) {}
 }
 
@@ -116,11 +117,11 @@ public extension YHDragCardInfo {
     override var description: String {
         return getInfo()
     }
-
+    
     override var debugDescription: String {
         return getInfo()
     }
-
+    
     func getInfo() -> String {
         return "[Card] \(card)\n[Transform] \(transform)\n[Frame] \(frame)"
     }
@@ -128,18 +129,11 @@ public extension YHDragCardInfo {
 
 
 
-
-
-
-
+// MARK: - 方向
 public enum YHDragCardRemoveDirection {
     case horizontal
     case vertical
 }
-
-
-
-
 
 
 
@@ -185,7 +179,7 @@ public class YHDragCard: UIView {
     
     /// 协议
     public weak var delegate: YHDragCardDelegate?
-
+    
     /// 可见卡片数量，默认3
     /// 取值范围:大于0
     /// 内部会根据`visibleCount`和`numberOfCount(_ dragCard: YHDragCard)`来纠正初始显示的卡片数量
@@ -392,7 +386,7 @@ private extension YHDragCard {
                 card.isUserInteractionEnabled = false
                 card.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
                 insertSubview(card, at: 0) //
-
+                
                 card.transform = .identity
                 card.frame = frame
                 
@@ -458,11 +452,9 @@ private extension YHDragCard {
         if self.removeDirection == .vertical {
             if direction == .left || direction == .right { return }
         }
-        guard let topCard = self.infos.first?.card else { return }
+        guard let topCard = self.infos.first?.card else { return } // 顶层卡片
         
-        let tmpCard = self.dataSource?.dragCard(self, indexOfCard: self.currentIndex - 1)
-        
-        guard let card = tmpCard else { return }
+        guard let card = self.dataSource?.dragCard(self, indexOfCard: self.currentIndex - 1) else { return } // 获取上一个卡片
         
         card.isUserInteractionEnabled = false
         card.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
@@ -520,71 +512,77 @@ private extension YHDragCard {
         
         self.isRevoking = true
         
-        let animation = { [weak self] in
-            guard let self = self else { return }
-            
-            card.center = self.initialFirstCardCenter
-            card.transform = .identity
-            
-            for (index, info) in self.infos.enumerated() {
-                if self.infos.count <= self.visibleCount {
-                    if index == 0 { continue }
-                } else {
-                    if index == self.infos.count - 1 || index == 0 { continue }
-                }
-                
-                /**********************************************************************
-                                4 3  2 1 0
-                 stableInfos    🀫 🀫 🀫 🀫 🀫
-                                
-                                5 4 3  2 1 0
-                 infos          🀫 🀫 🀫 🀫 🀫 🀫👈这个卡片新添加的
-                 ***********************************************************************/
-                let willInfo = self.stableInfos[index]
-                
-                info.card.transform = willInfo.transform
-                
-                var frame = info.card.frame
-                frame.origin.y = willInfo.frame.origin.y
-                info.card.frame = frame
+        do {
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
+                guard let self = self else { return }
+                card.center = self.initialFirstCardCenter
+            }, completion: nil)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { // 延迟0.1秒
+                UIView.animate(withDuration: 0.2, animations: { // 花费0.2秒使`transform`变为`identity`
+                    card.transform = .identity
+                }, completion: nil)
             }
         }
         
-        UIView.animate(withDuration: 0.4, animations: {
-            animation()
-        }) { [weak self] (isFinish) in
-            guard let self = self else { return }
-            
-            for (index, info) in self.infos.enumerated() {
-                if self.infos.count <= self.visibleCount {
-                    if index == 0 { continue }
-                } else {
-                    if index == self.infos.count - 1 || index == 0 { continue }
+        do {
+            UIView.animate(withDuration: 0.08, animations: { [weak self] in
+                guard let self = self else { return }
+                for (index, info) in self.infos.enumerated() {
+                    if self.infos.count <= self.visibleCount {
+                        if index == 0 { continue }
+                    } else {
+                        if index == self.infos.count - 1 || index == 0 { continue }
+                    }
+                    
+                    /**********************************************************************
+                                    4 3  2 1 0
+                     stableInfos    🀫 🀫 🀫 🀫 🀫
+                     
+                                    5 4 3  2 1 0
+                     infos          🀫 🀫 🀫 🀫 🀫 🀫👈这个卡片新添加的
+                     ***********************************************************************/
+                    let willInfo = self.stableInfos[index]
+                    
+                    info.card.transform = willInfo.transform
+                    
+                    var frame = info.card.frame
+                    frame.origin.y = willInfo.frame.origin.y
+                    info.card.frame = frame
                 }
-                let willInfo = self.stableInfos[index]
+            }) { [weak self] (isFinish) in
+                guard let self = self else { return }
                 
-                let willTransform = willInfo.transform
-                let willFrame = willInfo.frame
+                for (index, info) in self.infos.enumerated() {
+                    if self.infos.count <= self.visibleCount {
+                        if index == 0 { continue }
+                    } else {
+                        if index == self.infos.count - 1 || index == 0 { continue }
+                    }
+                    let willInfo = self.stableInfos[index]
+                    
+                    let willTransform = willInfo.transform
+                    let willFrame = willInfo.frame
+                    
+                    info.transform = willTransform
+                    info.frame = willFrame
+                }
                 
-                info.transform = willTransform
-                info.frame = willFrame
+                guard let bottomCard = self.infos.last?.card else { return }
+                
+                // 移除最底部的卡片
+                if self.infos.count > self.visibleCount {
+                    bottomCard.removeFromSuperview()
+                    self.infos.removeLast()
+                }
+                
+                self.currentIndex = self.currentIndex - 1
+                card.isUserInteractionEnabled = true
+                
+                self.isRevoking = false
+                
+                // 显示顶层卡片的回调
+                self.delegate?.dragCard(self, didDisplayCard: card, withIndexAt: self.currentIndex)
             }
-            
-            guard let bottomCard = self.infos.last?.card else { return }
-            
-            // 移除最底部的卡片
-            if self.infos.count > self.visibleCount {
-                bottomCard.removeFromSuperview()
-                self.infos.removeLast()
-            }
-            
-            self.currentIndex = self.currentIndex - 1
-            card.isUserInteractionEnabled = true
-            
-            self.isRevoking = false
-            
-            // 显示顶层卡片的回调
-            self.delegate?.dragCard(self, didDisplayCard: card, withIndexAt: self.currentIndex)
         }
     }
 }
@@ -595,7 +593,7 @@ private extension YHDragCard {
     /// 把下一张卡片添加到`container`的最底部
     private func installNextCard() {
         let maxCount: Int = self.dataSource?.numberOfCount(self) ?? 0
-        let showCount: Int = min(maxCount, visibleCount)
+        let showCount: Int = min(maxCount, self.visibleCount)
         if showCount <= 0 { return }
         
         var card: UIView?
@@ -627,14 +625,14 @@ private extension YHDragCard {
         _card.isUserInteractionEnabled = false
         _card.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         insertSubview(_card, at: 0)
-
+        
         _card.transform = .identity
         _card.transform = bottomCard.transform
         _card.frame = bottomCard.frame
-
+        
         let info = YHDragCardInfo(card: _card, transform: _card.transform, frame: _card.frame)
         self.infos.append(info) // append
-
+        
         if !self.disableDrag {
             self.addPanGesture(for: _card)
         }
@@ -679,14 +677,14 @@ private extension YHDragCard {
         self.installNextCard()
         let width: CGFloat = 150.0
         self.isNexting = true
-        self.disappear(horizontalMoveDistance: (isRight ? width : -width), verticalMoveDistance: -10, isAuto: true, completion: nil)
+        self.autoDisappear(horizontalMoveDistance: (isRight ? width : -width), verticalMoveDistance: -10, removeDirection: isRight ? .right : .left)
     }
     
     private func verticalNextCard(isUp: Bool) {
         if removeDirection == .horizontal { return }
         self.installNextCard()
         self.isNexting = true
-        self.disappear(horizontalMoveDistance: 0.0, verticalMoveDistance: (isUp ? -30.0 : 30.0), isAuto: true, completion: nil)
+        self.autoDisappear(horizontalMoveDistance: 0.0, verticalMoveDistance: (isUp ? -30.0 : 30.0), removeDirection: isUp ? .up : .down)
     }
 }
 
@@ -842,17 +840,17 @@ private extension YHDragCard {
                     abs(verticalMoveDistance) > 0.1 && // 避免分母为0
                     abs(horizontalMoveDistance) / abs(verticalMoveDistance) >= tan(self.correctDemarcationAngle()){
                     // 消失
-                    self.disappear(horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance, isAuto: false, completion: nil)
+                    self.disappear(horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance, removeDirection: horizontalMoveDistance.isLess(than: .zero) ? .left : .right)
                 } else {
                     // 复位
                     self.restore()
                 }
             } else {
-                if (abs(verticalMoveDistance) > self.horizontalRemoveDistance || abs(velocity.y) > self.verticalRemoveVelocity) &&
+                if (abs(verticalMoveDistance) > self.self.verticalRemoveDistance || abs(velocity.y) > self.verticalRemoveVelocity) &&
                     abs(verticalMoveDistance) > 0.1 && // 避免分母为0
                     abs(horizontalMoveDistance) / abs(verticalMoveDistance) <= tan(self.correctDemarcationAngle()) {
                     // 消失
-                    self.disappear(horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance, isAuto: false,completion: nil)
+                    self.disappear(horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance, removeDirection: verticalMoveDistance.isLess(than: .zero) ? .up : .down)
                 } else {
                     // 复位
                     self.restore()
@@ -903,120 +901,56 @@ private extension YHDragCard {
         }
     }
     
-    
-    /// 顶层卡片消失
-    /// - Parameter horizontalMoveDistance: 水平移动距离(相对于initialFirstCardCenter)
-    /// - Parameter verticalMoveDistance: 垂直移动距离(相对于initialFirstCardCenter)
-    /// - Parameter isAuto: 是否是自动消失
-    /// - Parameter closure: 回调
-    private func disappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, isAuto: Bool, completion closure: (()->())?) {
-        let animation = { [weak self] in
+    /// 自动消失
+    /// - Parameters:
+    ///   - horizontalMoveDistance: 水平移动距离
+    ///   - verticalMoveDistance:  垂直移动距离
+    private func autoDisappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, removeDirection: YHDragCardDirection.Direction) {
+        if self.infos.count <= 0 {
+            return
+        }
+        
+        let topCard = self.infos.first! // 临时存储顶层卡片
+        self.infos.removeFirst() // 移除顶层卡片
+        
+        // 顶层卡片下面的那些卡片的动画
+        UIView.animate(withDuration: 0.08, animations: { [weak self] in
             guard let self = self else { return }
-            // 顶层卡片位置设置
-            if let topCard = self.infos.first?.card {
-                if self.removeDirection == .horizontal {
-                    var flag: Int = 0
-                    if horizontalMoveDistance > 0 {
-                        flag = 2 // 右边滑出
-                    } else {
-                        flag = -1 // 左边滑出
-                    }
-                    let tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
-                    let tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCardCenter.y
-                    topCard.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
-                } else {
-                    var flag: Int = 0
-                    if verticalMoveDistance > 0 {
-                        flag = 2 // 向下滑出
-                    } else {
-                        flag = -1 // 向上滑出
-                    }
-                    let tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
-                    let tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCardCenter.x
-                    topCard.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
-                }
-            }
-            // 1、infos数量小于等于visibleCount，表明不会再增加新卡片了
-            // 2、infos数量大于visibleCount（infos数量最多只比visibleCount多1）
+            // 信息重置
             for (index, info) in self.infos.enumerated() {
-                if self.infos.count <= self.visibleCount {
-                    if index == 0 { continue } // index = 0   最上面的卡片
-                } else {
-                    if index == self.infos.count - 1 || index == 0 { continue } //  self.infos.count - 1   最下面的卡片
-                }
-                let willInfo = self.infos[index - 1]
+                let willInfo = self.stableInfos[index]
                 
                 info.card.transform = willInfo.transform
                 
                 var frame = info.card.frame
                 frame.origin.y = willInfo.frame.origin.y
                 info.card.frame = frame
+                
+                info.frame = willInfo.frame
+                info.transform = willInfo.transform
             }
-        }
-        
-        if isAuto {
-            UIView.animate(withDuration: 0.2) { [weak self] in
-                guard let self = self else { return }
-                if let topCard = self.infos.first?.card {
-                    if self.removeDirection == .horizontal {
-                        topCard.transform = CGAffineTransform(rotationAngle: horizontalMoveDistance > 0 ? self.correctRemoveMaxAngleAndToRadius() : -self.correctRemoveMaxAngleAndToRadius())
-                    } else {
-                        // 垂直方向不做处理
-                    }
-                }
-            }
-        }
-        
-        if isAuto {
-            self.zoomInAndOut(horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance, canRemove: true)
-        } else {
-            self.zoomIn(canRemove: true)
-        }
-        
-        UIView.animate(withDuration: 0.5,
-                       animations: {
-            animation()
+            
         }) { [weak self] (isFinish) in
             guard let self = self else { return }
             if !isFinish { return }
-            // 交换每个info的位置信息
-            for (index, info) in self.infos.enumerated().reversed() { // 倒叙交换位置
-                if self.infos.count <= self.visibleCount {
-                    if index == 0 { continue }
-                } else {
-                    if index == self.infos.count - 1 || index == 0 { continue }
-                }
-                let willInfo = self.infos[index - 1]
-                
-                let willTransform = willInfo.transform
-                let willFrame = willInfo.frame
-                
-                info.transform = willTransform
-                info.frame = willFrame
-            }
             
             self.isNexting = false
             
-            guard let info = self.infos.first else { return }
-            
-            info.card.removeFromSuperview()
-            self.infos.removeFirst()
-            
             // 卡片滑出去的回调
-            self.delegate?.dragCard(self, didRemoveCard: info.card, withIndex: self.currentIndex)
+            self.delegate?.dragCard(self, didRemoveCard: topCard.card, withIndex: self.currentIndex, removeDirection: removeDirection)
             
             
             // 顶部的卡片Remove
             if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
                 // 卡片只有最后一张了，此时闭包不回调出去
                 // 最后一张卡片移除出去的回调
-                self.delegate?.dragCard(self, didFinishRemoveLastCard: info.card)
+                self.delegate?.dragCard(self, didFinishRemoveLastCard: topCard.card)
                 
                 if self.infiniteLoop {
-                    if let _tmpTopCard = self.infos.first?.card {
+                    if let tmpTopCard = self.infos.first?.card {
                         self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
-                        _tmpTopCard.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
-                        self.delegate?.dragCard(self, didDisplayCard: _tmpTopCard, withIndexAt: self.currentIndex)
+                        tmpTopCard.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
+                        self.delegate?.dragCard(self, didDisplayCard: tmpTopCard, withIndexAt: self.currentIndex)
                     }
                 }
                 
@@ -1026,17 +960,181 @@ private extension YHDragCard {
                 self.infos.first?.card.isUserInteractionEnabled = true
                 
                 // 显示当前卡片的回调
-                if let _tmpTopCard = self.infos.first?.card {
-                    self.delegate?.dragCard(self, didDisplayCard: _tmpTopCard, withIndexAt: self.currentIndex)
+                if let tmpTopCard = self.infos.first?.card {
+                    self.delegate?.dragCard(self, didDisplayCard: tmpTopCard, withIndexAt: self.currentIndex)
                 }
-                closure?() // 闭包回调
             }
+        }
+        
+        
+        // 自动消失时，这儿加上个动画，这样外部就自带动画了
+        do {
+            let currentIndex = self.currentIndex
+            let direction1 = YHDragCardDirection(horizontal: horizontalMoveDistance > 0.0 ? .right : .left, vertical: verticalMoveDistance > 0 ? .down : .up, horizontalRatio: horizontalMoveDistance > 0.0 ? 1.0 : -1.0, verticalRatio: verticalMoveDistance > 0.0 ? 1.0 : -1.0)
+            
+            let direction2 = YHDragCardDirection(horizontal: .default, vertical: .default, horizontalRatio: 0.0, verticalRatio: 0.0)
+            
+            UIView.animate(withDuration: 0.25, animations: { [weak self] in
+                guard let self = self else { return }
+                self.delegate?.dragCard(self, currentCard: topCard.card, withIndex: currentIndex, currentCardDirection: direction1, canRemove: false)
+            }) { (isFinish) in
+                if !isFinish { return }
+                UIView.animate(withDuration: 0.25) { [weak self] in
+                    guard let self = self else { return }
+                    self.delegate?.dragCard(self, currentCard: topCard.card, withIndex: currentIndex, currentCardDirection: direction2, canRemove: true)
+                }
+            }
+        }
+        
+        
+        do {
+            // 顶层卡片的动画: 自动消失时，设置个旋转角度
+            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+                guard let self = self else { return }
+                topCard.card.transform = CGAffineTransform(rotationAngle: horizontalMoveDistance > 0 ? self.correctRemoveMaxAngleAndToRadius() : -self.correctRemoveMaxAngleAndToRadius())
+                }, completion: nil)
+            
+            // 顶层卡片的动画: center设置
+            UIView.animate(withDuration: 0.5, animations: { [weak self] in
+                guard let self = self else { return }
+                if self.removeDirection == .horizontal {
+                    var flag: CGFloat = 0
+                    if horizontalMoveDistance > 0 {
+                        flag = 1.5 // 右边滑出
+                    } else {
+                        flag = -1 // 左边滑出
+                    }
+                    let tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
+                    let tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCardCenter.y
+                    topCard.card.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+                } else {
+                    var flag: CGFloat = 0
+                    if verticalMoveDistance > 0 {
+                        flag = 1.5 // 向下滑出
+                    } else {
+                        flag = -1 // 向上滑出
+                    }
+                    let tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
+                    let tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCardCenter.x
+                    topCard.card.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+                }
+            }) { (isFinish) in
+                if !isFinish { return }
+                topCard.card.removeFromSuperview()
+            }
+        }
+    }
+    
+    /// 顶层卡片消失
+    /// - Parameter horizontalMoveDistance: 水平移动距离(相对于initialFirstCardCenter)
+    /// - Parameter verticalMoveDistance: 垂直移动距离(相对于initialFirstCardCenter)
+    private func disappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, removeDirection: YHDragCardDirection.Direction) {
+        
+        if self.infos.count <= 0 {
+            return
+        }
+        
+        let topCard = self.infos.first! // 临时存储顶层卡片
+        self.infos.removeFirst() // 移除顶层卡片
+        
+        
+        UIView.animate(withDuration: 0.08, animations: { [weak self] in
+            guard let self = self else { return }
+            // 信息重置
+            for (index, info) in self.infos.enumerated() {
+                let willInfo = self.stableInfos[index]
+                
+                info.card.transform = willInfo.transform
+                
+                var frame = info.card.frame
+                frame.origin.y = willInfo.frame.origin.y
+                info.card.frame = frame
+                
+                info.frame = willInfo.frame
+                info.transform = willInfo.transform
+            }
+            
+            // 这儿加上动画的原因是：回调给外部的时候就自带动画了
+            let direction = YHDragCardDirection(horizontal: .default, vertical: .default, horizontalRatio: 0.0, verticalRatio: 0.0)
+            self.delegate?.dragCard(self, currentCard: topCard.card, withIndex: self.currentIndex, currentCardDirection: direction, canRemove: true)
+            
+        }) { [weak self] (isFinish) in
+            guard let self = self else { return }
+            if !isFinish { return }
+            
+            
+            
+            self.isNexting = false
+            
+            // 卡片滑出去的回调
+            self.delegate?.dragCard(self, didRemoveCard: topCard.card, withIndex: self.currentIndex, removeDirection: removeDirection)
+            
+            
+            // 顶部的卡片Remove
+            if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                // 卡片只有最后一张了，此时闭包不回调出去
+                // 最后一张卡片移除出去的回调
+                self.delegate?.dragCard(self, didFinishRemoveLastCard: topCard.card)
+                
+                if self.infiniteLoop {
+                    if let tmpTopCard = self.infos.first?.card {
+                        self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
+                        tmpTopCard.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
+                        self.delegate?.dragCard(self, didDisplayCard: tmpTopCard, withIndexAt: self.currentIndex)
+                    }
+                }
+            } else {
+                // 如果不是最后一张卡片移出去，则把索引+1
+                self.currentIndex = self.currentIndex + 1
+                self.infos.first?.card.isUserInteractionEnabled = true
+                
+                // 显示当前卡片的回调
+                if let tmpTopCard = self.infos.first?.card {
+                    self.delegate?.dragCard(self, didDisplayCard: tmpTopCard, withIndexAt: self.currentIndex)
+                }
+            }
+        }
+        
+        
+        // 顶层卡片的动画
+        UIView.animate(withDuration: 0.5, animations: { [weak self] in
+            guard let self = self else { return }
+            if self.removeDirection == .horizontal {
+                var flag: Int = 0
+                if horizontalMoveDistance > 0 {
+                    flag = 2 // 右边滑出
+                } else {
+                    flag = -1 // 左边滑出
+                }
+                let tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
+                let tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCardCenter.y
+                topCard.card.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+            } else {
+                var flag: Int = 0
+                if verticalMoveDistance > 0 {
+                    flag = 2 // 向下滑出
+                } else {
+                    flag = -1 // 向上滑出
+                }
+                let tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
+                let tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCardCenter.x
+                topCard.card.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+            }
+        }) { (isFinish) in
+            if !isFinish { return }
+            topCard.card.removeFromSuperview()
         }
     }
     
     /// 重置所有卡片位置信息
     private func restore() {
-        zoomIn(canRemove: false)
+        // 这儿加上动画的原因是：回调给外部的时候就自带动画了
+        guard let topCard = self.infos.first?.card else { return }
+        UIView.animate(withDuration: 0.08) { [weak self] in
+            guard let self = self else { return }
+            let direction = YHDragCardDirection(horizontal: .default, vertical: .default, horizontalRatio: 0.0, verticalRatio: 0.0)
+            self.delegate?.dragCard(self, currentCard: topCard, withIndex: self.currentIndex, currentCardDirection: direction, canRemove: false)
+        }
         //
         UIView.animate(withDuration: 0.5,
                        delay: 0,
@@ -1059,35 +1157,6 @@ private extension YHDragCard {
                     }
                     self.infos.removeLast()
                 }
-            }
-        }
-    }
-    
-    private func zoomIn(canRemove: Bool) {
-        // 这儿再回调一次，相当于复位
-        guard let topCard = self.infos.first?.card else { return }
-        UIView.animate(withDuration: 0.2) { [weak self] in
-            guard let self = self else { return }
-            let direction = YHDragCardDirection(horizontal: .default, vertical: .default, horizontalRatio: 0.0, verticalRatio: 0.0)
-            self.delegate?.dragCard(self, currentCard: topCard, withIndex: self.currentIndex, currentCardDirection: direction, canRemove: canRemove)
-        }
-    }
-    
-    private func zoomInAndOut(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, canRemove: Bool) {
-        guard let topCard = self.infos.first?.card else { return }
-        
-        let direction = YHDragCardDirection(horizontal: horizontalMoveDistance > 0.0 ? .right : .left, vertical: verticalMoveDistance > 0 ? .down : .up, horizontalRatio: horizontalMoveDistance > 0.0 ? 1.0 : -1.0, verticalRatio: verticalMoveDistance > 0.0 ? 1.0 : -1.0)
-        
-        let direction1 = YHDragCardDirection(horizontal: .default, vertical: .default, horizontalRatio: 0.0, verticalRatio: 0.0)
-        
-        UIView.animate(withDuration: 0.2, animations: { [weak self] in
-            guard let self = self else { return }
-            self.delegate?.dragCard(self, currentCard: topCard, withIndex: self.currentIndex, currentCardDirection: direction, canRemove: canRemove)
-        }) { (isFinish) in
-            if !isFinish { return }
-            UIView.animate(withDuration: 0.2) { [weak self] in
-                guard let self = self else { return }
-                self.delegate?.dragCard(self, currentCard: topCard, withIndex: self.currentIndex, currentCardDirection: direction1, canRemove: canRemove)
             }
         }
     }

@@ -70,7 +70,7 @@ extension VerticalDragViewController: YHDragCardDelegate {
         print("点击卡片:\(index)")
     }
     
-    func dragCard(_ dragCard: YHDragCard, didRemoveCard card: UIView, withIndex index: Int) {
+    func dragCard(_ dragCard: YHDragCard, didRemoveCard card: UIView, withIndex index: Int, removeDirection: YHDragCardDirection.Direction) {
         print("索引为\(index)的卡片滑出去了")
     }
     

@@ -118,8 +118,20 @@ extension HorizontalDragViewController: YHDragCardDelegate {
         print("点击卡片:\(index)")
     }
     
-    func dragCard(_ dragCard: YHDragCard, didRemoveCard card: UIView, withIndex index: Int) {
+    func dragCard(_ dragCard: YHDragCard, didRemoveCard card: UIView, withIndex index: Int, removeDirection: YHDragCardDirection.Direction) {
         print("索引为\(index)的卡片滑出去了")
+        switch removeDirection {
+        case .up:
+            print("向上移除")
+        case .down:
+            print("向下移除")
+        case .left:
+            print("向左移除")
+        case .right:
+            print("向右移除")
+        case .default:
+            print("default")
+        }
     }
     
     func dragCard(_ dragCard: YHDragCard, didFinishRemoveLastCard card: UIView) {
