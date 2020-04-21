@@ -1,0 +1,16 @@
+PODS:
+  - YHDragCard.swift (0.6.4)
+
+DEPENDENCIES:
+  - YHDragCard.swift (from `YHDragContainer.podspec`)
+
+EXTERNAL SOURCES:
+  YHDragCard.swift:
+    :path: YHDragContainer.podspec
+
+SPEC CHECKSUMS:
+  YHDragCard.swift: e6ff2d6e3c58ab48de404cc9c8431ca553e28080
+
+PODFILE CHECKSUM: 9741a925985125a191fd7d4edc5f5f74cc47bec9
+
+COCOAPODS: 1.9.1
