@@ -113,7 +113,15 @@ fileprivate extension UIView {
 // MARK: - YHDragCard
 @objc public class YHDragCard: UIView {
     deinit {
-        //print("YHDragCard deinit")
+        self.reusableCells.forEach { (cell) in
+            cell.removeFromSuperview()
+        }
+        self.infos.forEach { (cell) in
+            cell.cell.removeFromSuperview()
+        }
+        self.reusableCells.removeAll()
+        self.infos.removeAll()
+        self.stableInfos.removeAll()
     }
     
     /// 数据源
@@ -246,15 +254,16 @@ fileprivate extension UIView {
     /// - Parameter frame: frame
     @objc public override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .gray
+        self.backgroundColor = .clear
     }
     
     @available(iOS, unavailable)
-    init() {
+    @objc public init() {
         super.init(frame: .zero)
     }
     
-    required init?(coder: NSCoder) {
+    @available(iOS, unavailable)
+    @objc public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }
@@ -290,13 +299,8 @@ public extension YHDragCard {
     
     /// 获取重用Cell
     /// - Parameter identifier: 标识符
-    @objc func dequeueReusableCard(withIdentifier identifier: String) -> YHDragCardCell? {
-        for (_, cell) in self.reusableCells.enumerated() {
-            if let tmpReuseIdentifier = cell.yh_getReuseIdentifier(), tmpReuseIdentifier == identifier {
-                return cell
-            }
-        }
-        return nil
+    @objc func dequeueReusableCell(withIdentifier identifier: String) -> YHDragCardCell? {
+        _dequeueReusableCell(withIdentifier: identifier)
     }
 }
 
@@ -304,6 +308,9 @@ public extension YHDragCard {
 private extension YHDragCard {
     private func _reloadData(animation: Bool) {
         
+        self.reusableCells.forEach { (cell) in
+            cell.removeFromSuperview()
+        }
         self.reusableCells.removeAll()
         
         self.infos.forEach { (transform) in
@@ -383,6 +390,7 @@ private extension YHDragCard {
     
     private func _nextCard(direction: YHDragCardMoveDirection) {
         if self.isNexting { return }
+        if self.isRevoking { return }
         switch direction {
         case .right:
             self.horizontalNextCell(isRight: true)
@@ -401,6 +409,7 @@ private extension YHDragCard {
         if self.currentIndex <= 0 { return }
         if direction == .none { return }
         if self.isRevoking { return }
+        if self.isNexting { return }
         if self.removeDirection == .horizontal {
             if direction == .up || direction == .down { return }
         }
@@ -481,7 +490,7 @@ private extension YHDragCard {
         }
         
         do {
-            UIView.animate(withDuration: 0.08, animations: { [weak self] in
+            UIView.animate(withDuration: 0.1, animations: { [weak self] in
                 guard let self = self else { return }
                 for (index, info) in self.infos.enumerated() {
                     if self.infos.count <= self.visibleCount {
@@ -515,7 +524,8 @@ private extension YHDragCard {
                 
                 // 移除最底部的卡片
                 if self.infos.count > self.visibleCount {
-                    bottomCell.removeFromSuperview()
+                    //bottomCell.removeFromSuperview()
+                    self.addToReusePool(cell: bottomCell)
                     self.infos.removeLast()
                 }
                 
@@ -528,6 +538,33 @@ private extension YHDragCard {
                 self.delegate?.dragCard?(self, didDisplayCell: cell, withIndexAt: self.currentIndex)
             }
         }
+    }
+    
+    private func _dequeueReusableCell(withIdentifier identifier: String) -> YHDragCardCell? {
+        var c: YHDragCardCell? = nil
+        
+        for (_, cell) in self.reusableCells.enumerated() {
+            // 在缓存池子中，且未被使用
+            if let reuseIdentifier = cell.yh_reuseIdentifier,
+                reuseIdentifier == identifier {
+                if cell.yh_is_reuse == false {
+                    cell.yh_is_reuse = true // 标记为正在使用缓存池子中的Cell
+                    c = cell
+                    break
+                }
+            }
+        }
+        
+        // 每次都遍历一次，如果未使用，从俯视图移除
+        for (_, cell) in self.reusableCells.enumerated() {
+            if !cell.yh_is_reuse {
+                cell.removeFromSuperview()
+            }
+        }
+        
+        print("++++++\(self.reusableCells.count)")
+        
+        return c
     }
 }
 
@@ -859,7 +896,7 @@ private extension YHDragCard {
         self.infos.removeFirst() // 移除顶层卡片
         
         // 顶层卡片下面的那些卡片的动画
-        UIView.animate(withDuration: 0.08, animations: { [weak self] in
+        UIView.animate(withDuration: 0.1, animations: { [weak self] in
             guard let self = self else { return }
             // 信息重置
             for (index, info) in self.infos.enumerated() {
@@ -881,32 +918,35 @@ private extension YHDragCard {
             
             self.isNexting = false
             
-            self.addToReusePool(cell: topCell.cell)
-            
             // 卡片滑出去的回调
             self.delegate?.dragCard?(self, didRemoveCell: topCell.cell, withIndex: self.currentIndex, removeDirection: removeDirection)
             
-            // 顶部的卡片Remove
-            if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
-                // 卡片只有最后一张了，此时闭包不回调出去
-                // 最后一张卡片移除出去的回调
-                self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
-                
-                if self.infiniteLoop {
-                    if let tmpTopCell = self.infos.first?.cell {
-                        self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
-                        tmpTopCell.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
-                        self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
-                    }
+            
+            
+            if self.infiniteLoop {
+                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                    // 最后一张卡片Remove
+                    self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
+                    self.currentIndex = 0 // 索引置为0
+                } else {
+                    self.currentIndex = self.currentIndex + 1
                 }
                 
-            } else {
-                // 如果不是最后一张卡片移出去，则把索引+1
-                self.currentIndex = self.currentIndex + 1
-                self.infos.first?.cell.isUserInteractionEnabled = true
-                
-                // 显示当前卡片的回调
                 if let tmpTopCell = self.infos.first?.cell {
+                    tmpTopCell.isUserInteractionEnabled = true
+                    self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
+                }
+                
+                
+            } else {
+                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                    // 最后一张卡片Remove
+                    self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
+                } else {
+                    self.currentIndex = self.currentIndex + 1
+                }
+                if let tmpTopCell = self.infos.first?.cell {
+                    tmpTopCell.isUserInteractionEnabled = true
                     self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
                 }
             }
@@ -943,6 +983,8 @@ private extension YHDragCard {
             // 顶层卡片的动画: center设置
             UIView.animate(withDuration: 0.5, animations: { [weak self] in
                 guard let self = self else { return }
+                var tmpWidth: CGFloat = 0.0
+                var tmpHeight: CGFloat = 0.0
                 if self.removeDirection == .horizontal {
                     var flag: CGFloat = 0
                     if horizontalMoveDistance > 0 {
@@ -950,9 +992,8 @@ private extension YHDragCard {
                     } else {
                         flag = -1 // 左边滑出
                     }
-                    let tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
-                    let tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
-                    topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+                    tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
+                    tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
                 } else {
                     var flag: CGFloat = 0
                     if verticalMoveDistance > 0 {
@@ -960,13 +1001,15 @@ private extension YHDragCard {
                     } else {
                         flag = -1 // 向上滑出
                     }
-                    let tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
-                    let tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
-                    topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+                    tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
+                    tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
                 }
-            }) { (isFinish) in
+                topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+            }) { [weak self] (isFinish) in
+                guard let self = self else { return }
                 if !isFinish { return }
-                topCell.cell.removeFromSuperview()
+                topCell.cell.center = CGPoint(x: UIScreen.main.bounds.size.width * 5, y: UIScreen.main.bounds.size.height * 5) // 动画完成，把`topCell`的中心点设置在屏幕外面很远的地方，防止pop的时候，会看见cell
+                self.addToReusePool(cell: topCell.cell)
             }
         }
     }
@@ -986,7 +1029,7 @@ private extension YHDragCard {
         self.infos.removeFirst() // 移除顶层卡片
         
         
-        UIView.animate(withDuration: 0.08, animations: { [weak self] in
+        UIView.animate(withDuration: 0.1, animations: { [weak self] in
             guard let self = self else { return }
             // 信息重置
             for (index, info) in self.infos.enumerated() {
@@ -1012,64 +1055,70 @@ private extension YHDragCard {
             
             self.isNexting = false
             
-            self.addToReusePool(cell: topCell.cell)
-            
             // 卡片滑出去的回调
             self.delegate?.dragCard?(self, didRemoveCell: topCell.cell, withIndex: self.currentIndex, removeDirection: removeDirection)
             
-            // 顶部的卡片Remove
-            if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
-                // 卡片只有最后一张了，此时闭包不回调出去
-                // 最后一张卡片移除出去的回调
-                self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
-                
-                if self.infiniteLoop {
-                    if let tmpTopCell = self.infos.first?.cell {
-                        self.currentIndex = 0 // 如果最后一个卡片滑出去了，且可以无限滑动，那么把索引置为0
-                        tmpTopCell.isUserInteractionEnabled = true // 使顶层卡片可以响应事件
-                        self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
-                    }
+            if self.infiniteLoop {
+                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                    // 最后一张卡片Remove
+                    self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
+                    self.currentIndex = 0 // 索引置为0
+                } else {
+                    self.currentIndex = self.currentIndex + 1
                 }
-            } else {
-                // 如果不是最后一张卡片移出去，则把索引+1
-                self.currentIndex = self.currentIndex + 1
-                self.infos.first?.cell.isUserInteractionEnabled = true
                 
-                // 显示当前卡片的回调
                 if let tmpTopCell = self.infos.first?.cell {
+                    tmpTopCell.isUserInteractionEnabled = true
+                    self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
+                }
+                
+            } else {
+                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                    // 最后一张卡片Remove
+                    self.delegate?.dragCard?(self, didFinishRemoveLastCell: topCell.cell)
+                } else {
+                    self.currentIndex = self.currentIndex + 1
+                }
+                if let tmpTopCell = self.infos.first?.cell {
+                    tmpTopCell.isUserInteractionEnabled = true
                     self.delegate?.dragCard?(self, didDisplayCell: tmpTopCell, withIndexAt: self.currentIndex)
                 }
             }
         }
         
-        
-        // 顶层卡片的动画
-        UIView.animate(withDuration: 0.5, animations: { [weak self] in
-            guard let self = self else { return }
-            if self.removeDirection == .horizontal {
-                var flag: Int = 0
-                if horizontalMoveDistance > 0 {
-                    flag = 2 // 右边滑出
+        do {
+            // 顶层卡片的动画
+            UIView.animate(withDuration: 0.5, animations: { [weak self] in
+                guard let self = self else { return }
+                var tmpWidth: CGFloat = 0.0
+                var tmpHeight: CGFloat = 0.0
+                if self.removeDirection == .horizontal {
+                    var flag: CGFloat = 0
+                    if horizontalMoveDistance > 0 {
+                        flag = 1.5 // 右边滑出
+                    } else {
+                        flag = -1 // 左边滑出
+                    }
+                    tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
+                    tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
+                    
                 } else {
-                    flag = -1 // 左边滑出
+                    var flag: CGFloat = 0
+                    if verticalMoveDistance > 0 {
+                        flag = 1.5 // 向下滑出
+                    } else {
+                        flag = -1 // 向上滑出
+                    }
+                    tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
+                    tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
                 }
-                let tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
-                let tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
                 topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
-            } else {
-                var flag: Int = 0
-                if verticalMoveDistance > 0 {
-                    flag = 2 // 向下滑出
-                } else {
-                    flag = -1 // 向上滑出
-                }
-                let tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
-                let tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
-                topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+            }) { [weak self] (isFinish) in
+                guard let self = self else { return }
+                if !isFinish { return }
+                topCell.cell.center = CGPoint(x: UIScreen.main.bounds.size.width * 5, y: UIScreen.main.bounds.size.height * 5) // 动画完成，把`topCell`的中心点设置在屏幕外面很远的地方，防止pop的时候，会看见cell
+                self.addToReusePool(cell: topCell.cell)
             }
-        }) { (isFinish) in
-            if !isFinish { return }
-            topCell.cell.removeFromSuperview()
         }
     }
     
@@ -1100,7 +1149,7 @@ private extension YHDragCard {
                 // 只有当infos数量大于visibleCount时，才移除最底部的卡片
                 if self.infos.count > self.visibleCount {
                     if let info = self.infos.last {
-                        info.cell.removeFromSuperview()
+                        self.removeFromReusePool(cell: info.cell) // restore的时候要重复用池子里面移除该cell
                     }
                     self.infos.removeLast()
                 }
@@ -1109,14 +1158,43 @@ private extension YHDragCard {
     }
     
     private func addToReusePool(cell: YHDragCardCell) {
-        guard let reuseIdentifier = cell.yh_getReuseIdentifier() else { return }
-        for (index, cell) in self.reusableCells.enumerated() {
-            if let tmpIdentifier = cell.yh_getReuseIdentifier(), tmpIdentifier == reuseIdentifier {
+        cell.yh_is_reuse = false  // 把该cell标记为未被使用
+        
+        guard let reuseIdentifier = cell.yh_reuseIdentifier, let internalIdentifier = cell.yh_internalIdentifier else { return }
+        
+        // `reuseIdentifier`存在，且`internalIdentifier`存在，且在复用池不存在，才可以把cell放入复用池
+        
+        var isContain: Bool = false
+        for (_, c) in self.reusableCells.enumerated() {
+            if let i1 = c.yh_internalIdentifier, i1 == internalIdentifier,
+                let i2 = c.yh_reuseIdentifier, i2 == reuseIdentifier {
+                isContain = true
+                break
+            }
+        }
+        if isContain {
+            return
+        }
+        self.reusableCells.append(cell)
+        
+        // 顶层卡片移动动画时间和下层的卡片移动时间不一样，会导致reusableCells的数量可能会大于`self.visibleCount + 1`
+        // 因为在快速滑动的时候，可能顶层卡片还没有滑动完，而下层卡片已经加载了好几次了
+    }
+    
+    private func removeFromReusePool(cell: YHDragCardCell) {
+        for (index, c) in self.reusableCells.enumerated() {
+            // 在缓存池子中，且未被使用
+            if let reuseIdentifier = cell.yh_reuseIdentifier,
+                let _reuseIdentifier = c.yh_reuseIdentifier,
+                let internalIdentifier = cell.yh_internalIdentifier,
+                let _internalIdentifier = c.yh_internalIdentifier,
+                reuseIdentifier == _reuseIdentifier,
+                internalIdentifier == _internalIdentifier {
                 self.reusableCells.remove(at: index)
                 break
             }
         }
-        self.reusableCells.append(cell)
+        cell.removeFromSuperview()
     }
 }
 

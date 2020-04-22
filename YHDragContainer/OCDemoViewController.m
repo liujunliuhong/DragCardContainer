@@ -18,8 +18,10 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+    self.view.backgroundColor = [UIColor whiteColor];
     [self.view addSubview:self.card];
+    
+    [self.card reloadDataWithAnimation:YES];
 }
 
 #pragma mark - YHDragCardDataSource
@@ -28,7 +30,7 @@
 }
 
 - (YHDragCardCell *)dragCard:(YHDragCard *)dragCard indexOfCell:(NSInteger)index{
-    DemoCell *cell = (DemoCell *)[dragCard dequeueReusableCardWithIdentifier:@"OC_ID"];
+    DemoCell *cell = (DemoCell *)[dragCard dequeueReusableCellWithIdentifier:@"OC_ID"];
     if (!cell) {
         cell = [[DemoCell alloc] initWithReuseIdentifier:@"OC_ID"];
     }

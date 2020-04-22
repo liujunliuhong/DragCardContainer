@@ -102,7 +102,7 @@ extension HorizontalDragViewController: YHDragCardDataSource {
     }
     
     func dragCard(_ dragCard: YHDragCard, indexOfCell index: Int) -> YHDragCardCell {
-        var cell = dragCard.dequeueReusableCard(withIdentifier: "ID") as? DemoCell
+        var cell = dragCard.dequeueReusableCell(withIdentifier: "ID") as? DemoCell
         if cell == nil {
             cell = DemoCell(reuseIdentifier: "ID")
         }
@@ -118,7 +118,6 @@ extension HorizontalDragViewController: YHDragCardDelegate {
     }
     
     func dragCard(_ dragCard: YHDragCard, didSelectIndexAt index: Int, with cell: YHDragCardCell) {
-        print("点击卡片索引:\(index)")
         let vc = NextViewController()
         self.navigationController?.pushViewController(vc, animated: true)
     }

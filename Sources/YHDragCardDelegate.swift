@@ -38,7 +38,7 @@ import Foundation
     ///   - removeDirection: 卡片移除方向
     @objc optional func dragCard(_ dragCard: YHDragCard, didRemoveCell cell: YHDragCardCell, withIndex index: Int, removeDirection: YHDragCardMoveDirection)
     
-    /// 当前卡片的滑动位置信息的回调
+    /// 当前卡片的滑动位置信息的回调(已经自带动画)
     /// - Parameters:
     ///   - dragCard: 容器
     ///   - cell: 顶层正在滑动的卡片

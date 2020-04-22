@@ -7,25 +7,31 @@
 
 import UIKit
 
-open class YHDragCardCell: UIView {
-    public let reuseIdentifier: String
-    public init(reuseIdentifier: String) {
+@objc open class YHDragCardCell: UIView {
+    @objc public let reuseIdentifier: String
+    @objc public init(reuseIdentifier: String) {
         self.reuseIdentifier = reuseIdentifier
         super.init(frame: .zero)
-        self.yh_set(reuseIdentifier: reuseIdentifier)
+        self.yh_reuseIdentifier = reuseIdentifier
+        self.yh_internalIdentifier = UUID().uuidString
+        self.yh_is_reuse = false
     }
     
-    internal override init(frame: CGRect) {
+    
+    @available(iOS, unavailable)
+    @objc public override init(frame: CGRect) {
         self.reuseIdentifier = ""
         super.init(frame: frame)
     }
     
-    internal init() {
+    @available(iOS, unavailable)
+    @objc public init() {
         self.reuseIdentifier = ""
         super.init(frame: .zero)
     }
     
-    required public init?(coder: NSCoder) {
+    @available(iOS, unavailable)
+    @objc public required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 }

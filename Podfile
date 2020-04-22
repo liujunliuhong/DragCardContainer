@@ -7,8 +7,6 @@ target 'YHDragContainer' do
   use_frameworks!
 
   pod 'YHDragCard.swift', :path => 'YHDragContainer.podspec'
-
-  
   
   
   target 'YHDragContainerTests' do

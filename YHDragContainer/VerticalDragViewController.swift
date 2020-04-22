@@ -9,7 +9,6 @@
 import UIKit
 import YHDragCardSwift
 
-
 class VerticalDragViewController: UIViewController {
     
     let models: [String] = ["水星",
@@ -30,6 +29,7 @@ class VerticalDragViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
+        self.navigationItem.title = "垂直方向滑动"
         view.addSubview(self.card)
         
         // 请根据具体项目情况在合适的时机进行刷新
@@ -52,7 +52,7 @@ extension VerticalDragViewController: YHDragCardDataSource {
     }
     
     func dragCard(_ dragCard: YHDragCard, indexOfCell index: Int) -> YHDragCardCell {
-        var cell = dragCard.dequeueReusableCard(withIdentifier: "ID") as? DemoCell
+        var cell = dragCard.dequeueReusableCell(withIdentifier: "ID") as? DemoCell
         if cell == nil {
             cell = DemoCell(reuseIdentifier: "ID")
         }
@@ -63,5 +63,8 @@ extension VerticalDragViewController: YHDragCardDataSource {
 }
 
 extension VerticalDragViewController: YHDragCardDelegate {
-    
+    func dragCard(_ dragCard: YHDragCard, didSelectIndexAt index: Int, with cell: YHDragCardCell) {
+        let vc = NextViewController()
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
 }

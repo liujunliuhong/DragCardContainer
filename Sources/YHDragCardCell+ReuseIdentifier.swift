@@ -10,13 +10,39 @@ import Foundation
 internal extension YHDragCardCell {
     struct AssociatedKeys {
         static var reuseKey = "com.yinhe.yhdragcard.reuse"
+        static var internalReuseKey = "com.yinhe.yhdragcard.internalReuseKey"
+        static var isReuseKey = "com.yinhe.yhdragcard.isReuse"
     }
     
-    func yh_set(reuseIdentifier: String) {
-        objc_setAssociatedObject(self, &AssociatedKeys.reuseKey, reuseIdentifier, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+    var yh_reuseIdentifier: String? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.reuseKey) as? String
+        }
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.reuseKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
     }
     
-    func yh_getReuseIdentifier() -> String? {
-        return objc_getAssociatedObject(self, &AssociatedKeys.reuseKey) as? String
+    
+    var yh_internalIdentifier: String? {
+        get {
+            return objc_getAssociatedObject(self, &AssociatedKeys.internalReuseKey) as? String
+        }
+        set {
+            if let i = self.yh_reuseIdentifier, let newValue = newValue {
+                objc_setAssociatedObject(self, &AssociatedKeys.internalReuseKey, "\(i)_\(newValue)", .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
+        }
+    }
+    
+    
+    var yh_is_reuse: Bool {
+        get {
+            return (objc_getAssociatedObject(self, &AssociatedKeys.isReuseKey) as? Bool) ?? false
+        }
+        
+        set {
+            objc_setAssociatedObject(self, &AssociatedKeys.isReuseKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+        }
     }
 }

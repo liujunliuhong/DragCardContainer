@@ -14,6 +14,7 @@ class ViewController: UIViewController {
         return ["水平方向滑动",
                 "垂直方向滑动",
                 "无限滑动",
+                "多种类型的卡片同时显示",
                 "OC Demo"]
     }
     
@@ -63,6 +64,9 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             let vc = InfiniteLoopDragViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         } else if indexPath.row == 3 {
+            let vc = MultiTypeDragViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.row == 4 {
             let vc = OCDemoViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }

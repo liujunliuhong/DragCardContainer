@@ -1,44 +1,42 @@
 # YHDragContainer
-高度还原类似探探等社交应用的滑牌效果。(OC+Swift)
+高度还原类似探探等社交应用的滑牌效果。(兼容OC)
 
 # 为什么写这个库?
 由于项目原因，我经常需要用到滑牌效果。最开始，我也是在网上找各种三方库，也的确找到了一些，但是都不是很满意，要么某些我想要的功能没有，要么就是感觉滑牌效果不好，要么就是有些Bug，导致我总是要去改动源码。这样折腾了几次之后，我决定自己写一个，因此就有了这个库。
 
 # 与其他三方库对比
-本人参考了一些其他开源库，给了我很多灵感，在此表示感谢:<br>
-[CCDraggableCard](https://github.com/liuzechen/CCDraggableCard-Master)<br>
-[QiCardView](https://github.com/QiShare/QiCardView)<br>
-但是我觉得这些开源库有些不足的地方:<br>
-`CCDraggableCard`:只是对卡片的宽做了缩放，没有对高做缩放，另外，其还可以滑动和点击没有显示在最顶部的卡片，而且其没有提供当前滑动索引的方法，并且其属性在框架内部写死了，不能灵活配置。之前在使用的时候，由于这些原因导致我改动了大量的源代码。<br>
-`QiCardView`:没有提供卡片的点击事件，并且在滑动过程中没有对下层卡片做处理
-综合上述原因，本人决定自己写一个扩展性好，可以灵活配置各种属性的滑牌库。<br><br>
+本人参考了一些其他开源库，给了我很多灵感，在此表示感谢:
+
+- [CCDraggableCard](https://github.com/liuzechen/CCDraggableCard-Master)
+- [QiCardView](https://github.com/QiShare/QiCardView)
+
+但是我觉得这些开源库有些不足的地方:
+- `CCDraggableCard`:只是对卡片的宽做了缩放，没有对高做缩放，另外，其还可以滑动和点击没有显示在最顶部的卡片，而且其没有提供当前滑动索引的方法，并且其属性在框架内部写死了，不能灵活配置。之前在使用的时候，由于这些原因导致我改动了大量的源代码。
+- `QiCardView`:没有提供卡片的点击事件，并且在滑动过程中没有对下层卡片做处理。
+
+综合上述原因，本人决定自己写一个扩展性好，可以灵活配置各种属性的滑牌库。
 与其他的同类三方库对比的优点：
 - 可以无限滑动
 - 可以上下左右滑动
+- 实现了卡片的重用机制，在快速滑动时，内存不会飙升
+- 多种类型的卡片可以同时显示
 - 滑牌属性可以自由定制
-- 通过数据源的方式来控制滑牌，内存占用低
+- 兼容OC
+- 通过数据源的方式来控制卡牌
 - 代理丰富，可以根据自己的需要来选择合适的代理
 
 ## 即将加入的功能
-- 模仿tableView实现卡片的重用机制
+- 目前是只支持纯frame初始化，接下来研究下如何适配AutoLayout
+
 ## 效果预览
 <img src="GIF/test.gif" width="350">
 
 ## 安装
 
 ### 手动
-- OC<br>
-Clone代码，把OC Demo里面的`Sources`文件夹拖入项目，#import "YHDragCardContainer.h"，就可以使用了
-- Swift<br>
-Clone代码，把Swift Demo里面的`Sources`文件夹拖入项目就可以使用了
+Clone代码，把`Sources`文件夹拖入项目就可以使用了
 
 ### CocoaPods
-- OC
-
-```
-pod 'YHDragContainer'
-```
-- Swift
 
 ```
 pod 'YHDragCard.swift'
@@ -46,19 +44,6 @@ pod 'YHDragCard.swift'
 如果提示未找到，先执行`pod repo update`，再执行`pod install`
 
 ## 使用
-- 👉OC（具体用法请看Demo，以及框架里面的注释，写的很详细）
-
-```
-YHDragCardContainer *card = [[YHDragCardContainer alloc] initWithFrame:CGRectMake(50, [UIApplication sharedApplication].statusBarFrame.size.height+44+40, self.view.frame.size.width - 100, 400)];
-card.delegate = self;
-card.dataSource = self;
-card.minScale = 0.9;
-card.removeDirection = YHDragCardRemoveDirectionHorizontal;
-[self.view addSubview:card];
-
-[card reloadData:NO]; // 这一步千万别忘了，否则界面上是没有卡片的
-```
-
 - 👉Swift（具体用法请看Demo，以及框架里面的注释，写的很详细）
 
 ```
@@ -71,6 +56,48 @@ self.view.addSubview(card)
 
 card.reloadData(animation: false) // 这一步千万别忘了，否则界面上是没有卡片的
 ```
+实现数据源协议
+```
+func numberOfCount(_ dragCard: YHDragCard) -> Int {
+    return 10
+}
+    
+func dragCard(_ dragCard: YHDragCard, indexOfCell index: Int) -> YHDragCardCell {
+    var cell = dragCard.dequeueReusableCard(withIdentifier: "ID") as?DemoCell
+    if cell == nil {
+        cell = DemoCell(reuseIdentifier: "ID")
+    }
+    return cell!
+}
+
+```
+
+
+- 👉OC（具体用法请看Demo里面的`OCDemoViewController`）
+
+```
+YHDragCard *card = [[YHDragCard alloc] initWithFrame:CGRectMake(50.0, [UIApplication sharedApplication].statusBarFrame.size.height + 44.0 + 40.0, [UIScreen mainScreen].bounds.size.width - 50.0 * 2.0, 400.0)];
+card.delegate = self;
+card.dataSource = self;
+[self.view addSubview:card];
+
+[card reloadData:NO]; // 这一步千万别忘了，否则界面上是没有卡片的
+```
+实现数据源协议
+```
+- (NSInteger)numberOfCount:(YHDragCard *)dragCard{
+    return 10;
+}
+
+- (YHDragCardCell *)dragCard:(YHDragCard *)dragCard indexOfCell:(NSInteger)index{
+    DemoCell *cell = (DemoCell *)[dragCard dequeueReusableCardWithIdentifier:@"OC_ID"];
+    if (!cell) {
+        cell = [[DemoCell alloc] initWithReuseIdentifier:@"OC_ID"];
+    }
+    return cell;
+}
+```
+
 
 
 ## 更新记录(倒叙)

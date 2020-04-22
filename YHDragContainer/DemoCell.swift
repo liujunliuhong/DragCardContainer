@@ -30,10 +30,6 @@ import YHDragCardSwift
         self.addSubview(self.label)
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override public func layoutSubviews() {
         super.layoutSubviews()
         self.label.frame = self.bounds
@@ -41,7 +37,7 @@ import YHDragCardSwift
 }
 
 extension DemoCell {
-    @objc public func set(title: String) {
+    @objc public func set(title: String?) {
         self.label.text = title
     }
 }
