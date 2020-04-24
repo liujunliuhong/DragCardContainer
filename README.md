@@ -63,7 +63,7 @@ func numberOfCount(_ dragCard: YHDragCard) -> Int {
 }
     
 func dragCard(_ dragCard: YHDragCard, indexOfCell index: Int) -> YHDragCardCell {
-    var cell = dragCard.dequeueReusableCard(withIdentifier: "ID") as?DemoCell
+    var cell = dragCard.dequeueReusableCell(withIdentifier: "ID") as?DemoCell
     if cell == nil {
         cell = DemoCell(reuseIdentifier: "ID")
     }
@@ -90,7 +90,7 @@ card.dataSource = self;
 }
 
 - (YHDragCardCell *)dragCard:(YHDragCard *)dragCard indexOfCell:(NSInteger)index{
-    DemoCell *cell = (DemoCell *)[dragCard dequeueReusableCardWithIdentifier:@"OC_ID"];
+    DemoCell *cell = (DemoCell *)[dragCard dequeueReusableCellWithIdentifier:@"OC_ID"];
     if (!cell) {
         cell = [[DemoCell alloc] initWithReuseIdentifier:@"OC_ID"];
     }
