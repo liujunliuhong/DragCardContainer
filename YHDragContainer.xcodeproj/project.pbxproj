@@ -204,7 +204,7 @@
 				185367D0244E936400731BB8 /* Sources */,
 				185367D1244E936400731BB8 /* Frameworks */,
 				185367D2244E936400731BB8 /* Resources */,
-				B52DA0E596BDF862062FDFC1 /* [CP] Embed Pods Frameworks */,
+				8A2FECA1E3E2D4504AFA8509 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -242,7 +242,7 @@
 				185367F1244E936600731BB8 /* Sources */,
 				185367F2244E936600731BB8 /* Frameworks */,
 				185367F3244E936600731BB8 /* Resources */,
-				221269010861B2958AF68364 /* [CP] Embed Pods Frameworks */,
+				AD78B53B9F6E97EB5315124C /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -326,23 +326,6 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		221269010861B2958AF68364 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputFileListPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		72945937E32442BD5939EC0A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -365,7 +348,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B52DA0E596BDF862062FDFC1 /* [CP] Embed Pods Frameworks */ = {
+		8A2FECA1E3E2D4504AFA8509 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -380,6 +363,23 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer/Pods-YHDragContainer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		AD78B53B9F6E97EB5315124C /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		C00A6025CCB6FB8E8C538708 /* [CP] Check Pods Manifest.lock */ = {

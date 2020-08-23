@@ -562,7 +562,7 @@ private extension YHDragCard {
             }
         }
         
-        print("++++++\(self.reusableCells.count)")
+        //print("++++++\(self.reusableCells.count)")
         
         return c
     }
