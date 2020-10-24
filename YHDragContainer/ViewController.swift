@@ -9,13 +9,14 @@
 import UIKit
 
 class ViewController: UIViewController {
-
+    
     var dataSource: [String] {
         return ["水平方向滑动",
                 "垂直方向滑动",
                 "无限滑动",
                 "多种类型的卡片同时显示",
-                "OC Demo"]
+                "OC Demo",
+                "屏幕旋转"]
     }
     
     lazy var tableView: UITableView = {
@@ -68,6 +69,9 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
             self.navigationController?.pushViewController(vc, animated: true)
         } else if indexPath.row == 4 {
             let vc = OCDemoViewController()
+            self.navigationController?.pushViewController(vc, animated: true)
+        } else if indexPath.row == 5 {
+            let vc = OrientationChangeViewController()
             self.navigationController?.pushViewController(vc, animated: true)
         }
     }

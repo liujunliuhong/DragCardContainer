@@ -23,6 +23,12 @@
 		1879535F2450531C006E6F43 /* OtherDemoCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1879535E2450531C006E6F43 /* OtherDemoCell.swift */; };
 		1879536124505413006E6F43 /* MultiTypeDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1879536024505413006E6F43 /* MultiTypeDragViewController.swift */; };
 		52B8FA9F7CCE89D36B5DEDED /* Pods_YHDragContainer_YHDragContainerUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4181CA4116B1803D80A9F342 /* Pods_YHDragContainer_YHDragContainerUITests.framework */; };
+		85F0D1A525446BCB00C23261 /* YHDragCardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A025446BCB00C23261 /* YHDragCardDelegate.swift */; };
+		85F0D1A625446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A125446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift */; };
+		85F0D1A725446BCB00C23261 /* YHDragCard.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A225446BCB00C23261 /* YHDragCard.swift */; };
+		85F0D1A825446BCB00C23261 /* YHDragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A325446BCB00C23261 /* YHDragCardDataSource.swift */; };
+		85F0D1A925446BCB00C23261 /* YHDragCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A425446BCB00C23261 /* YHDragCardCell.swift */; };
+		85F0D1B125446D1600C23261 /* OrientationChangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1B025446D1600C23261 /* OrientationChangeViewController.swift */; };
 		D5D7F5F3A67DD36AD5BF4894 /* Pods_YHDragContainerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9341A08FDD8F8AB7E481B7DE /* Pods_YHDragContainerTests.framework */; };
 		F1F385AEF5A72EF2F9FDA54D /* Pods_YHDragContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9385741327DD3E14B5F2537D /* Pods_YHDragContainer.framework */; };
 /* End PBXBuildFile section */
@@ -72,6 +78,12 @@
 		38A7302564C27098F5E534AB /* Pods-YHDragContainerTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainerTests.debug.xcconfig"; path = "Target Support Files/Pods-YHDragContainerTests/Pods-YHDragContainerTests.debug.xcconfig"; sourceTree = "<group>"; };
 		3C3D72396A3FEF759C7D88A4 /* Pods-YHDragContainer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainer.debug.xcconfig"; path = "Target Support Files/Pods-YHDragContainer/Pods-YHDragContainer.debug.xcconfig"; sourceTree = "<group>"; };
 		4181CA4116B1803D80A9F342 /* Pods_YHDragContainer_YHDragContainerUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHDragContainer_YHDragContainerUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		85F0D1A025446BCB00C23261 /* YHDragCardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YHDragCardDelegate.swift; sourceTree = "<group>"; };
+		85F0D1A125446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "YHDragCardCell+ReuseIdentifier.swift"; sourceTree = "<group>"; };
+		85F0D1A225446BCB00C23261 /* YHDragCard.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YHDragCard.swift; sourceTree = "<group>"; };
+		85F0D1A325446BCB00C23261 /* YHDragCardDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YHDragCardDataSource.swift; sourceTree = "<group>"; };
+		85F0D1A425446BCB00C23261 /* YHDragCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YHDragCardCell.swift; sourceTree = "<group>"; };
+		85F0D1B025446D1600C23261 /* OrientationChangeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OrientationChangeViewController.swift; sourceTree = "<group>"; };
 		880E74446E4A353A2BB66AF4 /* Pods-YHDragContainer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainer.release.xcconfig"; path = "Target Support Files/Pods-YHDragContainer/Pods-YHDragContainer.release.xcconfig"; sourceTree = "<group>"; };
 		9341A08FDD8F8AB7E481B7DE /* Pods_YHDragContainerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHDragContainerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9385741327DD3E14B5F2537D /* Pods_YHDragContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHDragContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,6 +122,7 @@
 		185367CB244E936400731BB8 = {
 			isa = PBXGroup;
 			children = (
+				85F0D19F25446BCB00C23261 /* Sources */,
 				185367D6244E936400731BB8 /* YHDragContainer */,
 				185367ED244E936600731BB8 /* YHDragContainerTests */,
 				185367F8244E936600731BB8 /* YHDragContainerUITests */,
@@ -138,6 +151,7 @@
 				1853680D244E93FB00731BB8 /* VerticalDragViewController.swift */,
 				18536808244E93EC00731BB8 /* InfiniteLoopDragViewController.swift */,
 				1879536024505413006E6F43 /* MultiTypeDragViewController.swift */,
+				85F0D1B025446D1600C23261 /* OrientationChangeViewController.swift */,
 				18536809244E93EC00731BB8 /* NextViewController.swift */,
 				1853681A244ECCA700731BB8 /* DemoCell.swift */,
 				1879535E2450531C006E6F43 /* OtherDemoCell.swift */,
@@ -181,6 +195,18 @@
 				D5AEA7B73C95A9535F3CCFDA /* Pods-YHDragContainerTests.release.xcconfig */,
 			);
 			path = Pods;
+			sourceTree = "<group>";
+		};
+		85F0D19F25446BCB00C23261 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				85F0D1A225446BCB00C23261 /* YHDragCard.swift */,
+				85F0D1A025446BCB00C23261 /* YHDragCardDelegate.swift */,
+				85F0D1A125446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift */,
+				85F0D1A325446BCB00C23261 /* YHDragCardDataSource.swift */,
+				85F0D1A425446BCB00C23261 /* YHDragCardCell.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 		E1D9D90BBA25BD60E9055648 /* Frameworks */ = {
@@ -434,7 +460,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				1853680B244E93EC00731BB8 /* InfiniteLoopDragViewController.swift in Sources */,
+				85F0D1B125446D1600C23261 /* OrientationChangeViewController.swift in Sources */,
 				1853680C244E93EC00731BB8 /* NextViewController.swift in Sources */,
+				85F0D1A625446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift in Sources */,
+				85F0D1A925446BCB00C23261 /* YHDragCardCell.swift in Sources */,
+				85F0D1A525446BCB00C23261 /* YHDragCardDelegate.swift in Sources */,
+				85F0D1A725446BCB00C23261 /* YHDragCard.swift in Sources */,
+				85F0D1A825446BCB00C23261 /* YHDragCardDataSource.swift in Sources */,
 				1853680A244E93EC00731BB8 /* HorizontalDragViewController.swift in Sources */,
 				1853680E244E93FB00731BB8 /* VerticalDragViewController.swift in Sources */,
 				185367DC244E936400731BB8 /* ViewController.swift in Sources */,

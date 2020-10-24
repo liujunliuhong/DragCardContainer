@@ -1,12 +1,9 @@
 
-
-
 platform :ios, '8.0'
 target 'YHDragContainer' do
   
   use_frameworks!
-
-  pod 'YHDragCard.swift', :path => 'YHDragCard.swift.podspec'
+  
   
   
   target 'YHDragContainerTests' do
