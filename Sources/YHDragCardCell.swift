@@ -16,7 +16,11 @@ import UIKit
         self.yh_internalIdentifier = UUID().uuidString
         self.yh_is_reuse = false
     }
-    
+    //@IBInspectable
+    open override func awakeFromNib() {
+        super.awakeFromNib()
+        
+    }
     
     @available(iOS, unavailable)
     @objc public override init(frame: CGRect) {

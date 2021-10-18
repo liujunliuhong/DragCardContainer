@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 51;
+	objectVersion = 50;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -29,6 +29,15 @@
 		85F0D1A825446BCB00C23261 /* YHDragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A325446BCB00C23261 /* YHDragCardDataSource.swift */; };
 		85F0D1A925446BCB00C23261 /* YHDragCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1A425446BCB00C23261 /* YHDragCardCell.swift */; };
 		85F0D1B125446D1600C23261 /* OrientationChangeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F0D1B025446D1600C23261 /* OrientationChangeViewController.swift */; };
+		BF235B95271D009600D866F9 /* DragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235B94271D009600D866F9 /* DragCardDataSource.swift */; };
+		BF235B97271D00A200D866F9 /* DragCardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235B96271D00A200D866F9 /* DragCardDelegate.swift */; };
+		BF235B99271D00FE00D866F9 /* DragCardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235B98271D00FE00D866F9 /* DragCardContainer.swift */; };
+		BF235B9B271D012E00D866F9 /* DragCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235B9A271D012E00D866F9 /* DragCardCell.swift */; };
+		BF235B9D271D018100D866F9 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235B9C271D018100D866F9 /* UIView+Extension.swift */; };
+		BF235BB1271D6B1600D866F9 /* DragCardProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235BB0271D6B1600D866F9 /* DragCardProperty.swift */; };
+		BF235BB3271D6F8E00D866F9 /* DragCardContainer+Fix.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235BB2271D6F8E00D866F9 /* DragCardContainer+Fix.swift */; };
+		BF235BB5271D788900D866F9 /* DragCardContainer+PanGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235BB4271D788900D866F9 /* DragCardContainer+PanGesture.swift */; };
+		BF235BB7271D78BA00D866F9 /* DragCardContainer+TapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF235BB6271D78BA00D866F9 /* DragCardContainer+TapGesture.swift */; };
 		D5D7F5F3A67DD36AD5BF4894 /* Pods_YHDragContainerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9341A08FDD8F8AB7E481B7DE /* Pods_YHDragContainerTests.framework */; };
 		F1F385AEF5A72EF2F9FDA54D /* Pods_YHDragContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9385741327DD3E14B5F2537D /* Pods_YHDragContainer.framework */; };
 /* End PBXBuildFile section */
@@ -87,6 +96,15 @@
 		880E74446E4A353A2BB66AF4 /* Pods-YHDragContainer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainer.release.xcconfig"; path = "Target Support Files/Pods-YHDragContainer/Pods-YHDragContainer.release.xcconfig"; sourceTree = "<group>"; };
 		9341A08FDD8F8AB7E481B7DE /* Pods_YHDragContainerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHDragContainerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9385741327DD3E14B5F2537D /* Pods_YHDragContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_YHDragContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BF235B94271D009600D866F9 /* DragCardDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardDataSource.swift; sourceTree = "<group>"; };
+		BF235B96271D00A200D866F9 /* DragCardDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardDelegate.swift; sourceTree = "<group>"; };
+		BF235B98271D00FE00D866F9 /* DragCardContainer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardContainer.swift; sourceTree = "<group>"; };
+		BF235B9A271D012E00D866F9 /* DragCardCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardCell.swift; sourceTree = "<group>"; };
+		BF235B9C271D018100D866F9 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		BF235BB0271D6B1600D866F9 /* DragCardProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardProperty.swift; sourceTree = "<group>"; };
+		BF235BB2271D6F8E00D866F9 /* DragCardContainer+Fix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+Fix.swift"; sourceTree = "<group>"; };
+		BF235BB4271D788900D866F9 /* DragCardContainer+PanGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+PanGesture.swift"; sourceTree = "<group>"; };
+		BF235BB6271D78BA00D866F9 /* DragCardContainer+TapGesture.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+TapGesture.swift"; sourceTree = "<group>"; };
 		D5AEA7B73C95A9535F3CCFDA /* Pods-YHDragContainerTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainerTests.release.xcconfig"; path = "Target Support Files/Pods-YHDragContainerTests/Pods-YHDragContainerTests.release.xcconfig"; sourceTree = "<group>"; };
 		EA573636A1BC0154EC011824 /* Pods-YHDragContainer-YHDragContainerUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-YHDragContainer-YHDragContainerUITests.release.xcconfig"; path = "Target Support Files/Pods-YHDragContainer-YHDragContainerUITests/Pods-YHDragContainer-YHDragContainerUITests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -201,10 +219,19 @@
 			isa = PBXGroup;
 			children = (
 				85F0D1A225446BCB00C23261 /* YHDragCard.swift */,
+				BF235B98271D00FE00D866F9 /* DragCardContainer.swift */,
 				85F0D1A025446BCB00C23261 /* YHDragCardDelegate.swift */,
 				85F0D1A125446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift */,
 				85F0D1A325446BCB00C23261 /* YHDragCardDataSource.swift */,
 				85F0D1A425446BCB00C23261 /* YHDragCardCell.swift */,
+				BF235B94271D009600D866F9 /* DragCardDataSource.swift */,
+				BF235B96271D00A200D866F9 /* DragCardDelegate.swift */,
+				BF235B9A271D012E00D866F9 /* DragCardCell.swift */,
+				BF235B9C271D018100D866F9 /* UIView+Extension.swift */,
+				BF235BB0271D6B1600D866F9 /* DragCardProperty.swift */,
+				BF235BB2271D6F8E00D866F9 /* DragCardContainer+Fix.swift */,
+				BF235BB4271D788900D866F9 /* DragCardContainer+PanGesture.swift */,
+				BF235BB6271D78BA00D866F9 /* DragCardContainer+TapGesture.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -424,16 +451,25 @@
 			buildActionMask = 2147483647;
 			files = (
 				1853680B244E93EC00731BB8 /* InfiniteLoopDragViewController.swift in Sources */,
+				BF235B95271D009600D866F9 /* DragCardDataSource.swift in Sources */,
+				BF235B97271D00A200D866F9 /* DragCardDelegate.swift in Sources */,
 				85F0D1B125446D1600C23261 /* OrientationChangeViewController.swift in Sources */,
 				1853680C244E93EC00731BB8 /* NextViewController.swift in Sources */,
+				BF235BB5271D788900D866F9 /* DragCardContainer+PanGesture.swift in Sources */,
 				85F0D1A625446BCB00C23261 /* YHDragCardCell+ReuseIdentifier.swift in Sources */,
 				85F0D1A925446BCB00C23261 /* YHDragCardCell.swift in Sources */,
 				85F0D1A525446BCB00C23261 /* YHDragCardDelegate.swift in Sources */,
+				BF235B99271D00FE00D866F9 /* DragCardContainer.swift in Sources */,
+				BF235B9B271D012E00D866F9 /* DragCardCell.swift in Sources */,
+				BF235BB7271D78BA00D866F9 /* DragCardContainer+TapGesture.swift in Sources */,
 				85F0D1A725446BCB00C23261 /* YHDragCard.swift in Sources */,
 				85F0D1A825446BCB00C23261 /* YHDragCardDataSource.swift in Sources */,
 				1853680A244E93EC00731BB8 /* HorizontalDragViewController.swift in Sources */,
 				1853680E244E93FB00731BB8 /* VerticalDragViewController.swift in Sources */,
+				BF235BB3271D6F8E00D866F9 /* DragCardContainer+Fix.swift in Sources */,
 				185367DC244E936400731BB8 /* ViewController.swift in Sources */,
+				BF235B9D271D018100D866F9 /* UIView+Extension.swift in Sources */,
+				BF235BB1271D6B1600D866F9 /* DragCardProperty.swift in Sources */,
 				185367D8244E936400731BB8 /* AppDelegate.swift in Sources */,
 				1879536124505413006E6F43 /* MultiTypeDragViewController.swift in Sources */,
 				1853681B244ECCA700731BB8 /* DemoCell.swift in Sources */,

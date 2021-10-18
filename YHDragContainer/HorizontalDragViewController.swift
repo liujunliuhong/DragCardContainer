@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import YHDragCardSwift
+//import YHDragCardSwift
 
 class HorizontalDragViewController: UIViewController {
     

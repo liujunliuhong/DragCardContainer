@@ -63,6 +63,10 @@ fileprivate extension YHDragCardInfo {
 
 
 
+
+
+
+
 // MARK: - 方向
 @objc public enum YHDragCardRemoveDirection: Int {
     case horizontal // 水平
@@ -81,29 +85,29 @@ fileprivate extension YHDragCardInfo {
 
 
 // MARK: - runtime动态添加属性
-fileprivate extension UIView {
-    struct AssociatedKeys {
-        static var panGestureKey = "com.yinhe.yhdragcard.panGestureKey"
-        static var tapGestureKey = "com.yinhe.yhdragcard.tapGestureKey"
-    }
-    var yh_drag_card_panGesture: UIPanGestureRecognizer? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.panGestureKey) as? UIPanGestureRecognizer
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.panGestureKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    var yh_drag_card_tapGesture: UITapGestureRecognizer? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.tapGestureKey) as? UITapGestureRecognizer
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.tapGestureKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-}
+//fileprivate extension UIView {
+//    struct AssociatedKeys {
+//        static var panGestureKey = "com.yinhe.yhdragcard.panGestureKey"
+//        static var tapGestureKey = "com.yinhe.yhdragcard.tapGestureKey"
+//    }
+//    var yh_drag_card_panGesture: UIPanGestureRecognizer? {
+//        get {
+//            return objc_getAssociatedObject(self, &AssociatedKeys.panGestureKey) as? UIPanGestureRecognizer
+//        }
+//        set {
+//            objc_setAssociatedObject(self, &AssociatedKeys.panGestureKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+//        }
+//    }
+//
+//    var yh_drag_card_tapGesture: UITapGestureRecognizer? {
+//        get {
+//            return objc_getAssociatedObject(self, &AssociatedKeys.tapGestureKey) as? UITapGestureRecognizer
+//        }
+//        set {
+//            objc_setAssociatedObject(self, &AssociatedKeys.tapGestureKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+//        }
+//    }
+//}
 
 
 

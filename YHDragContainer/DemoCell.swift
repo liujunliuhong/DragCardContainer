@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import YHDragCardSwift
+//import YHDragCardSwift
 
 @objc public class DemoCell: YHDragCardCell {
     

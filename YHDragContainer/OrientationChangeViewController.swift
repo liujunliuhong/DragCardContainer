@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import YHDragCardSwift
+//import YHDragCardSwift
 
 private func portraitFrame() -> CGRect {
     let top: CGFloat = 100.0
