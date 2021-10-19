@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		85A81964271F085D00822E8C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81963271F085D00822E8C /* Model.swift */; };
+		85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */; };
+		85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81967271F0B3800822E8C /* BaseViewController.swift */; };
+		B33283B339ECEC1718A57DCE /* Pods_DragCardContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD01730365DD5BB0C1B5819 /* Pods_DragCardContainer.framework */; };
 		BF7C1A57271ECD5100EA13F5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */; };
 		BF7C1A5B271ECD5100EA13F5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A5A271ECD5100EA13F5 /* ViewController.swift */; };
 		BF7C1A5E271ECD5100EA13F5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF7C1A5C271ECD5100EA13F5 /* Main.storyboard */; };
@@ -26,6 +30,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		2644428D5641402797AB892B /* Pods-DragCardContainer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragCardContainer.release.xcconfig"; path = "Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer.release.xcconfig"; sourceTree = "<group>"; };
+		700B2F66DB7D76130F011D7D /* Pods-DragCardContainer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragCardContainer.debug.xcconfig"; path = "Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer.debug.xcconfig"; sourceTree = "<group>"; };
+		85A81963271F085D00822E8C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
+		85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
+		85A81967271F0B3800822E8C /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		9BD01730365DD5BB0C1B5819 /* Pods_DragCardContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DragCardContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7C1A53271ECD5100EA13F5 /* DragCardContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragCardContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		BF7C1A5A271ECD5100EA13F5 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -51,18 +61,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B33283B339ECEC1718A57DCE /* Pods_DragCardContainer.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		85A81962271F080900822E8C /* Demo */ = {
+			isa = PBXGroup;
+			children = (
+				85A81967271F0B3800822E8C /* BaseViewController.swift */,
+				85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */,
+			);
+			path = Demo;
+			sourceTree = "<group>";
+		};
+		871F8CF56C0407CCF306B87D /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				9BD01730365DD5BB0C1B5819 /* Pods_DragCardContainer.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		BF7C1A4A271ECD5100EA13F5 = {
 			isa = PBXGroup;
 			children = (
+				85A81962271F080900822E8C /* Demo */,
 				BF7C1A6B271ECE2C00EA13F5 /* Sources */,
 				BF7C1A55271ECD5100EA13F5 /* DragCardContainer */,
 				BF7C1A54271ECD5100EA13F5 /* Products */,
+				D3055B5E5021178FD6BC01E2 /* Pods */,
+				871F8CF56C0407CCF306B87D /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -77,22 +108,15 @@
 		BF7C1A55271ECD5100EA13F5 /* DragCardContainer */ = {
 			isa = PBXGroup;
 			children = (
-				BF7C1A6A271ECDF200EA13F5 /* Demo */,
 				BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */,
 				BF7C1A5A271ECD5100EA13F5 /* ViewController.swift */,
+				85A81963271F085D00822E8C /* Model.swift */,
 				BF7C1A5C271ECD5100EA13F5 /* Main.storyboard */,
 				BF7C1A5F271ECD5400EA13F5 /* Assets.xcassets */,
 				BF7C1A61271ECD5400EA13F5 /* LaunchScreen.storyboard */,
 				BF7C1A64271ECD5400EA13F5 /* Info.plist */,
 			);
 			path = DragCardContainer;
-			sourceTree = "<group>";
-		};
-		BF7C1A6A271ECDF200EA13F5 /* Demo */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Demo;
 			sourceTree = "<group>";
 		};
 		BF7C1A6B271ECE2C00EA13F5 /* Sources */ = {
@@ -113,6 +137,16 @@
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		D3055B5E5021178FD6BC01E2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				700B2F66DB7D76130F011D7D /* Pods-DragCardContainer.debug.xcconfig */,
+				2644428D5641402797AB892B /* Pods-DragCardContainer.release.xcconfig */,
+			);
+			name = Pods;
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -120,9 +154,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = BF7C1A67271ECD5400EA13F5 /* Build configuration list for PBXNativeTarget "DragCardContainer" */;
 			buildPhases = (
+				D2678E62F5985DF9FD80C730 /* [CP] Check Pods Manifest.lock */,
 				BF7C1A4F271ECD5100EA13F5 /* Sources */,
 				BF7C1A50271ECD5100EA13F5 /* Frameworks */,
 				BF7C1A51271ECD5100EA13F5 /* Resources */,
+				0CEFC3D0259D8B8ECB2DF63A /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -179,6 +215,48 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		0CEFC3D0259D8B8ECB2DF63A /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D2678E62F5985DF9FD80C730 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-DragCardContainer-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		BF7C1A4F271ECD5100EA13F5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -191,10 +269,13 @@
 				BF7C1A5B271ECD5100EA13F5 /* ViewController.swift in Sources */,
 				BF7C1A85271ECE2C00EA13F5 /* DragCardContainer+PanGesture.swift in Sources */,
 				BF7C1A84271ECE2C00EA13F5 /* DragCardContainer.swift in Sources */,
+				85A81964271F085D00822E8C /* Model.swift in Sources */,
 				BF7C1A8A271ECE2C00EA13F5 /* DragCardDirection.swift in Sources */,
+				85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */,
 				BF7C1A86271ECE2C00EA13F5 /* DragCardContainer+TapGesture.swift in Sources */,
 				BF7C1A81271ECE2C00EA13F5 /* DragCardDelegate.swift in Sources */,
 				BF7C1A88271ECE2C00EA13F5 /* DragCardDataSource.swift in Sources */,
+				85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */,
 				BF7C1A57271ECD5100EA13F5 /* AppDelegate.swift in Sources */,
 				BF7C1A83271ECE2C00EA13F5 /* DragCardCell+Extension.swift in Sources */,
 			);
@@ -340,6 +421,7 @@
 		};
 		BF7C1A68271ECD5400EA13F5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 700B2F66DB7D76130F011D7D /* Pods-DragCardContainer.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -369,6 +451,7 @@
 		};
 		BF7C1A69271ECD5400EA13F5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2644428D5641402797AB892B /* Pods-DragCardContainer.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

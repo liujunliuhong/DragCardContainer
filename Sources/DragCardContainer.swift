@@ -122,13 +122,6 @@ public class DragCardContainer: UIView {
     }
 }
 
-extension DragCardContainer {
-    public override func didMoveToSuperview() {
-        super.didMoveToSuperview()
-        if superview == nil { return }
-        reloadData()
-    }
-}
 
 extension DragCardContainer {
     /// 重新加载界面
@@ -144,11 +137,6 @@ extension DragCardContainer {
         let cardWidth = bounds.size.width
         let cardHeight = bounds.size.height - CGFloat(showCount - 1) * fixCellSpacing()
         if cardHeight.isLessThanOrEqualTo(.zero) { return }
-        //
-        reusableCells.forEach { cell in
-            cell.removeFromSuperview()
-        }
-        reusableCells.removeAll()
         //
         dynamicCardProperties.forEach { p in
             p.cell.removeFromSuperview()
@@ -182,19 +170,20 @@ extension DragCardContainer {
             cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
             insertSubview(cell, at: 0)
             
-            cell.transform = transform
+            cell.transform = .identity
             cell.frame = frame
+            cell.transform = transform
             
             do {
                 let property = DragCardProperty(cell: cell)
-                property.transform = transform
-                property.frame = frame
+                property.frame = cell.frame
+                property.transform = cell.transform
                 dynamicCardProperties.append(property)
             }
             do {
                 let property = DragCardProperty(cell: cell)
-                property.transform = transform
-                property.frame = frame
+                property.frame = cell.frame
+                property.transform = cell.transform
                 cardProperties.append(property)
             }
             
@@ -274,8 +263,9 @@ extension DragCardContainer {
         if !disableDrag { addPanGesture(for: cell) }
         if !disableClick { addTapGesture(for: cell) }
         
-        cell.transform = .identity
         cell.frame = topCell.frame
+        cell.transform = .identity
+        
         
         if removeDirection == .horizontal {
             var flag: CGFloat = 1.0
@@ -315,8 +305,8 @@ extension DragCardContainer {
         dynamicCardProperties.first?.cell.isUserInteractionEnabled = false
         
         let property = DragCardProperty(cell: cell)
-        property.transform = topCell.transform
         property.frame = topCell.frame
+        property.transform = topCell.transform
         dynamicCardProperties.insert(property, at: 0)
         
         isRevoking = true
@@ -351,14 +341,14 @@ extension DragCardContainer {
                      ***********************************************************************/
                     let willInfo = self.cardProperties[index]
                     
-                    info.cell.transform = willInfo.transform
-                    
                     var frame = info.cell.frame
                     frame.origin.y = willInfo.frame.origin.y
-                    info.cell.frame = frame
                     
-                    info.transform = willInfo.transform
+                    info.cell.frame = frame
+                    info.cell.transform = willInfo.transform
+                    
                     info.frame = willInfo.frame
+                    info.transform = willInfo.transform
                 }
             }) { (isFinish) in
                 guard let bottomCell = self.dynamicCardProperties.last?.cell else { return }
@@ -381,11 +371,23 @@ extension DragCardContainer {
     }
     
     public func dequeueReusableCell(withIdentifier identifier: String) -> DragCardCell? {
+        var canFind: Bool = false
+        var cellClass: AnyClass?
+        for (_, cell) in reusableCells.enumerated() {
+            if cell.reuseIdentifier == identifier {
+                canFind = true
+                cellClass = cell.classForCoder
+                break
+            }
+        }
+        if !canFind || cellClass == nil {
+            return nil
+        }
+        
         var reusableCell: DragCardCell?
         for (_, cell) in reusableCells.enumerated() {
             // 在缓存池子中，且未被使用
-            let reuseIdentifier = cell.reuseIdentifier
-            if reuseIdentifier == identifier {
+            if cell.reuseIdentifier == identifier {
                 if cell.isReuse == false {
                     cell.isReuse = true // 标记为正在使用缓存池子中的Cell
                     reusableCell = cell
@@ -393,16 +395,17 @@ extension DragCardContainer {
                 }
             }
         }
-        // 每次都遍历一次，如果未使用，从父视图移除
-        for (_, cell) in reusableCells.enumerated() {
-            if !cell.isReuse && cell.superview != nil {
-                cell.removeFromSuperview()
+        if reusableCell == nil {
+            reusableCell = (cellClass as? DragCardCell.Type)?.init(reuseIdentifier: identifier)
+            if reusableCell != nil {
+                reusableCell!.isReuse = true
+                reusableCells.append(reusableCell!)
             }
         }
         return reusableCell
     }
     
-    public func register(_ cellClass: DragCardCell.Type, forCellReuseIdentifier identifier: String) {
+    public func register<T: DragCardCell>(_ cellClass: T.Type, forCellReuseIdentifier identifier: String) {
         let className = NSStringFromClass(cellClass)
         var find: Bool = false
         for (_, cell) in reusableCells.enumerated() {
@@ -509,8 +512,10 @@ extension DragCardContainer {
         cell!.isUserInteractionEnabled = false
         cell!.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         insertSubview(cell!, at: 0)
-        cell!.transform = bottomCell.transform
+        
+        cell!.transform = .identity
         cell!.frame = bottomCell.frame
+        cell!.transform = bottomCell.transform
         
         let property = DragCardProperty(cell: cell!)
         property.frame = cell!.frame
@@ -537,11 +542,11 @@ extension DragCardContainer {
             for (index, info) in self.dynamicCardProperties.enumerated() {
                 let willInfo = self.cardProperties[index]
                 
-                info.cell.transform = willInfo.transform
-                
                 var frame = info.cell.frame
                 frame.origin.y = willInfo.frame.origin.y
+                
                 info.cell.frame = frame
+                info.cell.transform = willInfo.transform
                 
                 info.frame = willInfo.frame
                 info.transform = willInfo.transform

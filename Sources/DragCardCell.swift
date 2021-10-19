@@ -20,13 +20,12 @@ open class DragCardCell: UIView {
     }
     
     @available(iOS, unavailable)
-    @objc public override init(frame: CGRect) {
+    public override init(frame: CGRect) {
         self.reuseIdentifier = ""
         super.init(frame: frame)
     }
     
-    @available(iOS, unavailable)
-    @objc public init() {
+    public init() {
         self.reuseIdentifier = ""
         super.init(frame: .zero)
     }

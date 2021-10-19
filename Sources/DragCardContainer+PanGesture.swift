@@ -135,8 +135,8 @@ extension DragCardContainer {
                        options: .curveEaseInOut,
                        animations: {
             for (_, info) in self.dynamicCardProperties.enumerated() {
-                info.cell.transform = info.transform
                 info.cell.frame = info.frame
+                info.cell.transform = info.transform
             }
         }) { (isFinish) in
             if !isFinish { return }
@@ -178,11 +178,12 @@ extension DragCardContainer {
             let willTransform = willInfo.transform
             let willFrame = willInfo.frame
             
+            var frame = info.cell.frame
+            frame.origin.y = currentFrame.origin.y - (currentFrame.origin.y - willFrame.origin.y) * ratio
+            
+            info.cell.frame = frame
             info.cell.transform = CGAffineTransform(scaleX:currentTransform.a - (currentTransform.a - willTransform.a) * ratio,
                                                     y: currentTransform.d - (currentTransform.d - willTransform.d) * ratio)
-            var frame = info.cell.frame
-            frame.origin.y = currentFrame.origin.y - (currentFrame.origin.y - willFrame.origin.y) * ratio;
-            info.cell.frame = frame
         }
     }
     
@@ -197,11 +198,11 @@ extension DragCardContainer {
             for (index, info) in self.dynamicCardProperties.enumerated() {
                 let willInfo = self.cardProperties[index]
                 
-                info.cell.transform = willInfo.transform
-                
                 var frame = info.cell.frame
                 frame.origin.y = willInfo.frame.origin.y
+                
                 info.cell.frame = frame
+                info.cell.transform = willInfo.transform
                 
                 info.frame = willInfo.frame
                 info.transform = willInfo.transform

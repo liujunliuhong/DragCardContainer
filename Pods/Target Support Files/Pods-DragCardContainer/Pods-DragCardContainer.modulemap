@@ -1,0 +1,6 @@
+framework module Pods_DragCardContainer {
+  umbrella header "Pods-DragCardContainer-umbrella.h"
+
+  export *
+  module * { export * }
+}
