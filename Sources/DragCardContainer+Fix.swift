@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import CoreGraphics
 
 extension DragCardContainer {
     /// 0.1 ~ 1.0
@@ -49,12 +50,23 @@ extension DragCardContainer {
     }
     
     /// 0.0 ~ 90.0，并且转换为弧度
-    internal func fixRemoveMaximumAngleAndToRadius() -> CGFloat {
-        var angle: CGFloat = removeMaxAngle
+    internal func fixCellRotationMaximumAngleAndConvertToRadius() -> CGFloat {
+        var angle: CGFloat = cellRotationMaximumAngle
         if angle.isLess(than: .zero) {
             angle = .zero
         } else if angle > 90.0 {
             angle = 90.0
+        }
+        return angle / 180.0 * CGFloat(Double.pi)
+    }
+    
+    /// 5.0 ~ 85.0，并且转换为弧度
+    internal func fixDemarcationVerticalAngleAndConvertToRadius() -> CGFloat {
+        var angle = demarcationVerticalAngle
+        if angle < 5.0 {
+            angle = 5.0
+        } else if angle > 85.0 {
+            angle = 85.0
         }
         return angle / 180.0 * CGFloat(Double.pi)
     }
