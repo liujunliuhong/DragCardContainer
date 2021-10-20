@@ -16,7 +16,6 @@
 		BF7C1A5E271ECD5100EA13F5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF7C1A5C271ECD5100EA13F5 /* Main.storyboard */; };
 		BF7C1A60271ECD5400EA13F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF7C1A5F271ECD5400EA13F5 /* Assets.xcassets */; };
 		BF7C1A63271ECD5400EA13F5 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF7C1A61271ECD5400EA13F5 /* LaunchScreen.storyboard */; };
-		BF7C1A7E271ECE2C00EA13F5 /* DragCardProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A6E271ECE2C00EA13F5 /* DragCardProperty.swift */; };
 		BF7C1A80271ECE2C00EA13F5 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A70271ECE2C00EA13F5 /* UIView+Extension.swift */; };
 		BF7C1A81271ECE2C00EA13F5 /* DragCardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A71271ECE2C00EA13F5 /* DragCardDelegate.swift */; };
 		BF7C1A82271ECE2C00EA13F5 /* DragCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A72271ECE2C00EA13F5 /* DragCardCell.swift */; };
@@ -27,6 +26,9 @@
 		BF7C1A88271ECE2C00EA13F5 /* DragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A78271ECE2C00EA13F5 /* DragCardDataSource.swift */; };
 		BF7C1A89271ECE2C00EA13F5 /* DragCardContainer+Fix.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A79271ECE2C00EA13F5 /* DragCardContainer+Fix.swift */; };
 		BF7C1A8A271ECE2C00EA13F5 /* DragCardDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A7A271ECE2C00EA13F5 /* DragCardDirection.swift */; };
+		BF95ABF1271FEA2B005EB63A /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF95ABF0271FEA2B005EB63A /* DetailViewController.swift */; };
+		BF95ABF5271FEE16005EB63A /* RegisterTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF95ABF4271FEE16005EB63A /* RegisterTable.swift */; };
+		BF95ABF7271FEE7F005EB63A /* DragCardProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF95ABF6271FEE7F005EB63A /* DragCardProperty.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,7 +45,6 @@
 		BF7C1A5F271ECD5400EA13F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BF7C1A62271ECD5400EA13F5 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		BF7C1A64271ECD5400EA13F5 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		BF7C1A6E271ECE2C00EA13F5 /* DragCardProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardProperty.swift; sourceTree = "<group>"; };
 		BF7C1A70271ECE2C00EA13F5 /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		BF7C1A71271ECE2C00EA13F5 /* DragCardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDelegate.swift; sourceTree = "<group>"; };
 		BF7C1A72271ECE2C00EA13F5 /* DragCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardCell.swift; sourceTree = "<group>"; };
@@ -54,6 +55,9 @@
 		BF7C1A78271ECE2C00EA13F5 /* DragCardDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDataSource.swift; sourceTree = "<group>"; };
 		BF7C1A79271ECE2C00EA13F5 /* DragCardContainer+Fix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+Fix.swift"; sourceTree = "<group>"; };
 		BF7C1A7A271ECE2C00EA13F5 /* DragCardDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDirection.swift; sourceTree = "<group>"; };
+		BF95ABF0271FEA2B005EB63A /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
+		BF95ABF4271FEE16005EB63A /* RegisterTable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterTable.swift; sourceTree = "<group>"; };
+		BF95ABF6271FEE7F005EB63A /* DragCardProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardProperty.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +76,7 @@
 			isa = PBXGroup;
 			children = (
 				85A81967271F0B3800822E8C /* BaseViewController.swift */,
+				BF95ABF0271FEA2B005EB63A /* DetailViewController.swift */,
 				85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */,
 			);
 			path = Demo;
@@ -123,7 +128,8 @@
 			isa = PBXGroup;
 			children = (
 				BF7C1A74271ECE2C00EA13F5 /* DragCardContainer.swift */,
-				BF7C1A6E271ECE2C00EA13F5 /* DragCardProperty.swift */,
+				BF95ABF4271FEE16005EB63A /* RegisterTable.swift */,
+				BF95ABF6271FEE7F005EB63A /* DragCardProperty.swift */,
 				BF7C1A70271ECE2C00EA13F5 /* UIView+Extension.swift */,
 				BF7C1A71271ECE2C00EA13F5 /* DragCardDelegate.swift */,
 				BF7C1A72271ECE2C00EA13F5 /* DragCardCell.swift */,
@@ -143,7 +149,6 @@
 				700B2F66DB7D76130F011D7D /* Pods-DragCardContainer.debug.xcconfig */,
 				2644428D5641402797AB892B /* Pods-DragCardContainer.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -263,13 +268,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF7C1A82271ECE2C00EA13F5 /* DragCardCell.swift in Sources */,
-				BF7C1A7E271ECE2C00EA13F5 /* DragCardProperty.swift in Sources */,
+				BF95ABF1271FEA2B005EB63A /* DetailViewController.swift in Sources */,
 				BF7C1A80271ECE2C00EA13F5 /* UIView+Extension.swift in Sources */,
 				BF7C1A89271ECE2C00EA13F5 /* DragCardContainer+Fix.swift in Sources */,
 				BF7C1A5B271ECD5100EA13F5 /* ViewController.swift in Sources */,
 				BF7C1A85271ECE2C00EA13F5 /* DragCardContainer+PanGesture.swift in Sources */,
 				BF7C1A84271ECE2C00EA13F5 /* DragCardContainer.swift in Sources */,
 				85A81964271F085D00822E8C /* Model.swift in Sources */,
+				BF95ABF5271FEE16005EB63A /* RegisterTable.swift in Sources */,
 				BF7C1A8A271ECE2C00EA13F5 /* DragCardDirection.swift in Sources */,
 				85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */,
 				BF7C1A86271ECE2C00EA13F5 /* DragCardContainer+TapGesture.swift in Sources */,
@@ -278,6 +284,7 @@
 				85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */,
 				BF7C1A57271ECD5100EA13F5 /* AppDelegate.swift in Sources */,
 				BF7C1A83271ECE2C00EA13F5 /* DragCardCell+Extension.swift in Sources */,
+				BF95ABF7271FEE7F005EB63A /* DragCardProperty.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -119,7 +119,7 @@ extension DragCardContainer {
 extension DragCardContainer {
     private func panGestureCancel() {
         // 这儿加上动画的原因是：回调给外部的时候就自带动画了
-        guard let topCell = dynamicCardProperties.first?.cell else { return }
+        guard let topCell = activeCardProperties.first?.cell else { return }
         UIView.animate(withDuration: 0.08) {
             let direction = DragCardDirection(horizontalMovementDirection: .identity,
                                               horizontalMovementRatio: .zero,
@@ -134,18 +134,18 @@ extension DragCardContainer {
                        initialSpringVelocity: 0.8,
                        options: .curveEaseInOut,
                        animations: {
-            for (_, info) in self.dynamicCardProperties.enumerated() {
-                info.cell.frame = info.frame
+            for (_, info) in self.activeCardProperties.enumerated() {
                 info.cell.transform = info.transform
+                info.cell.frame = info.frame
             }
         }) { (isFinish) in
             if !isFinish { return }
             // 只有当infos数量大于visibleCount时，才移除最底部的卡片
-            if self.dynamicCardProperties.count > self.visibleCount {
-                if let info = self.dynamicCardProperties.last {
+            if self.activeCardProperties.count > self.visibleCount {
+                if let info = self.activeCardProperties.last {
                     self.removeFromReusePool(cell: info.cell) // restore的时候要重复用池子里面移除该cell
                 }
-                self.dynamicCardProperties.removeLast()
+                self.activeCardProperties.removeLast()
             }
         }
     }
@@ -153,8 +153,8 @@ extension DragCardContainer {
 
 extension DragCardContainer {
     private func moving(ratio: CGFloat) {
-        // 1、dynamicCardProperties数量小于等于visibleCount
-        // 2、dynamicCardProperties数量大于visibleCount（dynamicCardProperties数量最多只比visibleCount多1）
+        // 1、activeCardProperties数量小于等于visibleCount
+        // 2、activeCardProperties数量大于visibleCount（activeCardProperties数量最多只比visibleCount多1）
         var ratio = ratio
         if ratio.isLess(than: .zero) {
             ratio = 0.0
@@ -163,14 +163,14 @@ extension DragCardContainer {
         }
         
         // index = 0 是最顶部的卡片
-        // index = dynamicCardProperties.count - 1 是最下面的卡片
-        for (index, info) in dynamicCardProperties.enumerated() {
-            if dynamicCardProperties.count <= visibleCount {
+        // index = activeCardProperties.count - 1 是最下面的卡片
+        for (index, info) in activeCardProperties.enumerated() {
+            if activeCardProperties.count <= visibleCount {
                 if index == 0 { continue }
             } else {
-                if index == dynamicCardProperties.count - 1 || index == 0 { continue }
+                if index == activeCardProperties.count - 1 || index == 0 { continue }
             }
-            let willInfo = dynamicCardProperties[index - 1]
+            let willInfo = activeCardProperties[index - 1]
             
             let currentTransform = info.transform
             let currentFrame = info.frame
@@ -178,31 +178,31 @@ extension DragCardContainer {
             let willTransform = willInfo.transform
             let willFrame = willInfo.frame
             
-            var frame = info.cell.frame
-            frame.origin.y = currentFrame.origin.y - (currentFrame.origin.y - willFrame.origin.y) * ratio
-            
-            info.cell.frame = frame
             info.cell.transform = CGAffineTransform(scaleX:currentTransform.a - (currentTransform.a - willTransform.a) * ratio,
                                                     y: currentTransform.d - (currentTransform.d - willTransform.d) * ratio)
+            
+            var frame = info.cell.frame
+            frame.origin.y = currentFrame.origin.y - (currentFrame.origin.y - willFrame.origin.y) * ratio
+            info.cell.frame = frame
         }
     }
     
     private func disappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, movementDirection: DragCardContainer.MovementDirection) {
-        if dynamicCardProperties.count <= 0 { return }
+        if activeCardProperties.count <= 0 { return }
         
-        let topCell = dynamicCardProperties.first! // 临时存储顶层卡片
-        dynamicCardProperties.removeFirst() // 移除顶层卡片
+        let topCell = activeCardProperties.first! // 临时存储顶层卡片
+        activeCardProperties.removeFirst() // 移除顶层卡片
         
         UIView.animate(withDuration: 0.1, animations: {
             // 信息重置
-            for (index, info) in self.dynamicCardProperties.enumerated() {
-                let willInfo = self.cardProperties[index]
+            for (index, info) in self.activeCardProperties.enumerated() {
+                let willInfo = self.initialCardProperties[index]
+                info.cell.transform = willInfo.transform
                 
                 var frame = info.cell.frame
                 frame.origin.y = willInfo.frame.origin.y
-                
                 info.cell.frame = frame
-                info.cell.transform = willInfo.transform
+                
                 
                 info.frame = willInfo.frame
                 info.transform = willInfo.transform
@@ -228,7 +228,7 @@ extension DragCardContainer {
                 } else {
                     self.currentIndex = self.currentIndex + 1
                 }
-                if let tmpTopCell = self.dynamicCardProperties.first?.cell {
+                if let tmpTopCell = self.activeCardProperties.first?.cell {
                     tmpTopCell.isUserInteractionEnabled = true
                     self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self.currentIndex)
                 }
@@ -239,7 +239,7 @@ extension DragCardContainer {
                 } else {
                     self.currentIndex = self.currentIndex + 1
                 }
-                if let tmpTopCell = self.dynamicCardProperties.first?.cell {
+                if let tmpTopCell = self.activeCardProperties.first?.cell {
                     tmpTopCell.isUserInteractionEnabled = true
                     self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self.currentIndex)
                 }

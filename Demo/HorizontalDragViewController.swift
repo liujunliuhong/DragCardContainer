@@ -15,19 +15,19 @@ public class HorizontalDragViewController: BaseViewController {
     
     private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
     
-    public lazy var cardContainer: DragCardContainer = {
-        let cardContainer = DragCardContainer()
-        cardContainer.delegate = self
-        cardContainer.dataSource = self
-        cardContainer.visibleCount = 3
-        cardContainer.minimumScale = 0.3
-        cardContainer.register(Cell.self, forCellReuseIdentifier: "ID")
-        return cardContainer
-    }()
+    private var cardContainer: DragCardContainer!
     
     public override func viewDidLoad() {
         super.viewDidLoad()
+        
+        cardContainer = DragCardContainer()
+        cardContainer.delegate = self
+        cardContainer.dataSource = self
+        cardContainer.visibleCount = 3
+        cardContainer.minimumScale = 0.8
+        cardContainer.register(Cell.self, forCellReuseIdentifier: "ID")
         view.addSubview(cardContainer)
+        
         cardContainer.snp.makeConstraints { make in
             make.left.equalToSuperview().offset(35)
             make.right.equalToSuperview().offset(-35)
@@ -53,7 +53,28 @@ extension HorizontalDragViewController: DragCardDataSource {
 }
 
 extension HorizontalDragViewController: DragCardDelegate {
+    public func dragCard(_ dragCard: DragCardContainer, didDisplayTopCell cell: DragCardCell, withIndexAt index: Int) {
+        print("显示顶层卡片，索引: \(index)")
+    }
     
+    public func dragCard(_ dragCard: DragCardContainer, didFinishRemoveLastCell cell: DragCardCell) {
+        print("最后一个卡片滑完")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, didRemoveTopCell cell: DragCardCell, withIndex index: Int, movementDirection: DragCardContainer.MovementDirection) {
+        print("顶层卡片滑出去了，索引: \(index)")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, didSelectIndexAt index: Int, withTopCell cell: DragCardCell) {
+        print("点击顶层卡片，索引: \(index)")
+        let vc = DetailViewController()
+        vc.navigationItem.title = "索引值：\(index)"
+        self.navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, currentCell cell: DragCardCell, withIndex index: Int, currentCardDirection direction: DragCardDirection, canRemove: Bool) {
+        
+    }
 }
 
 

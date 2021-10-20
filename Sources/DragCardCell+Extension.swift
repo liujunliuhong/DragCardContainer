@@ -16,6 +16,7 @@ extension DragCardCell {
 }
 
 extension DragCardCell {
+    /// 唯一标识符
     internal var identifier: String? {
         get {
             return objc_getAssociatedObject(self, &AssociatedKeys.identifierKey) as? String
@@ -25,7 +26,7 @@ extension DragCardCell {
         }
     }
     
-    
+    /// 是否被重用
     internal var isReuse: Bool {
         get {
             return (objc_getAssociatedObject(self, &AssociatedKeys.isReuseKey) as? Bool) ?? false

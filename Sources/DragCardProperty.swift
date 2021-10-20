@@ -7,7 +7,7 @@
 //
 
 import Foundation
-import CoreGraphics
+import UIKit
 
 internal class DragCardProperty {
     var transform: CGAffineTransform = .identity

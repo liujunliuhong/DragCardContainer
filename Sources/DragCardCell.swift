@@ -10,6 +10,7 @@ import Foundation
 import UIKit
 
 open class DragCardCell: UIView {
+    /// 重用标识符
     public let reuseIdentifier: String
     
     public required init(reuseIdentifier: String) {
