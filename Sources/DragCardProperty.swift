@@ -12,9 +12,11 @@ import UIKit
 internal class DragCardProperty {
     var transform: CGAffineTransform = .identity
     var frame: CGRect = .zero
-    
+    init() {}
+}
+
+internal class DragCardActiveProperty: DragCardProperty {
     let cell: DragCardCell
-    
     init(cell: DragCardCell) {
         self.cell = cell
     }

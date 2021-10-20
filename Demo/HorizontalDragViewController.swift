@@ -23,19 +23,20 @@ public class HorizontalDragViewController: BaseViewController {
         cardContainer = DragCardContainer()
         cardContainer.delegate = self
         cardContainer.dataSource = self
-        cardContainer.visibleCount = 3
+        cardContainer.visibleCount = 4
         cardContainer.minimumScale = 0.8
         cardContainer.register(Cell.self, forCellReuseIdentifier: "ID")
         view.addSubview(cardContainer)
         
         cardContainer.snp.makeConstraints { make in
-            make.left.equalToSuperview().offset(35)
-            make.right.equalToSuperview().offset(-35)
-            make.top.equalToSuperview().offset(100.0)
-            make.bottom.equalToSuperview().offset(-100)
+            make.centerX.equalToSuperview()
+            make.width.equalToSuperview().multipliedBy(0.6)
+            make.centerY.equalToSuperview()
+            make.height.equalToSuperview().multipliedBy(0.6)
         }
-        
-        cardContainer.reloadData()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.cardContainer.visibleCount = 6
+        }
     }
 }
 

@@ -12,6 +12,6 @@ import UIKit
 extension DragCardContainer {
     @objc internal func tapGestureRecognizer(tapGesture: UITapGestureRecognizer) {
         guard let cell = activeCardProperties.first?.cell else { return }
-        delegate?.dragCard(self, didSelectIndexAt: currentIndex, withTopCell: cell)
+        delegate?.dragCard(self, didSelectIndexAt: _currentIndex, withTopCell: cell)
     }
 }

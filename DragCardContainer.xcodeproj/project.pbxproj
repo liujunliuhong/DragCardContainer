@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8543B20A272070BE0003AEFA /* NavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8543B209272070BE0003AEFA /* NavigationController.swift */; };
 		85A81964271F085D00822E8C /* Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81963271F085D00822E8C /* Model.swift */; };
 		85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */; };
 		85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81967271F0B3800822E8C /* BaseViewController.swift */; };
@@ -34,6 +35,7 @@
 /* Begin PBXFileReference section */
 		2644428D5641402797AB892B /* Pods-DragCardContainer.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragCardContainer.release.xcconfig"; path = "Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer.release.xcconfig"; sourceTree = "<group>"; };
 		700B2F66DB7D76130F011D7D /* Pods-DragCardContainer.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-DragCardContainer.debug.xcconfig"; path = "Target Support Files/Pods-DragCardContainer/Pods-DragCardContainer.debug.xcconfig"; sourceTree = "<group>"; };
+		8543B209272070BE0003AEFA /* NavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NavigationController.swift; sourceTree = "<group>"; };
 		85A81963271F085D00822E8C /* Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Model.swift; sourceTree = "<group>"; };
 		85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
 		85A81967271F0B3800822E8C /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 				BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */,
 				BF7C1A5A271ECD5100EA13F5 /* ViewController.swift */,
 				85A81963271F085D00822E8C /* Model.swift */,
+				8543B209272070BE0003AEFA /* NavigationController.swift */,
 				BF7C1A5C271ECD5100EA13F5 /* Main.storyboard */,
 				BF7C1A5F271ECD5400EA13F5 /* Assets.xcassets */,
 				BF7C1A61271ECD5400EA13F5 /* LaunchScreen.storyboard */,
@@ -279,6 +282,7 @@
 				BF7C1A8A271ECE2C00EA13F5 /* DragCardDirection.swift in Sources */,
 				85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */,
 				BF7C1A86271ECE2C00EA13F5 /* DragCardContainer+TapGesture.swift in Sources */,
+				8543B20A272070BE0003AEFA /* NavigationController.swift in Sources */,
 				BF7C1A81271ECE2C00EA13F5 /* DragCardDelegate.swift in Sources */,
 				BF7C1A88271ECE2C00EA13F5 /* DragCardDataSource.swift in Sources */,
 				85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */,
@@ -440,6 +444,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
@@ -470,6 +475,7 @@
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;

@@ -12,5 +12,8 @@ open class BaseViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
     }
+    open override var shouldAutorotate: Bool {
+        return true
+    }
 }
 

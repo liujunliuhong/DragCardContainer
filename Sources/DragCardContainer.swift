@@ -11,9 +11,20 @@ import UIKit
 
 public class DragCardContainer: UIView {
     deinit {
-        reset()
+        activeCardProperties.forEach { p in
+            p.cell.removeFromSuperview()
+        }
+        reusableCells.forEach { cell in
+            cell.removeFromSuperview()
+        }
+        activeCardProperties.removeAll()
+        initialCardProperties.removeAll()
+        reusableCells.removeAll()
+        _currentIndex = 0
+        isRevoking = false
+        isNexting = false
+        initialFirstCellCenter = .zero
         registerTables.removeAll()
-        removeNotification()
 #if DEBUG
         print("DragCardContainer deinit")
 #endif
@@ -43,35 +54,35 @@ public class DragCardContainer: UIView {
     /// 可见卡片数量
     public var visibleCount: Int = 3 {
         didSet {
-            
+            reloadData()
         }
     }
     
     /// 卡片之间的距离
     public var cellSpacing: CGFloat = 10.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
     /// 卡片最小缩放比例
     public var minimumScale: CGFloat = 0.8 {
         didSet {
-            
+            reloadData()
         }
     }
     
     /// 卡片移除方向
     public var removeDirection: DragCardContainer.RemoveDirection = .horizontal {
         didSet {
-            
+            reloadData()
         }
     }
     /// 水平方向上最大移除距离
     /// `removeDirection`设置为`horizontal`时，才生效
     public var horizontalRemoveMinimumDistance: CGFloat = UIScreen.main.bounds.size.width / 4.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
@@ -79,7 +90,7 @@ public class DragCardContainer: UIView {
     /// `removeDirection`设置为`horizontal`时，才生效
     public var horizontalRemoveMinimumVelocity: CGFloat = 1000.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
@@ -87,7 +98,7 @@ public class DragCardContainer: UIView {
     /// `removeDirection`设置为`vertical`时，才生效
     public var verticalRemoveMinimumDistance: CGFloat = UIScreen.main.bounds.size.height / 4.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
@@ -95,21 +106,21 @@ public class DragCardContainer: UIView {
     /// `removeDirection`设置为`vertical`时，才生效
     public var verticalRemoveMinimumVelocity: CGFloat = 500.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
     /// 卡片滑动过程中旋转的角度
     public var cellRotationMaximumAngle: CGFloat = 10.0 {
         didSet {
-            
+            reloadData()
         }
     }
     
     /// 是否无限滑动
     public var infiniteLoop: Bool = false {
         didSet {
-            
+            reloadData()
         }
     }
     
@@ -118,7 +129,15 @@ public class DragCardContainer: UIView {
     /// 如果垂直方向能够移除卡片，请把该值设置的大点
     public var demarcationVerticalAngle: CGFloat = 5.0 {
         didSet {
-            
+            reloadData()
+        }
+    }
+    
+    /// 当前卡片索引（顶层卡片的索引，可以直接与用户发生交互）
+    public var currentIndex: Int = 0 {
+        didSet {
+            _currentIndex = currentIndex
+            reloadData()
         }
     }
     
@@ -148,10 +167,11 @@ public class DragCardContainer: UIView {
         }
     }
     
-    internal var currentIndex: Int = 0 // 当前卡片索引（顶层卡片的索引，可以直接与用户发生交互）
+    internal var containerView: UIView!
+    internal var _currentIndex: Int = 0
     internal var initialFirstCellCenter: CGPoint = .zero // 初始化顶层卡片的位置
     internal var initialCardProperties: [DragCardProperty] = [] // 卡片属性集合
-    internal var activeCardProperties: [DragCardProperty] = [] // 动态卡片属性集合
+    internal var activeCardProperties: [DragCardActiveProperty] = [] // 动态卡片属性集合
     internal var registerTables: [RegisterTable] = [] // 注册表
     internal var isRevoking: Bool = false // 是否正在撤销，避免在短时间内多次调用revoke方法，必须等上一张卡片revoke完成，才能revoke下一张卡片
     internal var isNexting: Bool = false // 是否正在调用`nextCard`方法，避免在短时间内多次调用`nextCard`方法，必须`nextCard`完成，才能继续下一次`nextCard`
@@ -159,157 +179,128 @@ public class DragCardContainer: UIView {
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
-        setup()
+        setupUI()
     }
     
     public init() {
         super.init(frame: .zero)
-        setup()
+        setupUI()
     }
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-        setup()
+        setupUI()
         fatalError("init(coder:) has not been implemented")
     }
-    
-    private func setup() {
-        addNotification()
+}
+
+extension DragCardContainer {
+    private func setupUI() {
+        containerView = UIView()
+        addSubview(containerView)
     }
 }
 
 extension DragCardContainer {
     public override func layoutSubviews() {
         super.layoutSubviews()
-    }
-}
-
-extension DragCardContainer {
-    private func addNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(deviceOrientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
-    }
-    private func removeNotification() {
-        NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
-    }
-    
-    @objc private func deviceOrientationDidChange() {
-        let maxCount: Int = dataSource?.numberOfCount(self) ?? 0
-        let showCount: Int = min(maxCount, visibleCount)
-        if showCount <= 0 { return }
-        //
-        let cardWidth = bounds.size.width
-        let cardHeight = bounds.size.height - CGFloat(showCount - 1) * fixCellSpacing()
-        if cardHeight.isLessThanOrEqualTo(.zero) { return }
-        //
-        for index in 0..<showCount {
-            let y = fixCellSpacing() * CGFloat(index)
-            let frame = CGRect(x: 0, y: y, width: cardWidth, height: cardHeight)
-            guard let cell = dataSource?.dragCard(self, indexOfCell: index) else { continue }
-            
-            let tmpScale: CGFloat = 1.0 - (avergeScale * CGFloat(index))
-            let transform = CGAffineTransform(scaleX: tmpScale, y: tmpScale)
-            
-            cell.isUserInteractionEnabled = false
-            cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
-            insertSubview(cell, at: 0)
-            
-            cell.transform = .identity
-            // 这只`frame`和`transform`的顺序不能颠倒
-            cell.frame = frame
-            cell.transform = transform
-            
-            do {
-                let property = DragCardProperty(cell: cell)
-                property.frame = cell.frame
-                property.transform = cell.transform
-                activeCardProperties.append(property)
-            }
-            do {
-                let property = DragCardProperty(cell: cell)
-                property.frame = cell.frame
-                property.transform = cell.transform
-                initialCardProperties.append(property)
-            }
-            
-            if !disableDrag {
-                addPanGesture(for: cell)
-            }
-            if !disableClick {
-                addTapGesture(for: cell)
-            }
-        }
+        containerView.frame = bounds
+        reloadData()
     }
 }
 
 extension DragCardContainer {
     /// 重新加载界面
-    public func reloadData(forceReset: Bool) {
+    public func reloadData() {
         if superview == nil { return }
         superview?.setNeedsLayout()
         superview?.layoutIfNeeded()
         //
-        let maxCount: Int = dataSource?.numberOfCount(self) ?? 0
-        let showCount: Int = min(maxCount, visibleCount)
-        if showCount <= 0 { return }
+        let numberOfCount: Int = dataSource?.numberOfCount(self) ?? 0
+        if numberOfCount <= 0 { return }
+        let displayCount = min(numberOfCount, visibleCount)
+        if displayCount <= 0 { return }
         //
         let cardWidth = bounds.size.width
-        let cardHeight = bounds.size.height - CGFloat(showCount - 1) * fixCellSpacing()
+        let cardHeight = bounds.size.height - CGFloat(displayCount - 1) * fixCellSpacing()
+        if cardWidth.isLessThanOrEqualTo(.zero) { return }
         if cardHeight.isLessThanOrEqualTo(.zero) { return }
         //
-        reset()
-        //
         var avergeScale: CGFloat = 1.0
-        if showCount > 1 {
-            avergeScale = CGFloat(1.0 - fixMinimumScale()) / CGFloat(showCount - 1)
+        if displayCount > 1 {
+            avergeScale = CGFloat(1.0 - fixMinimumScale()) / CGFloat(displayCount - 1)
         }
-        
-        for index in 0..<showCount {
+        if _currentIndex > numberOfCount {
+            _currentIndex = numberOfCount - 1 // 表示最后一张
+        }
+        if _currentIndex < 0 {
+            _currentIndex = 0 // 第一张
+        }
+        if _currentIndex == 0 && numberOfCount == 0 {
+            return
+        }
+        //
+        activeCardProperties.forEach { p in
+            p.cell.removeFromSuperview()
+        }
+        reusableCells.forEach { cell in
+            cell.isReuse = false
+        }
+        activeCardProperties.removeAll()
+        initialCardProperties.removeAll()
+        initialFirstCellCenter = .zero
+        //
+        for index in 0..<displayCount {
             let y = fixCellSpacing() * CGFloat(index)
             let frame = CGRect(x: 0, y: y, width: cardWidth, height: cardHeight)
-            guard let cell = dataSource?.dragCard(self, indexOfCell: index) else { continue }
-            
             let tmpScale: CGFloat = 1.0 - (avergeScale * CGFloat(index))
             let transform = CGAffineTransform(scaleX: tmpScale, y: tmpScale)
             
-            cell.isUserInteractionEnabled = false
-            cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
-            insertSubview(cell, at: 0)
-            
-            cell.transform = .identity
-            // 这只`frame`和`transform`的顺序不能颠倒
-            cell.frame = frame
-            cell.transform = transform
-            
             do {
-                let property = DragCardProperty(cell: cell)
-                property.frame = cell.frame
-                property.transform = cell.transform
-                activeCardProperties.append(property)
-            }
-            do {
-                let property = DragCardProperty(cell: cell)
-                property.frame = cell.frame
-                property.transform = cell.transform
+                // 创建一个临时View
+                let tempView = UIView()
+                tempView.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
+                tempView.frame = frame
+                tempView.transform = transform
+                
+                let property = DragCardProperty()
+                property.frame = tempView.frame
+                property.transform = tempView.transform
                 initialCardProperties.append(property)
             }
-            
-            if !disableDrag {
-                addPanGesture(for: cell)
+            if index == 0 {
+                initialFirstCellCenter = CGPoint(x: frame.origin.x + frame.size.width / 2.0,
+                                                 y: frame.origin.y + frame.size.height / 2.0)
             }
-            if !disableClick {
-                addTapGesture(for: cell)
+            if index + _currentIndex < numberOfCount {
+                if let cell = dataSource?.dragCard(self, indexOfCell: index + _currentIndex) {
+                    cell.isUserInteractionEnabled = false
+                    cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
+                    containerView.insertSubview(cell, at: 0)
+                    //
+                    cell.transform = .identity
+                    // 这只`frame`和`transform`的顺序不能颠倒
+                    cell.frame = frame
+                    cell.transform = transform
+                    //
+                    let property = DragCardActiveProperty(cell: cell)
+                    property.frame = cell.frame
+                    property.transform = cell.transform
+                    activeCardProperties.append(property)
+                    //
+                    if !disableDrag {
+                        addPanGesture(for: cell)
+                    }
+                    if !disableClick {
+                        addTapGesture(for: cell)
+                    }
+                }
             }
         }
-        
         guard activeCardProperties.count > 0 else { return }
-        
         let topCell = activeCardProperties.first!.cell
-        
-        initialFirstCellCenter = topCell.center
-        
         topCell.isUserInteractionEnabled = true
-        
-        delegate?.dragCard(self, didDisplayTopCell: topCell, withIndexAt: currentIndex)
+        delegate?.dragCard(self, didDisplayTopCell: topCell, withIndexAt: _currentIndex)
     }
     
     /// 显示下一张卡片
@@ -348,7 +339,7 @@ extension DragCardContainer {
     /// 撤销
     /// canRevokeWhenFirstCell: 当已经是第一张卡片的时候，是否还能继续撤销
     public func revoke(movementDirection: DragCardContainer.MovementDirection, canRevokeWhenFirstCell: Bool = false) {
-        if !canRevokeWhenFirstCell && currentIndex <= 0 { return }
+        if !canRevokeWhenFirstCell && _currentIndex <= 0 { return }
         if movementDirection == .identity { return }
         if isRevoking { return }
         if isNexting { return }
@@ -360,11 +351,11 @@ extension DragCardContainer {
         }
         guard let topCell = activeCardProperties.first?.cell else { return } // 顶层卡片
         
-        guard let cell = dataSource?.dragCard(self, indexOfCell: (currentIndex - 1 < 0) ? 0 : (currentIndex - 1)) else { return } // 获取上一个卡片
+        guard let cell = dataSource?.dragCard(self, indexOfCell: (_currentIndex - 1 < 0) ? 0 : (_currentIndex - 1)) else { return } // 获取上一个卡片
         
         cell.isUserInteractionEnabled = false
         cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
-        addSubview(cell)
+        containerView.addSubview(cell)
         
         if !disableDrag { addPanGesture(for: cell) }
         if !disableClick { addTapGesture(for: cell) }
@@ -411,7 +402,7 @@ extension DragCardContainer {
         
         activeCardProperties.first?.cell.isUserInteractionEnabled = false
         
-        let property = DragCardProperty(cell: cell)
+        let property = DragCardActiveProperty(cell: cell)
         property.frame = topCell.frame
         property.transform = topCell.transform
         activeCardProperties.insert(property, at: 0)
@@ -466,13 +457,13 @@ extension DragCardContainer {
                     self.activeCardProperties.removeLast()
                 }
                 
-                self.currentIndex = (self.currentIndex - 1 < 0) ? 0 : (self.currentIndex - 1)
+                self._currentIndex = (self._currentIndex - 1 < 0) ? 0 : (self._currentIndex - 1)
                 cell.isUserInteractionEnabled = true
                 
                 self.isRevoking = false
                 
                 // 显示顶层卡片的回调
-                self.delegate?.dragCard(self, didDisplayTopCell: cell, withIndexAt: self.currentIndex)
+                self.delegate?.dragCard(self, didDisplayTopCell: cell, withIndexAt: self._currentIndex)
             }
         }
     }
@@ -508,6 +499,11 @@ extension DragCardContainer {
             if reusableCell != nil {
                 reusableCell!.isReuse = true
                 reusableCells.append(reusableCell!)
+            }
+        }
+        for (_, cell) in reusableCells.enumerated() {
+            if !cell.isReuse {
+                cell.removeFromSuperview()
             }
         }
         return reusableCell
@@ -579,8 +575,7 @@ extension DragCardContainer {
             if let identifier = cell.identifier,
                let _identifier = c.identifier,
                cell.reuseIdentifier == c.reuseIdentifier,
-               identifier == _identifier,
-               cell.isReuse == false {
+               identifier == _identifier {
                 reusableCells.remove(at: index)
                 break
             }
@@ -590,28 +585,6 @@ extension DragCardContainer {
 }
 
 extension DragCardContainer {
-    private func reset() {
-        activeCardProperties.forEach { p in
-            p.cell.removeFromSuperview()
-        }
-        activeCardProperties.removeAll()
-        //
-        initialCardProperties.forEach { p in
-            p.cell.removeFromSuperview()
-        }
-        initialCardProperties.removeAll()
-        //
-        reusableCells.forEach { cell in
-            cell.removeFromSuperview()
-        }
-        reusableCells.removeAll()
-        //
-        currentIndex = 0
-        isRevoking = false
-        isNexting = false
-        initialFirstCellCenter = .zero
-    }
-    
     internal func installNextCard() {
         let maxCount: Int = dataSource?.numberOfCount(self) ?? 0
         let showCount: Int = min(maxCount, visibleCount)
@@ -621,20 +594,20 @@ extension DragCardContainer {
         
         if infiniteLoop {
             if maxCount > showCount {
-                if currentIndex + showCount >= maxCount {
+                if _currentIndex + showCount >= maxCount {
                     // 无剩余卡片可以滑动，把之前滑出去的，加在最下面
-                    cell = dataSource?.dragCard(self, indexOfCell: currentIndex + showCount - maxCount)
+                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount - maxCount)
                 } else {
                     // 还有剩余卡片可以滑动
-                    cell = dataSource?.dragCard(self, indexOfCell: currentIndex + showCount)
+                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount)
                 }
             } else { // 最多只是`maxCount = showCount`，比如总数是3张，一次性显示3张
                 // 滑出去的那张，放在最下面
-                cell = dataSource?.dragCard(self, indexOfCell: currentIndex)
+                cell = dataSource?.dragCard(self, indexOfCell: _currentIndex)
             }
         } else {
-            if currentIndex + showCount >= maxCount { return } // 无剩余卡片可滑
-            cell = dataSource?.dragCard(self, indexOfCell: currentIndex + showCount)
+            if _currentIndex + showCount >= maxCount { return } // 无剩余卡片可滑
+            cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount)
         }
         
         if cell == nil { return }
@@ -642,7 +615,7 @@ extension DragCardContainer {
         
         cell!.isUserInteractionEnabled = false
         cell!.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
-        insertSubview(cell!, at: 0)
+        containerView.insertSubview(cell!, at: 0)
         
         cell!.transform = .identity
         // 设置`transform`和`frame`的顺序不能颠倒
@@ -650,7 +623,7 @@ extension DragCardContainer {
         cell!.frame = bottomCell.frame
         
         
-        let property = DragCardProperty(cell: cell!)
+        let property = DragCardActiveProperty(cell: cell!)
         property.frame = cell!.frame
         property.transform = cell!.transform
         activeCardProperties.append(property)
@@ -673,6 +646,7 @@ extension DragCardContainer {
         UIView.animate(withDuration: 0.1, animations: {
             // 信息重置
             for (index, info) in self.activeCardProperties.enumerated() {
+                if index >= self.activeCardProperties.count { continue }
                 // 需要先设置`transform`，再设置`frame`
                 let willInfo = self.initialCardProperties[index]
                 info.cell.transform = willInfo.transform
@@ -688,30 +662,30 @@ extension DragCardContainer {
             if !isFinish { return }
             self.isNexting = false
             // 卡片滑出去的回调
-            self.delegate?.dragCard(self, didRemoveTopCell: topCell.cell, withIndex: self.currentIndex, movementDirection: movementDirection)
+            self.delegate?.dragCard(self, didRemoveTopCell: topCell.cell, withIndex: self._currentIndex, movementDirection: movementDirection)
             
             if self.infiniteLoop {
-                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                if self._currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
                     // 最后一张卡片Remove
                     self.delegate?.dragCard(self, didFinishRemoveLastCell: topCell.cell)
-                    self.currentIndex = 0 // 索引置为0
+                    self._currentIndex = 0 // 索引置为0
                 } else {
-                    self.currentIndex = self.currentIndex + 1
+                    self._currentIndex = self._currentIndex + 1
                 }
                 if let tmpTopCell = self.activeCardProperties.first?.cell {
                     tmpTopCell.isUserInteractionEnabled = true
-                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self.currentIndex)
+                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self._currentIndex)
                 }
             } else {
-                if self.currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                if self._currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
                     // 最后一张卡片Remove
                     self.delegate?.dragCard(self, didFinishRemoveLastCell: topCell.cell)
                 } else {
-                    self.currentIndex = self.currentIndex + 1
+                    self._currentIndex = self._currentIndex + 1
                 }
                 if let tmpTopCell = self.activeCardProperties.first?.cell {
                     tmpTopCell.isUserInteractionEnabled = true
-                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self.currentIndex)
+                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self._currentIndex)
                 }
             }
         }
@@ -729,11 +703,11 @@ extension DragCardContainer {
                                                verticalMovementRatio: .zero)
             
             UIView.animate(withDuration: 0.25, animations: {
-                self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self.currentIndex, currentCardDirection: direction1, canRemove: false)
+                self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self._currentIndex, currentCardDirection: direction1, canRemove: false)
             }) { (isFinish) in
                 if !isFinish { return }
                 UIView.animate(withDuration: 0.25) {
-                    self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self.currentIndex, currentCardDirection: direction2, canRemove: true)
+                    self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self._currentIndex, currentCardDirection: direction2, canRemove: true)
                 }
             }
         }
