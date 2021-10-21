@@ -5,6 +5,47 @@
 //  Created by jun on 2021/10/18.
 //  Copyright © 2021 yinhe. All rights reserved.
 //
+//
+//                              ┌───────────────────────────────────────────┐
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              └┬─────────────────────────────────────────┬┘
+//                               └┬───────────────────────────────────────┬┘
+//                                └───────────────────────────────────────┘
+
+
+
 
 import Foundation
 import UIKit
@@ -133,11 +174,21 @@ public class DragCardContainer: UIView {
         }
     }
     
-    /// 当前卡片索引（顶层卡片的索引，可以直接与用户发生交互）
-    public var currentIndex: Int = 0 {
+    /// 当数据源只有1个的时候，是否可以撤销
+    public var canRevokeWhenOnlyOneDataSource: Bool = false {
         didSet {
-            _currentIndex = currentIndex
             reloadData()
+        }
+    }
+    
+    /// 当前卡片索引（顶层卡片的索引，可以直接与用户发生交互）
+    public var currentIndex: Int {
+        set {
+            _currentIndex = newValue
+            reloadData()
+        }
+        get {
+            return _currentIndex
         }
     }
     
@@ -267,10 +318,9 @@ extension DragCardContainer {
                 property.frame = tempView.frame
                 property.transform = tempView.transform
                 initialCardProperties.append(property)
-            }
-            if index == 0 {
-                initialFirstCellCenter = CGPoint(x: frame.origin.x + frame.size.width / 2.0,
-                                                 y: frame.origin.y + frame.size.height / 2.0)
+                if index == 0 {
+                    initialFirstCellCenter = tempView.center
+                }
             }
             if index + _currentIndex < numberOfCount {
                 if let cell = dataSource?.dragCard(self, indexOfCell: index + _currentIndex) {
@@ -307,6 +357,7 @@ extension DragCardContainer {
     public func nextCard(topCardMovementDirection: DragCardContainer.MovementDirection) {
         func _horizontalNextCell(isRight: Bool) {
             if removeDirection == .vertical { return }
+            if activeCardProperties.count <= 0 { return }
             installNextCard()
             let distance: CGFloat = 150.0
             isNexting = true
@@ -314,11 +365,16 @@ extension DragCardContainer {
         }
         func _verticalNextCell(isUp: Bool) {
             if removeDirection == .horizontal { return }
+            if activeCardProperties.count <= 0 { return }
             installNextCard()
             let distance: CGFloat = 30.0
             isNexting = true
             autoDisappear(horizontalMoveDistance: 0.0, verticalMoveDistance: (isUp ? -distance : distance), movementDirection: isUp ? .up : .down)
         }
+        let numberOfCount = dataSource?.numberOfCount(self) ?? 0
+        if numberOfCount <= 0 { return }
+        let displayCount = min(numberOfCount, visibleCount)
+        if displayCount <= 0 { return }
         
         if isNexting { return }
         if isRevoking { return }
@@ -338,11 +394,17 @@ extension DragCardContainer {
     
     /// 撤销
     /// canRevokeWhenFirstCell: 当已经是第一张卡片的时候，是否还能继续撤销
-    public func revoke(movementDirection: DragCardContainer.MovementDirection, canRevokeWhenFirstCell: Bool = false) {
-        if !canRevokeWhenFirstCell && _currentIndex <= 0 { return }
+    public func revoke(movementDirection: DragCardContainer.MovementDirection) {
+        let numberOfCount = dataSource?.numberOfCount(self) ?? 0
+        if numberOfCount <= 0 { return }
+        let displayCount = min(numberOfCount, visibleCount)
+        if displayCount <= 0 { return }
+        if numberOfCount == 1 && !canRevokeWhenOnlyOneDataSource { return }
+        if numberOfCount > 1 && _currentIndex <= 0 { return }
         if movementDirection == .identity { return }
         if isRevoking { return }
         if isNexting { return }
+        
         if removeDirection == .horizontal {
             if movementDirection == .up || movementDirection == .down { return }
         }
@@ -363,7 +425,6 @@ extension DragCardContainer {
         cell.transform = .identity
         // 这只`frame`和`transform`的顺序不能颠倒
         cell.frame = topCell.frame
-        
         
         if removeDirection == .horizontal {
             var flag: CGFloat = 1.0
@@ -409,6 +470,7 @@ extension DragCardContainer {
         
         isRevoking = true
         
+        
         do {
             UIView.animate(withDuration: 0.3, animations: {
                 cell.center = self.initialFirstCellCenter
@@ -422,9 +484,11 @@ extension DragCardContainer {
         }
         
         do {
-            UIView.animate(withDuration: 0.1, animations: {
-                for (index, info) in self.activeCardProperties.enumerated() {
-                    if self.activeCardProperties.count <= self.visibleCount {
+            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
+                for index in 0..<self.activeCardProperties.count {
+                    let info = self.activeCardProperties[index]
+                    if index >= self.initialCardProperties.count { continue }
+                    if self.activeCardProperties.count <= displayCount {
                         if index == 0 { continue }
                     } else {
                         if index == self.activeCardProperties.count - 1 || index == 0 { continue }
@@ -448,11 +512,13 @@ extension DragCardContainer {
                     info.frame = willInfo.frame
                     info.transform = willInfo.transform
                 }
-            }) { (isFinish) in
+            } completion: { isFinish in
+                // ...
+            }
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 guard let bottomCell = self.activeCardProperties.last?.cell else { return }
-                
                 // 移除最底部的卡片
-                if self.activeCardProperties.count > self.visibleCount {
+                if self.activeCardProperties.count > displayCount {
                     self.addToReusePool(cell: bottomCell)
                     self.activeCardProperties.removeLast()
                 }
@@ -488,8 +554,18 @@ extension DragCardContainer {
         for (_, cell) in reusableCells.enumerated() {
             // 在缓存池子中，且未被使用
             if cell.reuseIdentifier == identifier, cell.isReuse == false {
-                cell.isReuse = true // 标记为正在使用缓存池子中的Cell
-                reusableCell = cell
+                if canRevokeWhenOnlyOneDataSource {
+                    // 当数据源只有一个，且能撤销，不从复用池子里面取
+                    let numberOfCount = dataSource?.numberOfCount(self) ?? 0
+                    let displayCount = min(numberOfCount, visibleCount)
+                    if displayCount != 1 {
+                        cell.isReuse = true // 标记为正在使用缓存池子中的Cell
+                        reusableCell = cell
+                    }
+                } else {
+                    cell.isReuse = true // 标记为正在使用缓存池子中的Cell
+                    reusableCell = cell
+                }
                 break
             }
         }
@@ -565,6 +641,7 @@ extension DragCardContainer {
                 break
             }
         }
+        cell.removeFromSuperview()
         if isContain { return }
         reusableCells.append(cell)
     }
@@ -586,28 +663,29 @@ extension DragCardContainer {
 
 extension DragCardContainer {
     internal func installNextCard() {
-        let maxCount: Int = dataSource?.numberOfCount(self) ?? 0
-        let showCount: Int = min(maxCount, visibleCount)
-        if showCount <= 0 { return }
+        let numberOfCount = dataSource?.numberOfCount(self) ?? 0
+        if numberOfCount <= 0 { return }
+        let displayCount = min(numberOfCount, visibleCount)
+        if displayCount <= 0 { return }
         
         var cell: DragCardCell?
         
         if infiniteLoop {
-            if maxCount > showCount {
-                if _currentIndex + showCount >= maxCount {
+            if numberOfCount > displayCount {
+                if _currentIndex + displayCount >= numberOfCount {
                     // 无剩余卡片可以滑动，把之前滑出去的，加在最下面
-                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount - maxCount)
+                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + displayCount - numberOfCount)
                 } else {
                     // 还有剩余卡片可以滑动
-                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount)
+                    cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + displayCount)
                 }
             } else { // 最多只是`maxCount = showCount`，比如总数是3张，一次性显示3张
                 // 滑出去的那张，放在最下面
                 cell = dataSource?.dragCard(self, indexOfCell: _currentIndex)
             }
         } else {
-            if _currentIndex + showCount >= maxCount { return } // 无剩余卡片可滑
-            cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + showCount)
+            if _currentIndex + displayCount >= numberOfCount { return } // 无剩余卡片可滑
+            cell = dataSource?.dragCard(self, indexOfCell: _currentIndex + displayCount)
         }
         
         if cell == nil { return }
@@ -621,7 +699,6 @@ extension DragCardContainer {
         // 设置`transform`和`frame`的顺序不能颠倒
         cell!.transform = bottomCell.transform
         cell!.frame = bottomCell.frame
-        
         
         let property = DragCardActiveProperty(cell: cell!)
         property.frame = cell!.frame

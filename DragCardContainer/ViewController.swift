@@ -14,7 +14,7 @@ public class ViewController: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         tableView.tableFooterView = UIView()
-        tableView.register(Cell.classForCoder(), forCellReuseIdentifier: "cellID")
+        tableView.register(_Cell.classForCoder(), forCellReuseIdentifier: "cellID")
         if #available(iOS 11.0, *) {
             tableView.contentInsetAdjustmentBehavior = .always
         }
@@ -30,7 +30,10 @@ public class ViewController: UIViewController {
         automaticallyAdjustsScrollViewInsets = true
         view.addSubview(tableView)
         
-        self.dataSource = [Model(title: "水平方向滑动", vc: HorizontalDragViewController.self)]
+        self.dataSource = [Model(title: "水平方向滑动", vc: HorizontalDragViewController.self),
+                           Model(title: "垂直方向滑动", vc: VerticalDragViewController.self),
+                           Model(title: "无限滑动", vc: InfiniteLoopDragViewController.self),
+                           Model(title: "完整示例", vc: FullFunctionViewController.self)]
         self.tableView.reloadData()
     }
     
@@ -50,7 +53,7 @@ extension ViewController: UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID") as? Cell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellID") as? _Cell
         let model = dataSource[indexPath.row]
         cell?.titleLabel.text = model.title
         return cell ?? UITableViewCell()
@@ -67,7 +70,7 @@ extension ViewController: UITableViewDelegate {
     }
 }
 
-fileprivate class Cell: UITableViewCell {
+fileprivate class _Cell: UITableViewCell {
     lazy var titleLabel: UILabel = {
         let titleLabel = UILabel()
         titleLabel.font = UIFont.systemFont(ofSize: 17)
