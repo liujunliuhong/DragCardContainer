@@ -1,8 +1,8 @@
 //
-//  FullFunctionViewController.swift
+//  XibViewController.swift
 //  DragCardContainer
 //
-//  Created by jun on 2021/10/21.
+//  Created by galaxy on 2021/10/21.
 //
 
 import UIKit
@@ -11,7 +11,7 @@ import SnapKit
 import DragCard
 #endif
 
-public class FullFunctionViewController: BaseViewController {
+public class XibViewController: BaseViewController {
     
     private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
     
@@ -81,7 +81,7 @@ public class FullFunctionViewController: BaseViewController {
     }
 }
 
-extension FullFunctionViewController {
+extension XibViewController {
     @objc private func reloadAction() {
         print("Reload")
         cardContainer.currentIndex = 0
@@ -99,7 +99,7 @@ extension FullFunctionViewController {
 }
 
 
-extension FullFunctionViewController: DragCardDataSource {
+extension XibViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
         return titles.count
     }
@@ -111,7 +111,7 @@ extension FullFunctionViewController: DragCardDataSource {
     }
 }
 
-extension FullFunctionViewController: DragCardDelegate {
+extension XibViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, didDisplayTopCell cell: DragCardCell, withIndexAt index: Int) {
         indexLabel.text = "当前索引: \(index)"
     }

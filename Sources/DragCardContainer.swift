@@ -62,8 +62,6 @@ public class DragCardContainer: UIView {
         initialCardProperties.removeAll()
         reusableCells.removeAll()
         _currentIndex = 0
-        isRevoking = false
-        isNexting = false
         initialFirstCellCenter = .zero
         registerTables.removeAll()
 #if DEBUG
@@ -224,8 +222,6 @@ public class DragCardContainer: UIView {
     internal var initialCardProperties: [DragCardProperty] = [] // 卡片属性集合
     internal var activeCardProperties: [DragCardActiveProperty] = [] // 动态卡片属性集合
     internal var registerTables: [RegisterTable] = [] // 注册表
-    internal var isRevoking: Bool = false // 是否正在撤销，避免在短时间内多次调用revoke方法，必须等上一张卡片revoke完成，才能revoke下一张卡片
-    internal var isNexting: Bool = false // 是否正在调用`nextCard`方法，避免在短时间内多次调用`nextCard`方法，必须`nextCard`完成，才能继续下一次`nextCard`
     internal var reusableCells: [DragCardCell] = [] // 重用卡片集合
     
     public override init(frame: CGRect) {
@@ -360,24 +356,20 @@ extension DragCardContainer {
             if activeCardProperties.count <= 0 { return }
             installNextCard()
             let distance: CGFloat = 150.0
-            isNexting = true
-            autoDisappear(horizontalMoveDistance: (isRight ? distance : -distance), verticalMoveDistance: -10, movementDirection: isRight ? .right : .left)
+            disappear(horizontalMoveDistance: (isRight ? distance : -distance), verticalMoveDistance: -10, movementDirection: isRight ? .right : .left)
         }
         func _verticalNextCell(isUp: Bool) {
             if removeDirection == .horizontal { return }
             if activeCardProperties.count <= 0 { return }
             installNextCard()
             let distance: CGFloat = 30.0
-            isNexting = true
-            autoDisappear(horizontalMoveDistance: 0.0, verticalMoveDistance: (isUp ? -distance : distance), movementDirection: isUp ? .up : .down)
+            disappear(horizontalMoveDistance: 0.0, verticalMoveDistance: (isUp ? -distance : distance), movementDirection: isUp ? .up : .down)
         }
         let numberOfCount = dataSource?.numberOfCount(self) ?? 0
         if numberOfCount <= 0 { return }
         let displayCount = min(numberOfCount, visibleCount)
         if displayCount <= 0 { return }
         
-        if isNexting { return }
-        if isRevoking { return }
         switch topCardMovementDirection {
             case .right:
                 _horizontalNextCell(isRight: true)
@@ -402,8 +394,6 @@ extension DragCardContainer {
         if numberOfCount == 1 && !canRevokeWhenOnlyOneDataSource { return }
         if numberOfCount > 1 && _currentIndex <= 0 { return }
         if movementDirection == .identity { return }
-        if isRevoking { return }
-        if isNexting { return }
         
         if removeDirection == .horizontal {
             if movementDirection == .up || movementDirection == .down { return }
@@ -415,9 +405,13 @@ extension DragCardContainer {
         
         guard let cell = dataSource?.dragCard(self, indexOfCell: (_currentIndex - 1 < 0) ? 0 : (_currentIndex - 1)) else { return } // 获取上一个卡片
         
-        cell.isUserInteractionEnabled = false
+        cell.isUserInteractionEnabled = true
         cell.layer.anchorPoint = CGPoint(x: 0.5, y: 1.0)
         containerView.addSubview(cell)
+        
+        _currentIndex = (_currentIndex - 1 < 0) ? 0 : (_currentIndex - 1)
+        // 显示顶层卡片的回调
+        delegate?.dragCard(self, didDisplayTopCell: cell, withIndexAt: _currentIndex)
         
         if !disableDrag { addPanGesture(for: cell) }
         if !disableClick { addTapGesture(for: cell) }
@@ -468,68 +462,52 @@ extension DragCardContainer {
         property.transform = topCell.transform
         activeCardProperties.insert(property, at: 0)
         
-        isRevoking = true
+        // 顶层卡片的动画
+        UIView.animate(withDuration: 0.3, animations: {
+            cell.center = self.initialFirstCellCenter
+        }, completion: nil)
         
+        UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut, animations: {
+            cell.transform = .identity
+        }, completion: nil)
         
-        do {
-            UIView.animate(withDuration: 0.3, animations: {
-                cell.center = self.initialFirstCellCenter
-            }, completion: nil)
-            
-            // 延迟0.1秒
-            // 花费0.2秒使`transform`变为`identity`
-            UIView.animate(withDuration: 0.2, delay: 0.1, options: .curveEaseInOut, animations: {
-                cell.transform = .identity
-            }, completion: nil)
-        }
-        
-        do {
-            UIView.animate(withDuration: 0.3, delay: 0, options: .curveEaseInOut) {
-                for index in 0..<self.activeCardProperties.count {
-                    let info = self.activeCardProperties[index]
-                    if index >= self.initialCardProperties.count { continue }
-                    if self.activeCardProperties.count <= displayCount {
-                        if index == 0 { continue }
-                    } else {
-                        if index == self.activeCardProperties.count - 1 || index == 0 { continue }
-                    }
-                    
-                    /**********************************************************************
-                     4 3  2 1 0
-                     stableInfos    🀫 🀫 🀫 🀫 🀫
-                     
-                     5 4 3  2 1 0
-                     infos          🀫 🀫 🀫 🀫 🀫 🀫👈这个卡片新添加的
-                     ***********************************************************************/
-                    // 需要先设置`transform`，再设置`frame`
-                    let willInfo = self.initialCardProperties[index]
-                    info.cell.transform = willInfo.transform
-                    
-                    var frame = info.cell.frame
-                    frame.origin.y = willInfo.frame.origin.y
-                    info.cell.frame = frame
-                    
-                    info.frame = willInfo.frame
-                    info.transform = willInfo.transform
+        // 顶层卡片下面的那些卡片的动画
+        UIView.animate(withDuration: 0.15, delay: 0, options: .curveEaseInOut) {
+            for (index, info) in self.activeCardProperties.enumerated() {
+                if index >= self.initialCardProperties.count { continue }
+                if self.activeCardProperties.count <= displayCount {
+                    if index == 0 { continue }
+                } else {
+                    if index == self.activeCardProperties.count - 1 || index == 0 { continue }
                 }
-            } completion: { isFinish in
-                // ...
+                
+                /**********************************************************************
+                 4 3  2 1 0
+                 stableInfos    🀫 🀫 🀫 🀫 🀫
+                 
+                 5 4 3  2 1 0
+                 infos          🀫 🀫 🀫 🀫 🀫 🀫👈这个卡片新添加的
+                 ***********************************************************************/
+                // 需要先设置`transform`，再设置`frame`
+                let willInfo = self.initialCardProperties[index]
+                info.cell.transform = willInfo.transform
+                
+                var frame = info.cell.frame
+                frame.origin.y = willInfo.frame.origin.y
+                info.cell.frame = frame
+                
+                info.frame = willInfo.frame
+                info.transform = willInfo.transform
             }
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                guard let bottomCell = self.activeCardProperties.last?.cell else { return }
-                // 移除最底部的卡片
-                if self.activeCardProperties.count > displayCount {
-                    self.addToReusePool(cell: bottomCell)
-                    self.activeCardProperties.removeLast()
-                }
-                
-                self._currentIndex = (self._currentIndex - 1 < 0) ? 0 : (self._currentIndex - 1)
-                cell.isUserInteractionEnabled = true
-                
-                self.isRevoking = false
-                
-                // 显示顶层卡片的回调
-                self.delegate?.dragCard(self, didDisplayTopCell: cell, withIndexAt: self._currentIndex)
+        } completion: { isFinish in
+            // ...
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
+            guard let bottomCell = self.activeCardProperties.last?.cell else { return }
+            // 移除最底部的卡片
+            if self.activeCardProperties.count > displayCount {
+                self.addToReusePool(cell: bottomCell)
+                self.activeCardProperties.removeLast()
             }
         }
     }
@@ -554,18 +532,8 @@ extension DragCardContainer {
         for (_, cell) in reusableCells.enumerated() {
             // 在缓存池子中，且未被使用
             if cell.reuseIdentifier == identifier, cell.isReuse == false {
-                if canRevokeWhenOnlyOneDataSource {
-                    // 当数据源只有一个，且能撤销，不从复用池子里面取
-                    let numberOfCount = dataSource?.numberOfCount(self) ?? 0
-                    let displayCount = min(numberOfCount, visibleCount)
-                    if displayCount != 1 {
-                        cell.isReuse = true // 标记为正在使用缓存池子中的Cell
-                        reusableCell = cell
-                    }
-                } else {
-                    cell.isReuse = true // 标记为正在使用缓存池子中的Cell
-                    reusableCell = cell
-                }
+                cell.isReuse = true // 标记为正在使用缓存池子中的Cell
+                reusableCell = cell
                 break
             }
         }
@@ -713,17 +681,44 @@ extension DragCardContainer {
         }
     }
     
-    private func autoDisappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, movementDirection: DragCardContainer.MovementDirection) {
+    internal func disappear(horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat, movementDirection: DragCardContainer.MovementDirection) {
+        
         if activeCardProperties.count <= 0 { return }
         
-        let topCell = activeCardProperties.first! // 临时存储顶层卡片
-        activeCardProperties.removeFirst() // 移除顶层卡片
+        let willRemoveTopCell = activeCardProperties.first!.cell // 临时存储将要移除出去的顶层卡片
+        activeCardProperties.removeFirst() // 从数组里面移除将要移除出去的顶层卡片
         
-        // 顶层卡片下面的那些卡片的动画
+        if let currentTopCell = activeCardProperties.first?.cell {
+            currentTopCell.isUserInteractionEnabled = true
+            delegate?.dragCard(self, didDisplayTopCell: currentTopCell, withIndexAt: _currentIndex)
+        }
+        
+        let tempIndex = _currentIndex // 存储临时索引
+        
+        // 卡片滑出去的回调
+        self.delegate?.dragCard(self, didRemoveTopCell: willRemoveTopCell, withIndex: _currentIndex, movementDirection: movementDirection)
+        
+        if infiniteLoop {
+            if _currentIndex == (dataSource?.numberOfCount(self) ?? 0) - 1 {
+                // 最后一张卡片Remove
+                delegate?.dragCard(self, didFinishRemoveLastCell: willRemoveTopCell)
+                _currentIndex = 0 // 索引置为0
+            } else {
+                _currentIndex = _currentIndex + 1
+            }
+        } else {
+            if _currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
+                // 最后一张卡片Remove
+                delegate?.dragCard(self, didFinishRemoveLastCell: willRemoveTopCell)
+            } else {
+                _currentIndex = _currentIndex + 1
+            }
+        }
+        //
         UIView.animate(withDuration: 0.1, animations: {
             // 信息重置
             for (index, info) in self.activeCardProperties.enumerated() {
-                if index >= self.activeCardProperties.count { continue }
+                if index >= self.initialCardProperties.count { continue }
                 // 需要先设置`transform`，再设置`frame`
                 let willInfo = self.initialCardProperties[index]
                 info.cell.transform = willInfo.transform
@@ -736,94 +731,64 @@ extension DragCardContainer {
                 info.transform = willInfo.transform
             }
         }) { (isFinish) in
+            // ...
+        }
+        
+        //
+        let direction1 = DragCardDirection(horizontalMovementDirection: horizontalMoveDistance > 0.0 ? .right : .left,
+                                           horizontalMovementRatio: horizontalMoveDistance > 0.0 ? 1.0 : -1.0,
+                                           verticalMovementDirection: verticalMoveDistance > 0 ? .down : .up,
+                                           verticalMovementRatio: verticalMoveDistance > 0.0 ? 1.0 : -1.0)
+        let direction2 = DragCardDirection(horizontalMovementDirection: .identity,
+                                           horizontalMovementRatio: .zero,
+                                           verticalMovementDirection: .identity,
+                                           verticalMovementRatio: .zero)
+        UIView.animate(withDuration: 0.25, animations: {
+            self.delegate?.dragCard(self, currentCell: willRemoveTopCell, withIndex: tempIndex, currentCardDirection: direction1, canRemove: false)
+        }) { (isFinish) in
             if !isFinish { return }
-            self.isNexting = false
-            // 卡片滑出去的回调
-            self.delegate?.dragCard(self, didRemoveTopCell: topCell.cell, withIndex: self._currentIndex, movementDirection: movementDirection)
-            
-            if self.infiniteLoop {
-                if self._currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
-                    // 最后一张卡片Remove
-                    self.delegate?.dragCard(self, didFinishRemoveLastCell: topCell.cell)
-                    self._currentIndex = 0 // 索引置为0
+            UIView.animate(withDuration: 0.25) {
+                self.delegate?.dragCard(self, currentCell: willRemoveTopCell, withIndex: tempIndex, currentCardDirection: direction2, canRemove: true)
+            }
+        }
+        //
+        removeTopCell(topCell: willRemoveTopCell, horizontalMoveDistance: horizontalMoveDistance, verticalMoveDistance: verticalMoveDistance)
+    }
+    
+    internal func removeTopCell(topCell: DragCardCell, horizontalMoveDistance: CGFloat, verticalMoveDistance: CGFloat) {
+        // 顶层卡片的动画: `transform`设置
+        UIView.animate(withDuration: 0.2, animations: {
+            topCell.transform = CGAffineTransform(rotationAngle: horizontalMoveDistance > 0 ? self.fixCellRotationMaximumAngleAndConvertToRadius() : -self.fixCellRotationMaximumAngleAndConvertToRadius())
+        }, completion: nil)
+        
+        // 顶层卡片的动画: `center`设置
+        UIView.animate(withDuration: 0.5, animations: {
+            var tmpWidth: CGFloat = 0.0
+            var tmpHeight: CGFloat = 0.0
+            if self.removeDirection == .horizontal {
+                var flag: CGFloat = 0
+                if horizontalMoveDistance > 0 {
+                    flag = 1.5 // 右边滑出
                 } else {
-                    self._currentIndex = self._currentIndex + 1
+                    flag = -1 // 左边滑出
                 }
-                if let tmpTopCell = self.activeCardProperties.first?.cell {
-                    tmpTopCell.isUserInteractionEnabled = true
-                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self._currentIndex)
-                }
+                tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
+                tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
             } else {
-                if self._currentIndex == (self.dataSource?.numberOfCount(self) ?? 0) - 1 {
-                    // 最后一张卡片Remove
-                    self.delegate?.dragCard(self, didFinishRemoveLastCell: topCell.cell)
+                var flag: CGFloat = 0
+                if verticalMoveDistance > 0 {
+                    flag = 1.5 // 向下滑出
                 } else {
-                    self._currentIndex = self._currentIndex + 1
+                    flag = -1 // 向上滑出
                 }
-                if let tmpTopCell = self.activeCardProperties.first?.cell {
-                    tmpTopCell.isUserInteractionEnabled = true
-                    self.delegate?.dragCard(self, didDisplayTopCell: tmpTopCell, withIndexAt: self._currentIndex)
-                }
+                tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
+                tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
             }
-        }
-        
-        // 自动消失时，这儿加上个动画，这样外部就自带动画了
-        do {
-            let direction1 = DragCardDirection(horizontalMovementDirection: horizontalMoveDistance > 0.0 ? .right : .left,
-                                               horizontalMovementRatio: horizontalMoveDistance > 0.0 ? 1.0 : -1.0,
-                                               verticalMovementDirection: verticalMoveDistance > 0 ? .down : .up,
-                                               verticalMovementRatio: verticalMoveDistance > 0.0 ? 1.0 : -1.0)
-            
-            let direction2 = DragCardDirection(horizontalMovementDirection: .identity,
-                                               horizontalMovementRatio: .zero,
-                                               verticalMovementDirection: .identity,
-                                               verticalMovementRatio: .zero)
-            
-            UIView.animate(withDuration: 0.25, animations: {
-                self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self._currentIndex, currentCardDirection: direction1, canRemove: false)
-            }) { (isFinish) in
-                if !isFinish { return }
-                UIView.animate(withDuration: 0.25) {
-                    self.delegate?.dragCard(self, currentCell: topCell.cell, withIndex: self._currentIndex, currentCardDirection: direction2, canRemove: true)
-                }
-            }
-        }
-        
-        do {
-            // 顶层卡片的动画: 自动消失时，设置个旋转角度
-            UIView.animate(withDuration: 0.2, animations: {
-                topCell.cell.transform = CGAffineTransform(rotationAngle: horizontalMoveDistance > 0 ? self.fixCellRotationMaximumAngleAndConvertToRadius() : -self.fixCellRotationMaximumAngleAndConvertToRadius())
-            }, completion: nil)
-            
-            // 顶层卡片的动画: center设置
-            UIView.animate(withDuration: 0.5, animations: {
-                var tmpWidth: CGFloat = 0.0
-                var tmpHeight: CGFloat = 0.0
-                if self.removeDirection == .horizontal {
-                    var flag: CGFloat = 0
-                    if horizontalMoveDistance > 0 {
-                        flag = 1.5 // 右边滑出
-                    } else {
-                        flag = -1 // 左边滑出
-                    }
-                    tmpWidth = UIScreen.main.bounds.size.width * CGFloat(flag)
-                    tmpHeight = (verticalMoveDistance / horizontalMoveDistance * tmpWidth) + self.initialFirstCellCenter.y
-                } else {
-                    var flag: CGFloat = 0
-                    if verticalMoveDistance > 0 {
-                        flag = 1.5 // 向下滑出
-                    } else {
-                        flag = -1 // 向上滑出
-                    }
-                    tmpHeight = UIScreen.main.bounds.size.height * CGFloat(flag)
-                    tmpWidth = horizontalMoveDistance / verticalMoveDistance * tmpHeight + self.initialFirstCellCenter.x
-                }
-                topCell.cell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
-            }) { (isFinish) in
-                if !isFinish { return }
-                topCell.cell.center = CGPoint(x: UIScreen.main.bounds.size.width * 5, y: UIScreen.main.bounds.size.height * 5) // 动画完成，把`topCell`的中心点设置在屏幕外面很远的地方，防止pop的时候，会看见cell
-                self.addToReusePool(cell: topCell.cell)
-            }
+            topCell.center = CGPoint(x: tmpWidth, y: tmpHeight) // 中心点设置
+        }) { (isFinish) in
+            if !isFinish { return }
+            topCell.center = CGPoint(x: UIScreen.main.bounds.size.width * 5, y: UIScreen.main.bounds.size.height * 5) // 动画完成，把`topCell`的中心点设置在屏幕外面很远的地方，防止pop的时候，会看见cell
+            self.addToReusePool(cell: topCell)
         }
     }
 }

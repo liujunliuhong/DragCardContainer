@@ -1,8 +1,8 @@
 //
-//  FullFunctionViewController.swift
+//  OnlyOneViewController.swift
 //  DragCardContainer
 //
-//  Created by jun on 2021/10/21.
+//  Created by galaxy on 2021/10/21.
 //
 
 import UIKit
@@ -11,18 +11,16 @@ import SnapKit
 import DragCard
 #endif
 
-public class FullFunctionViewController: BaseViewController {
+public class OnlyOneViewController: BaseViewController {
     
-    private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
+    private let titles: [String] = ["水星"]
     
     private var cardContainer: DragCardContainer!
     private var indexLabel: UILabel!
-    private var nextButton: UIButton!
     private var revokeButton: UIButton!
     
     public override func viewDidLoad() {
         super.viewDidLoad()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Reload", style: .done, target: self, action: #selector(reloadAction))
         
         indexLabel = UILabel()
         indexLabel.textAlignment = .center
@@ -47,28 +45,19 @@ public class FullFunctionViewController: BaseViewController {
             make.width.equalTo(60)
         }
         
-        nextButton = UIButton(type: .system)
-        nextButton.backgroundColor = .gray
-        nextButton.setTitle("Next", for: .normal)
-        nextButton.setTitleColor(.white, for: .normal)
-        nextButton.addTarget(self, action: #selector(nextAction), for: .touchUpInside)
-        view.addSubview(nextButton)
-        nextButton.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.bottom.equalTo(indexLabel.snp.top).offset(-15)
-            make.height.equalTo(35)
-            make.width.equalTo(60)
-        }
-        
         cardContainer = DragCardContainer()
         cardContainer.delegate = self
         cardContainer.dataSource = self
-        cardContainer.visibleCount = 3
+        cardContainer.visibleCount = 1
         cardContainer.minimumScale = 0.8
         cardContainer.cellRotationMaximumAngle = 15
         cardContainer.removeDirection = .horizontal
         cardContainer.infiniteLoop = false
         cardContainer.register(CardCell.self, forCellReuseIdentifier: "ID")
+        
+        // canRevokeWhenFirstCell设置为true，表示数据源只有1个的时候，能revoke
+        // canRevokeWhenFirstCell设置为fase，表示数据源只有1个的时候，不能revoke
+        cardContainer.canRevokeWhenOnlyOneDataSource = true
         
         view.addSubview(cardContainer)
         
@@ -81,25 +70,15 @@ public class FullFunctionViewController: BaseViewController {
     }
 }
 
-extension FullFunctionViewController {
-    @objc private func reloadAction() {
-        print("Reload")
-        cardContainer.currentIndex = 0
-    }
-    
+extension OnlyOneViewController {
     @objc private func revokeAction() {
         print("Revoke")
         cardContainer.revoke(movementDirection: .right)
     }
-    
-    @objc private func nextAction() {
-        print("Next")
-        cardContainer.nextCard(topCardMovementDirection: .right)
-    }
 }
 
 
-extension FullFunctionViewController: DragCardDataSource {
+extension OnlyOneViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
         return titles.count
     }
@@ -111,7 +90,7 @@ extension FullFunctionViewController: DragCardDataSource {
     }
 }
 
-extension FullFunctionViewController: DragCardDelegate {
+extension OnlyOneViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, didDisplayTopCell cell: DragCardCell, withIndexAt index: Int) {
         indexLabel.text = "当前索引: \(index)"
     }
