@@ -52,8 +52,8 @@ internal class RegisterTable {
     let reuseIdentifier: String
     let cellClass: DragCardCell.Type
     
-     init(reuseIdentifier: String, cellClass: DragCardCell.Type) {
+    init(reuseIdentifier: String, cellClass: DragCardCell.Type) {
         self.reuseIdentifier = reuseIdentifier
-         self.cellClass = cellClass
+        self.cellClass = cellClass
     }
 }

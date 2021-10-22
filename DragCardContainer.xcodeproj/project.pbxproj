@@ -12,9 +12,6 @@
 		85A81966271F0B1A00822E8C /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */; };
 		85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85A81967271F0B3800822E8C /* BaseViewController.swift */; };
 		85FAF9402721B3E400D6E89F /* OnlyOneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FAF93F2721B3E400D6E89F /* OnlyOneViewController.swift */; };
-		85FAF9422721B8F000D6E89F /* CardXibCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 85FAF9412721B8F000D6E89F /* CardXibCell.xib */; };
-		85FAF9442721B9C800D6E89F /* CardXibCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FAF9432721B9C800D6E89F /* CardXibCell.swift */; };
-		85FAF9462721BBE100D6E89F /* XibViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85FAF9452721BBE100D6E89F /* XibViewController.swift */; };
 		B33283B339ECEC1718A57DCE /* Pods_DragCardContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9BD01730365DD5BB0C1B5819 /* Pods_DragCardContainer.framework */; };
 		BF7C1A57271ECD5100EA13F5 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */; };
 		BF7C1A5B271ECD5100EA13F5 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF7C1A5A271ECD5100EA13F5 /* ViewController.swift */; };
@@ -48,9 +45,6 @@
 		85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
 		85A81967271F0B3800822E8C /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		85FAF93F2721B3E400D6E89F /* OnlyOneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnlyOneViewController.swift; sourceTree = "<group>"; };
-		85FAF9412721B8F000D6E89F /* CardXibCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = CardXibCell.xib; sourceTree = "<group>"; };
-		85FAF9432721B9C800D6E89F /* CardXibCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardXibCell.swift; sourceTree = "<group>"; };
-		85FAF9452721BBE100D6E89F /* XibViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = XibViewController.swift; sourceTree = "<group>"; };
 		9BD01730365DD5BB0C1B5819 /* Pods_DragCardContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_DragCardContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7C1A53271ECD5100EA13F5 /* DragCardContainer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DragCardContainer.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BF7C1A56271ECD5100EA13F5 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -96,14 +90,11 @@
 				85A81967271F0B3800822E8C /* BaseViewController.swift */,
 				BF95ABF0271FEA2B005EB63A /* DetailViewController.swift */,
 				BF93F83527213B0D00509746 /* CardCell.swift */,
-				85FAF9432721B9C800D6E89F /* CardXibCell.swift */,
-				85FAF9412721B8F000D6E89F /* CardXibCell.xib */,
 				85A81965271F0B1A00822E8C /* HorizontalDragViewController.swift */,
 				BF93F833272139F700509746 /* VerticalDragViewController.swift */,
 				BF93F8372721456600509746 /* InfiniteLoopDragViewController.swift */,
 				85FAF93F2721B3E400D6E89F /* OnlyOneViewController.swift */,
 				BF93F8392721478200509746 /* FullFunctionViewController.swift */,
-				85FAF9452721BBE100D6E89F /* XibViewController.swift */,
 			);
 			path = Demo;
 			sourceTree = "<group>";
@@ -240,7 +231,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF7C1A63271ECD5400EA13F5 /* LaunchScreen.storyboard in Resources */,
-				85FAF9422721B8F000D6E89F /* CardXibCell.xib in Resources */,
 				BF7C1A60271ECD5400EA13F5 /* Assets.xcassets in Resources */,
 				BF7C1A5E271ECD5100EA13F5 /* Main.storyboard in Resources */,
 			);
@@ -313,9 +303,7 @@
 				8543B20A272070BE0003AEFA /* NavigationController.swift in Sources */,
 				BF93F83627213B0D00509746 /* CardCell.swift in Sources */,
 				BF7C1A81271ECE2C00EA13F5 /* DragCardDelegate.swift in Sources */,
-				85FAF9462721BBE100D6E89F /* XibViewController.swift in Sources */,
 				BF93F8382721456600509746 /* InfiniteLoopDragViewController.swift in Sources */,
-				85FAF9442721B9C800D6E89F /* CardXibCell.swift in Sources */,
 				BF7C1A88271ECE2C00EA13F5 /* DragCardDataSource.swift in Sources */,
 				85A81968271F0B3800822E8C /* BaseViewController.swift in Sources */,
 				BF7C1A57271ECD5100EA13F5 /* AppDelegate.swift in Sources */,
@@ -475,7 +463,6 @@
 				INFOPLIST_FILE = DragCardContainer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
@@ -506,7 +493,6 @@
 				INFOPLIST_FILE = DragCardContainer/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";

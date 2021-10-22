@@ -19,6 +19,7 @@ public class FullFunctionViewController: BaseViewController {
     private var indexLabel: UILabel!
     private var nextButton: UIButton!
     private var revokeButton: UIButton!
+    private var stateView: UIView!
     
     public override func viewDidLoad() {
         super.viewDidLoad()
@@ -60,6 +61,13 @@ public class FullFunctionViewController: BaseViewController {
             make.width.equalTo(60)
         }
         
+        stateView = UIView()
+        stateView.frame = CGRect(x: (UIScreen.main.bounds.size.width - 100.0)/2.0, y: UIScreen.main.bounds.size.height - 250, width: 100.0, height: 100.0)
+        stateView.backgroundColor = UIColor.purple
+        stateView.layer.cornerRadius = 100.0/2.0
+        stateView.layer.masksToBounds = true
+        view.addSubview(stateView)
+        
         cardContainer = DragCardContainer()
         cardContainer.delegate = self
         cardContainer.dataSource = self
@@ -73,11 +81,17 @@ public class FullFunctionViewController: BaseViewController {
         view.addSubview(cardContainer)
         
         cardContainer.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(150.0)
+            make.width.equalToSuperview().multipliedBy(0.6)
             make.centerX.equalToSuperview()
-            make.width.equalToSuperview().multipliedBy(0.3)
-            make.centerY.equalToSuperview()
-            make.height.equalToSuperview().multipliedBy(0.3)
+            make.height.equalTo(400)
         }
+    }
+}
+
+extension FullFunctionViewController {
+    public override var shouldAutorotate: Bool {
+        return false
     }
 }
 
@@ -132,6 +146,7 @@ extension FullFunctionViewController: DragCardDelegate {
     }
     
     public func dragCard(_ dragCard: DragCardContainer, currentCell cell: DragCardCell, withIndex index: Int, currentCardDirection direction: DragCardDirection, canRemove: Bool) {
-        
+        let ratio = abs(direction.horizontalMovementRatio) * 0.2
+        self.stateView.transform = CGAffineTransform(scaleX: 1.0+ratio, y: 1.0+ratio)
     }
 }

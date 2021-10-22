@@ -30,11 +30,10 @@ public class ViewController: UIViewController {
         automaticallyAdjustsScrollViewInsets = true
         view.addSubview(tableView)
         
-        self.dataSource = [Model(title: "水平方向滑动", vc: HorizontalDragViewController.self),
-                           Model(title: "垂直方向滑动", vc: VerticalDragViewController.self),
-                           Model(title: "无限滑动", vc: InfiniteLoopDragViewController.self),
-                           Model(title: "Cell采用Xib的方式", vc: XibViewController.self),
-                           Model(title: "只有一个数据源，仍可撤销", vc: OnlyOneViewController.self),
+        self.dataSource = [Model(title: "水平方向滑动（屏幕可旋转）", vc: HorizontalDragViewController.self),
+                           Model(title: "垂直方向滑动（屏幕可旋转）", vc: VerticalDragViewController.self),
+                           Model(title: "无限滑动（屏幕可旋转）", vc: InfiniteLoopDragViewController.self),
+                           Model(title: "只有一个数据源，仍可撤销（屏幕可旋转）", vc: OnlyOneViewController.self),
                            Model(title: "完整示例", vc: FullFunctionViewController.self)]
         self.tableView.reloadData()
     }

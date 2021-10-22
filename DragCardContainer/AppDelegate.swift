@@ -15,7 +15,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.window?.makeKeyAndVisible()
         //
         let vc = ViewController()
-        let navi = UINavigationController(rootViewController: vc)
+        let navi = NavigationController(rootViewController: vc)
         self.window?.rootViewController = navi
         //
         return true
