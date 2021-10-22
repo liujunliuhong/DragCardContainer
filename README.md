@@ -89,6 +89,9 @@ public func dragCard(_ dragCard: DragCardContainer, indexOfCell index: Int) -> D
 
 ## 更新记录(倒叙)
 
+### 8、1.1.1（2021.10.22）
+- 修改当前卡片索引异常的Bug
+
 ### 7、1.1.0（2021.10.22）
 
 由于此次更新重构了代码，类名、协议名、属性名称都有一些改变，如果你使用了我写的这个库，请记得修改下你的代码
