@@ -1,7 +1,7 @@
 
 Pod::Spec.new do |s|
   s.name             = 'DragCard'
-  s.version          = '1.1.0'
+  s.version          = '1.1.1'
   s.summary          = '卡牌滑动控件'
   s.description      = '高仿探探、默默卡牌滑动'
   s.homepage         = 'https://github.com/liujunliuhong/DragCardContainer'

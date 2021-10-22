@@ -688,11 +688,6 @@ extension DragCardContainer {
         let willRemoveTopCell = activeCardProperties.first!.cell // 临时存储将要移除出去的顶层卡片
         activeCardProperties.removeFirst() // 从数组里面移除将要移除出去的顶层卡片
         
-        if let currentTopCell = activeCardProperties.first?.cell {
-            currentTopCell.isUserInteractionEnabled = true
-            delegate?.dragCard(self, didDisplayTopCell: currentTopCell, withIndexAt: _currentIndex)
-        }
-        
         let tempIndex = _currentIndex // 存储临时索引
         
         // 卡片滑出去的回调
@@ -713,6 +708,10 @@ extension DragCardContainer {
             } else {
                 _currentIndex = _currentIndex + 1
             }
+        }
+        if let currentTopCell = activeCardProperties.first?.cell {
+            currentTopCell.isUserInteractionEnabled = true
+            delegate?.dragCard(self, didDisplayTopCell: currentTopCell, withIndexAt: _currentIndex)
         }
         //
         UIView.animate(withDuration: 0.1, animations: {
