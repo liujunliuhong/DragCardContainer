@@ -1,17 +1,17 @@
 //
-//  VerticalDragViewController.swift
+//  HorizontalDragViewController.swift
 //  DragCardContainer
 //
-//  Created by jun on 2021/10/21.
+//  Created by galaxy on 2021/10/19.
 //
 
 import UIKit
 import SnapKit
-#if canImport(DragCard)
-import DragCard
-#endif
+import DragCardContainer
 
-public class VerticalDragViewController: BaseViewController {
+
+
+public class HorizontalDragViewController: BaseViewController {
     
     private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
     
@@ -41,7 +41,7 @@ public class VerticalDragViewController: BaseViewController {
         cardContainer.visibleCount = 3
         cardContainer.minimumScale = 0.8
         cardContainer.cellRotationMaximumAngle = 15
-        cardContainer.removeDirection = .vertical
+        cardContainer.removeDirection = .horizontal
         cardContainer.register(CardCell.self, forCellReuseIdentifier: "ID")
         view.addSubview(cardContainer)
         
@@ -54,14 +54,14 @@ public class VerticalDragViewController: BaseViewController {
     }
 }
 
-extension VerticalDragViewController {
+extension HorizontalDragViewController {
     @objc private func reloadAction() {
         cardContainer.currentIndex = 0
     }
 }
 
 
-extension VerticalDragViewController: DragCardDataSource {
+extension HorizontalDragViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
         return titles.count
     }
@@ -73,7 +73,7 @@ extension VerticalDragViewController: DragCardDataSource {
     }
 }
 
-extension VerticalDragViewController: DragCardDelegate {
+extension HorizontalDragViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, didDisplayTopCell cell: DragCardCell, withIndexAt index: Int) {
         indexLabel.text = "当前索引: \(index)"
     }

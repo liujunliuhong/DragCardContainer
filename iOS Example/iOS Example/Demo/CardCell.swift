@@ -7,9 +7,7 @@
 
 import UIKit
 import SnapKit
-#if canImport(DragCard)
-import DragCard
-#endif
+import DragCardContainer
 
 public class CardCell: DragCardCell {
     public lazy var titleLabel: UILabel = {

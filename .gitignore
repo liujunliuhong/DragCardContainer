@@ -32,4 +32,4 @@ xcuserdata/
 *.dSYM
 
 #CocoaPods
-Pods/
+iOS Example/Pods

@@ -1,17 +1,17 @@
 //
-//  HorizontalDragViewController.swift
+//  InfiniteLoopDragViewController.swift
 //  DragCardContainer
 //
-//  Created by galaxy on 2021/10/19.
+//  Created by jun on 2021/10/21.
 //
 
 import UIKit
 import SnapKit
-#if canImport(DragCard)
-import DragCard
-#endif
+import DragCardContainer
 
-public class HorizontalDragViewController: BaseViewController {
+
+
+public class InfiniteLoopDragViewController: BaseViewController {
     
     private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
     
@@ -42,6 +42,7 @@ public class HorizontalDragViewController: BaseViewController {
         cardContainer.minimumScale = 0.8
         cardContainer.cellRotationMaximumAngle = 15
         cardContainer.removeDirection = .horizontal
+        cardContainer.infiniteLoop = true
         cardContainer.register(CardCell.self, forCellReuseIdentifier: "ID")
         view.addSubview(cardContainer)
         
@@ -54,14 +55,14 @@ public class HorizontalDragViewController: BaseViewController {
     }
 }
 
-extension HorizontalDragViewController {
+extension InfiniteLoopDragViewController {
     @objc private func reloadAction() {
         cardContainer.currentIndex = 0
     }
 }
 
 
-extension HorizontalDragViewController: DragCardDataSource {
+extension InfiniteLoopDragViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
         return titles.count
     }
@@ -73,7 +74,7 @@ extension HorizontalDragViewController: DragCardDataSource {
     }
 }
 
-extension HorizontalDragViewController: DragCardDelegate {
+extension InfiniteLoopDragViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, didDisplayTopCell cell: DragCardCell, withIndexAt index: Int) {
         indexLabel.text = "当前索引: \(index)"
     }
