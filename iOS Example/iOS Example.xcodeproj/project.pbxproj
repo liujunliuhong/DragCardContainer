@@ -23,16 +23,6 @@
 		D15CD70729A30D6100086A1B /* InfiniteLoopDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXContainerItemProxy section */
-		D15CD6E229A30CE200086A1B /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = D15CD6DE29A30CE200086A1B /* DragCardContainer.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = D15CD68629A30A1000086A1B;
-			remoteInfo = DragCardContainer;
-		};
-/* End PBXContainerItemProxy section */
-
 /* Begin PBXFileReference section */
 		5AE42063DCDE93D2B0037C60 /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8281919F37B8A1A62947D281 /* Pods-iOS Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS Example.release.xcconfig"; path = "Target Support Files/Pods-iOS Example/Pods-iOS Example.release.xcconfig"; sourceTree = "<group>"; };
@@ -44,7 +34,6 @@
 		D15CD6D329A30C8E00086A1B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		D15CD6D629A30C8E00086A1B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		D15CD6D829A30C8E00086A1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		D15CD6DE29A30CE200086A1B /* DragCardContainer.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = DragCardContainer.xcodeproj; path = ../DragCardContainer/DragCardContainer.xcodeproj; sourceTree = "<group>"; };
 		D15CD6F829A30D6100086A1B /* OnlyOneViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OnlyOneViewController.swift; sourceTree = "<group>"; };
 		D15CD6F929A30D6100086A1B /* FullFunctionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullFunctionViewController.swift; sourceTree = "<group>"; };
 		D15CD6FA29A30D6100086A1B /* CardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCell.swift; sourceTree = "<group>"; };
@@ -87,7 +76,6 @@
 		D15CD6BE29A30C8D00086A1B = {
 			isa = PBXGroup;
 			children = (
-				D15CD6DE29A30CE200086A1B /* DragCardContainer.xcodeproj */,
 				D15CD6C929A30C8D00086A1B /* iOS Example */,
 				D15CD6C829A30C8D00086A1B /* Products */,
 				8BBDDB377DBF7A983937A4F8 /* Pods */,
@@ -115,14 +103,6 @@
 				D15CD6D829A30C8E00086A1B /* Info.plist */,
 			);
 			path = "iOS Example";
-			sourceTree = "<group>";
-		};
-		D15CD6DF29A30CE200086A1B /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				D15CD6E329A30CE200086A1B /* DragCardContainer.framework */,
-			);
-			name = Products;
 			sourceTree = "<group>";
 		};
 		D15CD6F729A30D6100086A1B /* Demo */ = {
@@ -188,28 +168,12 @@
 			mainGroup = D15CD6BE29A30C8D00086A1B;
 			productRefGroup = D15CD6C829A30C8D00086A1B /* Products */;
 			projectDirPath = "";
-			projectReferences = (
-				{
-					ProductGroup = D15CD6DF29A30CE200086A1B /* Products */;
-					ProjectRef = D15CD6DE29A30CE200086A1B /* DragCardContainer.xcodeproj */;
-				},
-			);
 			projectRoot = "";
 			targets = (
 				D15CD6C629A30C8D00086A1B /* iOS Example */,
 			);
 		};
 /* End PBXProject section */
-
-/* Begin PBXReferenceProxy section */
-		D15CD6E329A30CE200086A1B /* DragCardContainer.framework */ = {
-			isa = PBXReferenceProxy;
-			fileType = wrapper.framework;
-			path = DragCardContainer.framework;
-			remoteRef = D15CD6E229A30CE200086A1B /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		D15CD6C529A30C8D00086A1B /* Resources */ = {
