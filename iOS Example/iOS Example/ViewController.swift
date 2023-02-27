@@ -6,14 +6,27 @@
 //
 
 import UIKit
+import SnapKit
+import DragCardContainer
 
-class ViewController: UIViewController {
+public class ViewController: UIViewController {
 
-    override func viewDidLoad() {
+    private lazy var swipeableView: SwipeableView = {
+        let swipeableView = SwipeableView()
+        return swipeableView
+    }()
+    
+    public override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
+        view.backgroundColor = .white
+        navigationItem.title = "Demo"
+        
+        view.addSubview(swipeableView)
+        swipeableView.snp.makeConstraints { make in
+            make.left.right.equalToSuperview().inset(70)
+            make.top.equalToSuperview().offset(120)
+            make.bottom.equalToSuperview().offset(-90)
+        }
     }
-
-
 }
 

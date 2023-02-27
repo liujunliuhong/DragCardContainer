@@ -21,7 +21,23 @@
 		D15CD70529A30D6100086A1B /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FD29A30D6100086A1B /* HorizontalDragViewController.swift */; };
 		D15CD70629A30D6100086A1B /* VerticalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FE29A30D6100086A1B /* VerticalDragViewController.swift */; };
 		D15CD70729A30D6100086A1B /* InfiniteLoopDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */; };
+		D19E8C7229ACADD000B17234 /* DragCardContainer.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D19E8C7129ACADD000B17234 /* DragCardContainer.framework */; };
+		D19E8C7329ACADD000B17234 /* DragCardContainer.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = D19E8C7129ACADD000B17234 /* DragCardContainer.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		D19E8C7429ACADD000B17234 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				D19E8C7329ACADD000B17234 /* DragCardContainer.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		5AE42063DCDE93D2B0037C60 /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -42,6 +58,7 @@
 		D15CD6FD29A30D6100086A1B /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
 		D15CD6FE29A30D6100086A1B /* VerticalDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticalDragViewController.swift; sourceTree = "<group>"; };
 		D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteLoopDragViewController.swift; sourceTree = "<group>"; };
+		D19E8C7129ACADD000B17234 /* DragCardContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = DragCardContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +66,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D19E8C7229ACADD000B17234 /* DragCardContainer.framework in Frameworks */,
 				1885F2FA3A6B8CBF22EA66E3 /* Pods_iOS_Example.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -59,6 +77,7 @@
 		7D1431112FFEA6C362D75644 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D19E8C7129ACADD000B17234 /* DragCardContainer.framework */,
 				5AE42063DCDE93D2B0037C60 /* Pods_iOS_Example.framework */,
 			);
 			name = Frameworks;
@@ -132,6 +151,7 @@
 				D15CD6C429A30C8D00086A1B /* Frameworks */,
 				D15CD6C529A30C8D00086A1B /* Resources */,
 				4227C07D22FF257543F71878 /* [CP] Embed Pods Frameworks */,
+				D19E8C7429ACADD000B17234 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);

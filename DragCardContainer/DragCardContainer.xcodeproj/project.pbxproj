@@ -20,6 +20,11 @@
 		D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */; };
 		D15CD6A729A30A8000086A1B /* DragCardContainer+Fix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69B29A30A8000086A1B /* DragCardContainer+Fix.swift */; };
 		D15CD6A829A30A8000086A1B /* DragCardDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69C29A30A8000086A1B /* DragCardDirection.swift */; };
+		D19E8C6829ACA66300B17234 /* SwipeableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19E8C6729ACA66300B17234 /* SwipeableView.swift */; };
+		D19E8C6A29ACA6AD00B17234 /* SwipeableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19E8C6929ACA6AD00B17234 /* SwipeableCell.swift */; };
+		D19E8C6C29ACA6E800B17234 /* Layout.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19E8C6B29ACA6E800B17234 /* Layout.swift */; };
+		D19E8C6E29ACA88000B17234 /* ModeState.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19E8C6D29ACA88000B17234 /* ModeState.swift */; };
+		D19E8C7029ACA8AC00B17234 /* ItemModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D19E8C6F29ACA8AC00B17234 /* ItemModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -37,6 +42,11 @@
 		D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDataSource.swift; sourceTree = "<group>"; };
 		D15CD69B29A30A8000086A1B /* DragCardContainer+Fix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+Fix.swift"; sourceTree = "<group>"; };
 		D15CD69C29A30A8000086A1B /* DragCardDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDirection.swift; sourceTree = "<group>"; };
+		D19E8C6729ACA66300B17234 /* SwipeableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableView.swift; sourceTree = "<group>"; };
+		D19E8C6929ACA6AD00B17234 /* SwipeableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeableCell.swift; sourceTree = "<group>"; };
+		D19E8C6B29ACA6E800B17234 /* Layout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Layout.swift; sourceTree = "<group>"; };
+		D19E8C6D29ACA88000B17234 /* ModeState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ModeState.swift; sourceTree = "<group>"; };
+		D19E8C6F29ACA8AC00B17234 /* ItemModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ItemModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -53,6 +63,7 @@
 		D15CD67C29A30A1000086A1B = {
 			isa = PBXGroup;
 			children = (
+				D19E8C5D29AC5D4200B17234 /* New */,
 				D15CD69029A30A8000086A1B /* Sources */,
 				D15CD68829A30A1000086A1B /* DragCardContainer */,
 				D15CD68729A30A1000086A1B /* Products */,
@@ -92,6 +103,18 @@
 				D15CD69C29A30A8000086A1B /* DragCardDirection.swift */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		D19E8C5D29AC5D4200B17234 /* New */ = {
+			isa = PBXGroup;
+			children = (
+				D19E8C6729ACA66300B17234 /* SwipeableView.swift */,
+				D19E8C6929ACA6AD00B17234 /* SwipeableCell.swift */,
+				D19E8C6B29ACA6E800B17234 /* Layout.swift */,
+				D19E8C6D29ACA88000B17234 /* ModeState.swift */,
+				D19E8C6F29ACA8AC00B17234 /* ItemModel.swift */,
+			);
+			path = New;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -173,14 +196,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D19E8C7029ACA8AC00B17234 /* ItemModel.swift in Sources */,
+				D19E8C6E29ACA88000B17234 /* ModeState.swift in Sources */,
 				D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */,
 				D15CD6A729A30A8000086A1B /* DragCardContainer+Fix.swift in Sources */,
 				D15CD6A329A30A8000086A1B /* RegisterTable.swift in Sources */,
 				D15CD6A829A30A8000086A1B /* DragCardDirection.swift in Sources */,
 				D15CD69E29A30A8000086A1B /* UIView+Extension.swift in Sources */,
+				D19E8C6C29ACA6E800B17234 /* Layout.swift in Sources */,
+				D19E8C6829ACA66300B17234 /* SwipeableView.swift in Sources */,
 				D15CD6A529A30A8000086A1B /* DragCardContainer+TapGesture.swift in Sources */,
 				D15CD6A229A30A8000086A1B /* DragCardContainer.swift in Sources */,
 				D15CD6A029A30A8000086A1B /* DragCardCell.swift in Sources */,
+				D19E8C6A29ACA6AD00B17234 /* SwipeableCell.swift in Sources */,
 				D15CD6A129A30A8000086A1B /* DragCardCell+Extension.swift in Sources */,
 				D15CD6A429A30A8000086A1B /* DragCardContainer+PanGesture.swift in Sources */,
 				D15CD69D29A30A8000086A1B /* DragCardProperty.swift in Sources */,
