@@ -10,20 +10,13 @@ import Foundation
 
 internal final class ModeState {
     
-    internal var itemModels: [ItemModel] = []
-    
-    private weak var layout: Layout?
-    
-    internal init(layout: Layout) {
-        self.layout = layout
+    internal init() {
+        
     }
-    
 }
 
 extension ModeState {
-    internal func setItemModels(_ itemModels: [ItemModel]) {
-        self.itemModels = itemModels
-    }
+    
 }
 
 extension ModeState {

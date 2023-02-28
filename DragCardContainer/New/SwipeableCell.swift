@@ -33,15 +33,3 @@ public final class SwipeableCell: UICollectionViewCell {
     }
 }
 
-fileprivate func RBA(R: CGFloat, G: CGFloat, B: CGFloat, A: CGFloat = 1.0) -> UIColor {
-    return UIColor(red: (R / 255.0), green: (G / 255.0), blue: (B / 255.0), alpha: A)
-}
-
-/// 获取一个随机颜色
-fileprivate func RandomColor() -> UIColor {
-    let R: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
-    let G: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
-    let B: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
-    let A: CGFloat = 1.0
-    return RBA(R: R, G: G, B: B, A: A)
-}

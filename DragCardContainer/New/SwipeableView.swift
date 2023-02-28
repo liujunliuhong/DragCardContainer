@@ -7,28 +7,44 @@
 
 import UIKit
 
+internal func RBA(R: CGFloat, G: CGFloat, B: CGFloat, A: CGFloat = 1.0) -> UIColor {
+    return UIColor(red: (R / 255.0), green: (G / 255.0), blue: (B / 255.0), alpha: A)
+}
+
+/// 获取一个随机颜色
+internal func RandomColor() -> UIColor {
+    let R: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
+    let G: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
+    let B: CGFloat = CGFloat(Int.random(in: Range(uncheckedBounds: (0, 255))))
+    let A: CGFloat = 1.0
+    return RBA(R: R, G: G, B: B, A: A)
+}
+
+
 public final class SwipeableView: UIView {
     
-    private lazy var layout: Layout = {
-        let layout = Layout()
-        return layout
+    private lazy var modeState: ModeState = {
+        let modeState = ModeState()
+        return modeState
     }()
     
-    private lazy var collectionView: UICollectionView = {
-        let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .clear
-        collectionView.bounces = true
-        collectionView.alwaysBounceVertical = true
-        collectionView.alwaysBounceHorizontal = true
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.isScrollEnabled = true
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.register(SwipeableCell.classForCoder(), forCellWithReuseIdentifier: NSStringFromClass(SwipeableCell.classForCoder()))
-        collectionView.clipsToBounds = false
-        return collectionView
+    private lazy var testView: UIView = {
+        let testView = UIView()
+        testView.backgroundColor = RandomColor()
+        return testView
     }()
+    
+    private lazy var animator: UIDynamicAnimator = {
+        let animator = UIDynamicAnimator(referenceView: self)
+        return animator
+    }()
+    
+    public var cardSpacing: CGFloat = 10.0
+    public var minimumScale: CGFloat = 0.8
+    
+    
+    private var attachmentBehavior: UIAttachmentBehavior?
+    private var snapBehavior: UISnapBehavior?
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -44,7 +60,7 @@ public final class SwipeableView: UIView {
 extension SwipeableView {
     public override func layoutSubviews() {
         super.layoutSubviews()
-        collectionView.frame = bounds
+        testView.frame = bounds
     }
 }
 
@@ -54,28 +70,53 @@ extension SwipeableView {
     }
     
     private func setupUI() {
-        addSubview(collectionView)
+        addSubview(testView)
+        
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        testView.addGestureRecognizer(pan)
     }
 }
 
-extension SwipeableView: UICollectionViewDataSource {
-    public func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 1
-    }
-    
-    public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NSStringFromClass(SwipeableCell.classForCoder()), for: indexPath) as? SwipeableCell else { return UICollectionViewCell() }
-        cell.label.text = "\(indexPath.item)"
-        return cell
+extension SwipeableView {
+    @objc func handlePan(_ recognizer: UIPanGestureRecognizer) {
+        let translation = recognizer.translation(in: self)
+        let location = recognizer.location(in: self)
+        let velocity = recognizer.velocity(in: self)
+        
+        switch recognizer.state {
+            case .began:
+                print("begin")
+                print("😄\(location)")
+                
+                if let snapBehavior = snapBehavior {
+                    animator.removeBehavior(snapBehavior)
+                }
+                
+                // UIViewPropertyAnimator
+                
+                let snapBehavior = UISnapBehavior(item: testView, snapTo: location)
+                snapBehavior.damping = 1.0
+                animator.addBehavior(snapBehavior)
+                self.snapBehavior = snapBehavior
+                
+//                let attachmentBehavior = UIAttachmentBehavior(item: testView, attachedToAnchor: location)
+//                attachmentBehavior.length = 0
+//                attachmentBehavior.damping = 0
+//                animator.addBehavior(attachmentBehavior)
+//                self.attachmentBehavior = attachmentBehavior
+            case .changed:
+                print("changed")
+                if let attachmentBehavior = attachmentBehavior {
+                    attachmentBehavior.anchorPoint = location
+                }
+            case .ended, .cancelled:
+                print("ended or cancelled")
+            default:
+                break
+        }
     }
 }
 
-extension SwipeableView: UICollectionViewDelegate {
-    public func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        print("Did Select Item: \(indexPath.item)")
-    }
+extension SwipeableView {
+    
 }
