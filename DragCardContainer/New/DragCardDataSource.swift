@@ -47,11 +47,9 @@
 
 
 import Foundation
+import UIKit
 
 public protocol DragCardDataSource: NSObjectProtocol {
-    /// 卡片总数
     func numberOfCount(_ dragCard: DragCardContainer) -> Int
-    
-    /// 每个索引对应的卡片
-    func dragCard(_ dragCard: DragCardContainer, indexOfCell index: Int) -> DragCardCell
+    func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView
 }

@@ -84,11 +84,12 @@ public class DragCardContainer: UIView {
         case down
     }
     
-    /// 数据源
-    public weak var dataSource: DragCardDataSource?
     
-    /// 代理
+    public weak var dataSource: DragCardDataSource?
     public weak var delegate: DragCardDelegate?
+    
+    
+    
     
     /// 可见卡片数量
     public var visibleCount: Int = 3 {
@@ -98,7 +99,7 @@ public class DragCardContainer: UIView {
     }
     
     /// 卡片之间的距离
-    public var cellSpacing: CGFloat = 10.0 {
+    public var cardSpacing: CGFloat = 10.0 {
         didSet {
             reloadData()
         }
@@ -111,12 +112,44 @@ public class DragCardContainer: UIView {
         }
     }
     
+    
+    /// 是否无限滑动
+    public var infiniteLoop: Bool = false {
+        didSet {
+            reloadData()
+        }
+    }
+    
+    public var allowedDirection = Direction.horizontal
+    
+    public var minimumTranslationInPercent: CGFloat = 0.5
+    public var minimumVelocityInPointPerSecond: CGFloat = 750
+    
+    
+    /// 卡片滑动过程中旋转的角度
+    public var cardRotationMaximumAngle: CGFloat = 20.0 {
+        didSet {
+            reloadData()
+        }
+    }
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
     /// 卡片移除方向
     public var removeDirection: DragCardContainer.RemoveDirection = .horizontal {
         didSet {
             reloadData()
         }
     }
+    
+    
     /// 水平方向上最大移除距离
     /// `removeDirection`设置为`horizontal`时，才生效
     public var horizontalRemoveMinimumDistance: CGFloat = UIScreen.main.bounds.size.width / 4.0 {
@@ -149,19 +182,9 @@ public class DragCardContainer: UIView {
         }
     }
     
-    /// 卡片滑动过程中旋转的角度
-    public var cellRotationMaximumAngle: CGFloat = 10.0 {
-        didSet {
-            reloadData()
-        }
-    }
     
-    /// 是否无限滑动
-    public var infiniteLoop: Bool = false {
-        didSet {
-            reloadData()
-        }
-    }
+    
+    
     
     /// 卡片滑动方向和纵轴之间的角度（你可以自己写个Demo，然后改变该属性的值，你就明白该属性的意思了）
     /// 如果水平方向滑动能移除卡片，请把该值设置的尽量小

@@ -23,10 +23,7 @@ internal func RandomColor() -> UIColor {
 
 public final class SwipeableView: UIView {
     
-    private lazy var modeState: ModeState = {
-        let modeState = ModeState()
-        return modeState
-    }()
+    
     
     private lazy var testView: UIView = {
         let testView = UIView()
