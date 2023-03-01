@@ -7,10 +7,10 @@
 
 import UIKit
 
-public class DetailViewController: UIViewController {
-
-    public override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-    }
-}
+//public class DetailViewController: UIViewController {
+//
+//    public override func viewDidLoad() {
+//        super.viewDidLoad()
+//        view.backgroundColor = .white
+//    }
+//}

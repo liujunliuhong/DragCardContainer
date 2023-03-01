@@ -11,7 +11,6 @@ import UIKit
 
 internal final class ModeState {
     
-    private var basicInfos: [BasicInfo] = []
     private weak var weakCardContainer: DragCardContainer?
     
     private var displayCardIndex: Int = 0
@@ -48,6 +47,13 @@ internal final class ModeState {
 
 extension ModeState {
     internal func prepare() {
+        metrics.update(self)
+        
+        for model in cardModels {
+            model.cardView.removeFromSuperview()
+        }
+        cardModels.removeAll()
+        
         
         let displayCount = min(metrics.visibleCount, metrics.numberOfCount)
         
@@ -60,13 +66,15 @@ extension ModeState {
         
         updateAllCardModelsTargetBasicInfo()
         
-        let animator = UIViewPropertyAnimator(duration: 0.25, curve: .easeInOut) {
+        let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
+                                              curve: .easeInOut) {
             for model in self.cardModels {
+                model.cardView.transform = .identity
+                model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.transform = model.targetBasicInfo.transform
             }
         }
         animator.startAnimation()
-        
     }
     
     internal func installNextCard() {
@@ -77,12 +85,15 @@ extension ModeState {
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: displayCardIndex)
         
         cardView.layer.anchorPoint = metrics.minimumBasicInfo.anchorPoint
+        cardView.transform = .identity
         cardView.frame = metrics.minimumBasicInfo.frame
         cardView.transform = metrics.minimumBasicInfo.transform
         cardContainer.insertSubview(cardView, at: 0)
         
         let cardModel = CardModel(cardView: cardView, modeState: self)
         cardModels.insert(cardModel, at: 0)
+        
+        addPanGesture(cardView: cardView)
     }
     
     private func restoreCard() {
@@ -92,13 +103,17 @@ extension ModeState {
         if !canRestoreCard() {
             return
         }
+        
         restoreDisplayIndex()
         cardModels.append(currentHoldCardModel)
         
         updateAllCardModelsTargetBasicInfo()
         
-        let animator = UIViewPropertyAnimator(duration: 0.25, dampingRatio: 0.5) {
+        let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
+                                              dampingRatio: 0.7) {
             for model in self.cardModels {
+                model.cardView.transform = .identity
+                model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.transform = model.targetBasicInfo.transform
             }
         }
@@ -185,10 +200,43 @@ extension ModeState {
         }
         return isDirectionAllowed() && areTranslationAndVelocityInTheSameDirection() && (isTranslationLargeEnough() || isVelocityLargeEnough())
     }
+    
+    private func dragFraction(movement: Movement) -> CGFloat {
+        let bounds = cardContainer.bounds
+        let translation = movement.translation
+        
+        let fraction = abs(translation.x) / (metrics.minimumTranslationInPercent * bounds.width)
+        
+        if fraction.isLessThanOrEqualTo(.zero) {
+            return .zero
+        } else if !fraction.isLessThanOrEqualTo(1.0) {
+            return 1.0
+        }
+        return fraction
+    }
+    
+    private func rotationAngle(movement: Movement) -> CGFloat {
+        let bounds = cardContainer.bounds
+        let translation = movement.translation
+        
+        var fraction = translation.x / (metrics.minimumTranslationInPercent * bounds.width)
+        
+        if fraction.isLessThanOrEqualTo(-1.0) {
+            fraction = -1.0
+        } else if !fraction.isLessThanOrEqualTo(1.0) {
+            fraction = 1.0
+        }
+        return (fraction * metrics.cardRotationMaximumAngle).radius
+    }
+    
+    private func addPanGesture(cardView: UIView) {
+        let panGesture = DragCardPanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
+        cardView.addGestureRecognizer(panGesture)
+    }
 }
 
 extension ModeState {
-    @objc private func handlePan(_ recognizer: UIPanGestureRecognizer) {
+    @objc private func handlePan(_ recognizer: DragCardPanGestureRecognizer) {
         let translation = recognizer.translation(in: cardContainer)
         let location = recognizer.location(in: cardContainer)
         let velocity = recognizer.velocity(in: cardContainer)
@@ -208,27 +256,50 @@ extension ModeState {
                 updateAllCardModelsTargetBasicInfo()
                 
                 
-                gestureChangeAnimator = UIViewPropertyAnimator(duration: 0.25, curve: .easeInOut, animations: {
+                gestureChangeAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
+                                                               curve: .easeInOut,
+                                                               animations: {
                     for model in self.cardModels {
+                        model.cardView.transform = .identity
+                        model.cardView.frame = model.targetBasicInfo.frame
                         model.cardView.transform = model.targetBasicInfo.transform
                     }
                 })
                 
+                
             case .changed:
                 print("changed")
                 // rotate and translate
+                gestureChangeAnimator?.fractionComplete = dragFraction(movement: movement)
+                
+                
+                let translationTransform = CGAffineTransform(translationX: translation.x, y: translation.y)
+                
+                let rotationAngle = rotationAngle(movement: movement)
+                print("rotationAngle: \(rotationAngle)")
+                let rotationTransform = CGAffineTransform(rotationAngle: rotationAngle)
+                
+                let holdCardTransform = translationTransform.concatenating(rotationTransform)
+                
+                currentHoldCardModel?.cardView.transform = holdCardTransform
+                
+                //recognizer.setTranslation(.zero, in: cardContainer)
                 
             case .ended:
                 print("ended")
-                if shouldDragOut(movement: movement) {
-                    // Drag out
-                } else {
+//                if shouldDragOut(movement: movement) {
+//                    // Drag out
+//                    gestureChangeAnimator?.finishAnimation(at: .end)
+//                } else {
                     // Restore
+                    gestureChangeAnimator?.stopAnimation(true)
+                    
                     restoreCard()
-                }
+//                }
             case .cancelled:
                 print("cancelled")
                 // Restore
+                gestureChangeAnimator?.stopAnimation(true)
                 restoreCard()
             default:
                 break

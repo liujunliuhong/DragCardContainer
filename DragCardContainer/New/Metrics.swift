@@ -9,26 +9,28 @@ import Foundation
 import UIKit
 
 internal final class Metrics {
+    internal private(set) var visibleCount: Int = Default.visibleCount
+    internal private(set) var cardSpacing: CGFloat = Default.cardSpacing
+    internal private(set) var infiniteLoop: Bool = Default.infiniteLoop
+    internal private(set) var allowedDirection: Direction = Default.allowedDirection
+    internal private(set) var minimumTranslationInPercent: CGFloat = Default.minimumTranslationInPercent
+    internal private(set) var minimumVelocityInPointPerSecond: CGFloat = Default.minimumVelocityInPointPerSecond
+    internal private(set) var cardRotationMaximumAngle: CGFloat = Default.cardRotationMaximumAngle
+    internal private(set) var minimumScale: CGFloat = Default.minimumScale
     
-    internal let numberOfCount: Int
-    internal let visibleCount: Int
-    internal let cardSpacing: CGFloat
-    internal let infiniteLoop: Bool
-    internal let allowedDirection: Direction
-    internal let minimumTranslationInPercent: CGFloat
-    internal let minimumVelocityInPointPerSecond: CGFloat
-    internal let cardRotationMaximumAngle: CGFloat
-    internal let minimumScale: CGFloat
-    internal let magnitudeScale: CGFloat
-    internal let normalCardSize: CGSize
-    internal let normalCardFrame: CGRect
-    internal let basicInfos: [BasicInfo]
+    internal private(set) var numberOfCount: Int = 0
+    internal private(set) var normalCardSize: CGSize = .zero
+    internal private(set) var basicInfos: [BasicInfo] = []
     
     internal var minimumBasicInfo: BasicInfo {
         return basicInfos.last!
     }
     
     internal init(modeState: ModeState) {
+        update(modeState)
+    }
+    
+    internal func update(_ modeState: ModeState) {
         let numberOfCount = modeState.cardDataSource.numberOfCount(modeState.cardContainer)
         assert(numberOfCount >= 0, "`numberOfCount` must be greater or equal to 0")
         self.numberOfCount = numberOfCount
@@ -45,25 +47,26 @@ internal final class Metrics {
         assert(minimumScale.isLessThanOrEqualTo(1.0), "`minimumScale` must be less than or equal to 1.0")
         let magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
         self.minimumScale = minimumScale
-        self.magnitudeScale = magnitudeScale
         
         self.infiniteLoop = modeState.cardContainer.infiniteLoop
         self.allowedDirection = modeState.cardContainer.allowedDirection
         self.minimumTranslationInPercent = modeState.cardContainer.minimumTranslationInPercent
         self.minimumVelocityInPointPerSecond = modeState.cardContainer.minimumVelocityInPointPerSecond
-        self.cardRotationMaximumAngle = cardRotationMaximumAngle
+        self.cardRotationMaximumAngle = modeState.cardContainer.cardRotationMaximumAngle
         
         let normalCardWidth = modeState.cardContainer.bounds.width
         let normalCardHeight = modeState.cardContainer.bounds.height - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
         self.normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
-        self.normalCardFrame = CGRect(origin: .zero, size: normalCardSize)
         
         var basicInfos: [BasicInfo] = []
         for i in 0..<visibleCount {
             let anchorPoint = CGPoint(x: 0.5, y: 1.0)
             let scale = 1.0 - magnitudeScale * CGFloat(i)
             let basicInfo = BasicInfo(transform: CGAffineTransform(scaleX: scale, y: scale),
-                                      frame: normalCardFrame,
+                                      frame: CGRect(x: .zero,
+                                                    y: cardSpacing * CGFloat(i),
+                                                    width: normalCardWidth,
+                                                    height: normalCardHeight),
                                       anchorPoint: anchorPoint)
             basicInfos.append(basicInfo)
         }
