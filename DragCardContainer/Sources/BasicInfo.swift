@@ -1,9 +1,9 @@
 //
-//  DragCardCell.swift
-//  YHDragContainer
+//  BasicInfo.swift
+//  DragCardContainer
 //
-//  Created by jun on 2021/10/18.
-//  Copyright © 2021 yinhe. All rights reserved.
+//  Created by dfsx6 on 2023/3/1.
+//
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -47,32 +47,18 @@
 
 
 import Foundation
-import UIKit
 
-open class DragCardCell: UIView {
-    /// 重用标识符
-    public let reuseIdentifier: String
+
+internal struct BasicInfo {
+    internal let transform: CGAffineTransform
+    internal let frame: CGRect
+    internal let anchorPoint: CGPoint
     
-    public required init(reuseIdentifier: String) {
-        self.reuseIdentifier = reuseIdentifier
-        super.init(frame: .zero)
-        self.identifier = UUID().uuidString
-        self.isReuse = false
+    internal init(transform: CGAffineTransform, frame: CGRect, anchorPoint: CGPoint) {
+        self.transform = transform
+        self.frame = frame
+        self.anchorPoint = anchorPoint
     }
     
-    @available(iOS, unavailable)
-    public override init(frame: CGRect) {
-        self.reuseIdentifier = ""
-        super.init(frame: frame)
-    }
-    
-    public init() {
-        self.reuseIdentifier = ""
-        super.init(frame: .zero)
-    }
-    
-    @available(iOS, unavailable)
-    @objc public required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    internal static let `default` = BasicInfo(transform: .identity, frame: .zero, anchorPoint: .zero)
 }

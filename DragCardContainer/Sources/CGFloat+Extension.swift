@@ -1,9 +1,9 @@
 //
-//  DragCardContainer+TapGesture.swift
-//  YHDragContainer
+//  CGFloat+Extension.swift
+//  DragCardContainer
 //
-//  Created by jun on 2021/10/18.
-//  Copyright © 2021 yinhe. All rights reserved.
+//  Created by galaxy on 2023/3/1.
+//
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -47,11 +47,9 @@
 
 
 import Foundation
-import UIKit
 
-//extension DragCardContainer {
-//    @objc internal func tapGestureRecognizer(tapGesture: UITapGestureRecognizer) {
-//        guard let cell = activeCardProperties.first?.cell else { return }
-//        delegate?.dragCard(self, didSelectIndexAt: _currentIndex, withTopCell: cell)
-//    }
-//}
+extension CGFloat {
+    internal var radius: CGFloat {
+        return self / 180.0 * CGFloat(Double.pi)
+    }
+}

@@ -1,8 +1,9 @@
 //
-//  RegisterTable.swift
+//  Default.swift
 //  DragCardContainer
 //
-//  Created by jun on 2021/10/20.
+//  Created by dfsx6 on 2023/3/1.
+//
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -46,14 +47,15 @@
 
 
 import Foundation
-import UIKit
 
-internal class RegisterTable {
-    let reuseIdentifier: String
-    let cellClass: DragCardCell.Type
-    
-    init(reuseIdentifier: String, cellClass: DragCardCell.Type) {
-        self.reuseIdentifier = reuseIdentifier
-        self.cellClass = cellClass
-    }
+internal struct Default {
+    internal static let minimumTranslationInPercent: CGFloat = 0.25
+    internal static let minimumVelocityInPointPerSecond: CGFloat = 750
+    internal static let cardRotationMaximumAngle: CGFloat = 20.0
+    internal static let allowedDirection = Direction.horizontal
+    internal static let infiniteLoop: Bool = false
+    internal static let minimumScale: CGFloat = 0.8
+    internal static let cardSpacing: CGFloat = 10.0
+    internal static let visibleCount: Int = 3
+    internal static let animationDuration: TimeInterval = 0.5
 }

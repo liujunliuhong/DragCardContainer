@@ -1,9 +1,9 @@
 //
-//  DragCardCell+Extension.swift
-//  YHDragContainer
+//  Direction.swift
+//  DragCardContainer
 //
-//  Created by jun on 2021/10/19.
-//  Copyright © 2021 yinhe. All rights reserved.
+//  Created by dfsx6 on 2023/3/1.
+//
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -48,31 +48,55 @@
 
 import Foundation
 
-extension DragCardCell {
-    private struct AssociatedKeys {
-        static var identifierKey = "com.galaxy.gragCardCell.identifierKey"
-        static var isReuseKey = "com.galaxy.gragCardCell.isReuseKey"
+public struct Direction: OptionSet, CustomStringConvertible {
+    public let rawValue: UInt
+    
+    public init(rawValue: UInt) {
+        self.rawValue = rawValue
+    }
+    
+    public static let none = Direction([])
+    public static let left = Direction(rawValue: 1 << 0)
+    public static let right = Direction(rawValue: 1 << 1)
+    public static let down = Direction(rawValue: 1 << 2)
+    public static let up = Direction(rawValue: 1 << 3)
+    
+    public static let horizontal: Direction = [left, right]
+    public static let vertical: Direction = [up, down]
+    
+    public static let all: Direction = [horizontal, vertical]
+    
+    public var description: String {
+        switch self {
+            case .none:
+                return "None"
+            case .left:
+                return "Left"
+            case .right:
+                return "Right"
+            case .up:
+                return "Up"
+            case .down:
+                return "Down"
+            default:
+                return "Unknown"
+        }
     }
 }
 
-extension DragCardCell {
-    /// 唯一标识符
-    internal var identifier: String? {
-        get {
-            return objc_getAssociatedObject(self, &AssociatedKeys.identifierKey) as? String
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.identifierKey, newValue, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
-        }
-    }
-    
-    /// 是否被重用
-    internal var isReuse: Bool {
-        get {
-            return (objc_getAssociatedObject(self, &AssociatedKeys.isReuseKey) as? Bool) ?? false
-        }
-        set {
-            objc_setAssociatedObject(self, &AssociatedKeys.isReuseKey, newValue, .OBJC_ASSOCIATION_ASSIGN)
+extension Direction {
+    public static func fromPoint(_ point: CGPoint) -> Direction {
+        switch (point.x, point.y) {
+            case let (x, y) where abs(x) >= abs(y) && x > 0:
+                return .right
+            case let (x, y) where abs(x) >= abs(y) && x < 0:
+                return .left
+            case let (x, y) where abs(x) < abs(y) && y < 0:
+                return .up
+            case let (x, y) where abs(x) < abs(y) && y > 0:
+                return .down
+            case (_, _):
+                return .none
         }
     }
 }

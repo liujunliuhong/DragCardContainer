@@ -1,9 +1,9 @@
 //
-//  DragCardProperty.swift
-//  YHDragContainer
+//  Movement.swift
+//  DragCardContainer
 //
-//  Created by jun on 2021/10/18.
-//  Copyright © 2021 yinhe. All rights reserved.
+//  Created by dfsx6 on 2023/3/1.
+//
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -47,17 +47,15 @@
 
 
 import Foundation
-import UIKit
 
-//internal class DragCardProperty {
-//    var transform: CGAffineTransform = .identity
-//    var frame: CGRect = .zero
-//    init() {}
-//}
-//
-//internal class DragCardActiveProperty: DragCardProperty {
-//    let cell: DragCardCell
-//    init(cell: DragCardCell) {
-//        self.cell = cell
-//    }
-//}
+public struct Movement {
+    public let translation: CGPoint
+    public let velocity: CGPoint
+    
+    internal init(translation: CGPoint, velocity: CGPoint) {
+        self.translation = translation
+        self.velocity = velocity
+    }
+    
+    internal static let `default` = Movement(translation: .zero, velocity: .zero)
+}

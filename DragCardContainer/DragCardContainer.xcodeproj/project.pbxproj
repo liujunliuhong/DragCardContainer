@@ -7,21 +7,14 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8559819129AFA4EE00365130 /* DragCardPanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8559819029AFA4EE00365130 /* DragCardPanGestureRecognizer.swift */; };
 		8559819329AFA79300365130 /* CGFloat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8559819229AFA79300365130 /* CGFloat+Extension.swift */; };
+		D113EF4329B049B300BA78D5 /* DragOutStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4229B049B300BA78D5 /* DragOutStatus.swift */; };
+		D113EF4729B09D3200BA78D5 /* PanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */; };
+		D113EF4929B09D5900BA78D5 /* TapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */; };
 		D15CD68A29A30A1000086A1B /* DragCardContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = D15CD68929A30A1000086A1B /* DragCardContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		D15CD69D29A30A8000086A1B /* DragCardProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69129A30A8000086A1B /* DragCardProperty.swift */; };
-		D15CD69E29A30A8000086A1B /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69229A30A8000086A1B /* UIView+Extension.swift */; };
 		D15CD69F29A30A8000086A1B /* DragCardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69329A30A8000086A1B /* DragCardDelegate.swift */; };
-		D15CD6A029A30A8000086A1B /* DragCardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69429A30A8000086A1B /* DragCardCell.swift */; };
-		D15CD6A129A30A8000086A1B /* DragCardCell+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69529A30A8000086A1B /* DragCardCell+Extension.swift */; };
 		D15CD6A229A30A8000086A1B /* DragCardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69629A30A8000086A1B /* DragCardContainer.swift */; };
-		D15CD6A329A30A8000086A1B /* RegisterTable.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69729A30A8000086A1B /* RegisterTable.swift */; };
-		D15CD6A429A30A8000086A1B /* DragCardContainer+PanGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69829A30A8000086A1B /* DragCardContainer+PanGesture.swift */; };
-		D15CD6A529A30A8000086A1B /* DragCardContainer+TapGesture.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69929A30A8000086A1B /* DragCardContainer+TapGesture.swift */; };
 		D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */; };
-		D15CD6A729A30A8000086A1B /* DragCardContainer+Fix.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69B29A30A8000086A1B /* DragCardContainer+Fix.swift */; };
-		D15CD6A829A30A8000086A1B /* DragCardDirection.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69C29A30A8000086A1B /* DragCardDirection.swift */; };
 		D185877829AEFFC4001FCBB5 /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877729AEFFC4001FCBB5 /* CardModel.swift */; };
 		D185877A29AF01E8001FCBB5 /* BasicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877929AF01E8001FCBB5 /* BasicInfo.swift */; };
 		D185877C29AF0239001FCBB5 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877B29AF0239001FCBB5 /* Default.swift */; };
@@ -33,22 +26,15 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		8559819029AFA4EE00365130 /* DragCardPanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardPanGestureRecognizer.swift; sourceTree = "<group>"; };
 		8559819229AFA79300365130 /* CGFloat+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extension.swift"; sourceTree = "<group>"; };
+		D113EF4229B049B300BA78D5 /* DragOutStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragOutStatus.swift; sourceTree = "<group>"; };
+		D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanGestureRecognizer.swift; sourceTree = "<group>"; };
+		D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGestureRecognizer.swift; sourceTree = "<group>"; };
 		D15CD68629A30A1000086A1B /* DragCardContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DragCardContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		D15CD68929A30A1000086A1B /* DragCardContainer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = DragCardContainer.h; sourceTree = "<group>"; };
-		D15CD69129A30A8000086A1B /* DragCardProperty.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardProperty.swift; sourceTree = "<group>"; };
-		D15CD69229A30A8000086A1B /* UIView+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
 		D15CD69329A30A8000086A1B /* DragCardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDelegate.swift; sourceTree = "<group>"; };
-		D15CD69429A30A8000086A1B /* DragCardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardCell.swift; sourceTree = "<group>"; };
-		D15CD69529A30A8000086A1B /* DragCardCell+Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardCell+Extension.swift"; sourceTree = "<group>"; };
 		D15CD69629A30A8000086A1B /* DragCardContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardContainer.swift; sourceTree = "<group>"; };
-		D15CD69729A30A8000086A1B /* RegisterTable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RegisterTable.swift; sourceTree = "<group>"; };
-		D15CD69829A30A8000086A1B /* DragCardContainer+PanGesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+PanGesture.swift"; sourceTree = "<group>"; };
-		D15CD69929A30A8000086A1B /* DragCardContainer+TapGesture.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+TapGesture.swift"; sourceTree = "<group>"; };
 		D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDataSource.swift; sourceTree = "<group>"; };
-		D15CD69B29A30A8000086A1B /* DragCardContainer+Fix.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "DragCardContainer+Fix.swift"; sourceTree = "<group>"; };
-		D15CD69C29A30A8000086A1B /* DragCardDirection.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDirection.swift; sourceTree = "<group>"; };
 		D185877729AEFFC4001FCBB5 /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		D185877929AF01E8001FCBB5 /* BasicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfo.swift; sourceTree = "<group>"; };
 		D185877B29AF0239001FCBB5 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
@@ -73,7 +59,6 @@
 		D15CD67C29A30A1000086A1B = {
 			isa = PBXGroup;
 			children = (
-				D19E8C5D29AC5D4200B17234 /* New */,
 				D15CD69029A30A8000086A1B /* Sources */,
 				D15CD68829A30A1000086A1B /* DragCardContainer */,
 				D15CD68729A30A1000086A1B /* Products */,
@@ -100,22 +85,6 @@
 			isa = PBXGroup;
 			children = (
 				D15CD69629A30A8000086A1B /* DragCardContainer.swift */,
-				D15CD69129A30A8000086A1B /* DragCardProperty.swift */,
-				D15CD69229A30A8000086A1B /* UIView+Extension.swift */,
-				D15CD69429A30A8000086A1B /* DragCardCell.swift */,
-				D15CD69529A30A8000086A1B /* DragCardCell+Extension.swift */,
-				D15CD69729A30A8000086A1B /* RegisterTable.swift */,
-				D15CD69829A30A8000086A1B /* DragCardContainer+PanGesture.swift */,
-				D15CD69929A30A8000086A1B /* DragCardContainer+TapGesture.swift */,
-				D15CD69B29A30A8000086A1B /* DragCardContainer+Fix.swift */,
-				D15CD69C29A30A8000086A1B /* DragCardDirection.swift */,
-			);
-			path = Sources;
-			sourceTree = "<group>";
-		};
-		D19E8C5D29AC5D4200B17234 /* New */ = {
-			isa = PBXGroup;
-			children = (
 				D19E8C6D29ACA88000B17234 /* ModeState.swift */,
 				D185877729AEFFC4001FCBB5 /* CardModel.swift */,
 				D185877929AF01E8001FCBB5 /* BasicInfo.swift */,
@@ -124,12 +93,14 @@
 				D185878329AF39D0001FCBB5 /* Metrics.swift */,
 				D185878729AF53DD001FCBB5 /* Movement.swift */,
 				D185878B29AF5508001FCBB5 /* Direction.swift */,
+				D113EF4229B049B300BA78D5 /* DragOutStatus.swift */,
 				D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */,
 				8559819229AFA79300365130 /* CGFloat+Extension.swift */,
 				D185877B29AF0239001FCBB5 /* Default.swift */,
-				8559819029AFA4EE00365130 /* DragCardPanGestureRecognizer.swift */,
+				D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */,
+				D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */,
 			);
-			path = New;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -211,28 +182,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8559819129AFA4EE00365130 /* DragCardPanGestureRecognizer.swift in Sources */,
 				D185877A29AF01E8001FCBB5 /* BasicInfo.swift in Sources */,
+				D113EF4929B09D5900BA78D5 /* TapGestureRecognizer.swift in Sources */,
 				D19E8C6E29ACA88000B17234 /* ModeState.swift in Sources */,
 				D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */,
-				D15CD6A729A30A8000086A1B /* DragCardContainer+Fix.swift in Sources */,
 				D185878429AF39D0001FCBB5 /* Metrics.swift in Sources */,
 				8559819329AFA79300365130 /* CGFloat+Extension.swift in Sources */,
-				D15CD6A329A30A8000086A1B /* RegisterTable.swift in Sources */,
-				D15CD6A829A30A8000086A1B /* DragCardDirection.swift in Sources */,
 				D185877829AEFFC4001FCBB5 /* CardModel.swift in Sources */,
-				D15CD69E29A30A8000086A1B /* UIView+Extension.swift in Sources */,
-				D15CD6A529A30A8000086A1B /* DragCardContainer+TapGesture.swift in Sources */,
 				D15CD6A229A30A8000086A1B /* DragCardContainer.swift in Sources */,
-				D15CD6A029A30A8000086A1B /* DragCardCell.swift in Sources */,
-				D15CD6A129A30A8000086A1B /* DragCardCell+Extension.swift in Sources */,
 				D185878C29AF5508001FCBB5 /* Direction.swift in Sources */,
 				D185878829AF53DD001FCBB5 /* Movement.swift in Sources */,
-				D15CD6A429A30A8000086A1B /* DragCardContainer+PanGesture.swift in Sources */,
-				D15CD69D29A30A8000086A1B /* DragCardProperty.swift in Sources */,
+				D113EF4729B09D3200BA78D5 /* PanGestureRecognizer.swift in Sources */,
 				D15CD69F29A30A8000086A1B /* DragCardDelegate.swift in Sources */,
 				D185878A29AF547E001FCBB5 /* CGPoint+Extension.swift in Sources */,
 				D185877C29AF0239001FCBB5 /* Default.swift in Sources */,
+				D113EF4329B049B300BA78D5 /* DragOutStatus.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

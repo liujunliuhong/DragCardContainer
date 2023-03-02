@@ -9,11 +9,13 @@ import UIKit
 import SnapKit
 import DragCardContainer
 
-public class ViewController: UIViewController, DragCardDataSource {
+public class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
+        cardContainer.infiniteLoop = true
         cardContainer.dataSource = self
+        cardContainer.delegate = self
         return cardContainer
     }()
     
@@ -22,22 +24,62 @@ public class ViewController: UIViewController, DragCardDataSource {
         view.backgroundColor = .white
         navigationItem.title = "Demo"
         
+        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "next", style: .plain, target: self, action: #selector(nextAction)),
+                                              UIBarButtonItem(title: "rewind", style: .plain, target: self, action: #selector(rewindAction))]
+        
         view.addSubview(cardContainer)
         cardContainer.snp.makeConstraints { make in
-            make.left.right.equalToSuperview().inset(90)
-            make.top.equalToSuperview().offset(200)
-            make.bottom.equalToSuperview().offset(-200)
+            make.centerX.equalToSuperview()//.offset(-100)
+            make.width.equalTo(150)
+            make.centerY.equalToSuperview()
+            make.height.equalTo(250)
         }
     }
     
+    @objc private func nextAction() {
+        cardContainer.swipeTopCard(to: .right)
+    }
+    
+    @objc private func rewindAction() {
+        cardContainer.rewind(from: .right)
+    }
+}
+
+extension ViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
         return 6
     }
     
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView {
-        let view = UIView()
-        view.backgroundColor = RandomColor()
-        return view
+        let label = UILabel()
+        label.backgroundColor = RandomColor()
+        label.textAlignment = .center
+        label.font = .boldSystemFont(ofSize: 60)
+        label.text = "\(index)"
+        label.isUserInteractionEnabled = true
+        return label
+    }
+}
+
+extension ViewController: DragCardDelegate {
+    public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with card: UIView) {
+        print("displayTopCardAt: \(index)")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with card: UIView) {
+        print("movementCardAt: \(index) - \(translation)")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, didRemoveTopCardAt index: Int, direction: Direction, with card: UIView) {
+        print("didRemoveTopCardAt: \(index)")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, didFinishRemoveLast card: UIView) {
+        print("didFinishRemoveLast")
+    }
+    
+    public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with card: UIView) {
+        print("didSelectTopCardAt: \(index)")
     }
 }
 
