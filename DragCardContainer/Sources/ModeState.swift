@@ -68,6 +68,20 @@ internal final class ModeState {
     
     private var metrics: Metrics = .default
     
+    private var _topIndex: Int?
+    internal var topIndex: Int? {
+        get {
+            _topIndex = cardModels.last?.index
+            return _topIndex
+        }
+        set {
+            if let newValue = newValue, newValue >= 0 && newValue <= metrics.visibleCount - 1 {
+                _topIndex = newValue
+                invalidate(forceReset: false, animation: false)
+            }
+        }
+    }
+    
     internal var cardContainer: DragCardContainer {
         guard let cardContainer = weakCardContainer else {
             fatalError("")
@@ -88,12 +102,18 @@ internal final class ModeState {
 }
 
 extension ModeState {
-    internal func prepare() {
-        flush()
-        //
+    internal func invalidate(forceReset: Bool, animation: Bool) {
         metrics = Metrics(modeState: self)
         //
-        let displayCount = min(metrics.visibleCount, metrics.numberOfCount)
+        if forceReset {
+            displayCardIndex = 0
+        } else {
+            displayCardIndex = _topIndex ?? 0
+        }
+        //
+        flush()
+        //
+        let displayCount = metrics.visibleCount
         for i in 0..<displayCount {
             installNextCard()
             if i != displayCount - 1 {
@@ -103,15 +123,23 @@ extension ModeState {
         
         updateAllCardModelsTargetBasicInfo()
         
-        let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                              curve: .easeInOut) {
+        if animation {
+            let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
+                                                  curve: .easeInOut) {
+                for model in self.cardModels {
+                    model.cardView.transform = .identity
+                    model.cardView.frame = model.targetBasicInfo.frame
+                    model.cardView.transform = model.targetBasicInfo.transform
+                }
+            }
+            animator.startAnimation()
+        } else {
             for model in self.cardModels {
                 model.cardView.transform = .identity
                 model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.transform = model.targetBasicInfo.transform
             }
         }
-        animator.startAnimation()
         
         addPanGestureForTopCard()
         addTapGestureForTopCard()
@@ -143,6 +171,7 @@ extension ModeState {
         
         activeCardsAnimator?.stopAnimation(false)
         activeCardsAnimator?.finishAnimation(at: .current)
+        activeCardsAnimator = nil
         
         activeCardsAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
                                                      curve: .easeInOut,
@@ -206,6 +235,30 @@ extension ModeState {
         
         restoreCard()
     }
+    
+    internal func addPanGestureForTopCard() {
+        if let topModel = cardModels.last {
+            addPanGesture(topModel.cardView)
+        }
+    }
+    
+    internal func addTapGestureForTopCard() {
+        if let topModel = cardModels.last {
+            addTapGesture(topModel.cardView)
+        }
+    }
+    
+    internal func removePanGestureForTopCard() {
+        if let topModel = cardModels.last {
+            removePanGesture(topModel.cardView)
+        }
+    }
+    
+    internal func removeTapGestureForTopCard() {
+        if let topModel = cardModels.last {
+            removeTapGesture(topModel.cardView)
+        }
+    }
 }
 
 extension ModeState {
@@ -227,8 +280,6 @@ extension ModeState {
             activeCardsAnimator.finishAnimation(at: .current)
         }
         activeCardsAnimator = nil
-        //
-        displayCardIndex = 0
     }
     
     private func installNextCard() {
@@ -376,10 +427,9 @@ extension ModeState {
         func isVelocityLargeEnough() -> Bool {
             return velocity.magnitude > metrics.minimumVelocityInPointPerSecond
         }
-        //        print("direction: \(Direction.fromPoint(translation))")
-        //        print("isDirectionAllowed: \(isDirectionAllowed())")
-        //        print("isTranslationLargeEnough: \(isTranslationLargeEnough())")
-        
+        // print("direction: \(Direction.fromPoint(translation))")
+        // print("isDirectionAllowed: \(isDirectionAllowed())")
+        // print("isTranslationLargeEnough: \(isTranslationLargeEnough())")
         return isDirectionAllowed() && (isTranslationLargeEnough() || isVelocityLargeEnough())
     }
     
@@ -411,23 +461,11 @@ extension ModeState {
         return (fraction * metrics.cardRotationMaximumAngle).radius
     }
     
-    private func removePanGestureForTopCard() {
-        if let topModel = cardModels.last {
-            removePanGesture(topModel.cardView)
-        }
-    }
-    
     private func removePanGesture(_ cardView: UIView) {
         for gesture in (cardView.gestureRecognizers ?? []) {
             if gesture.isKind(of: PanGestureRecognizer.classForCoder()) {
                 cardView.removeGestureRecognizer(gesture)
             }
-        }
-    }
-    
-    private func removeTapGestureForTopCard() {
-        if let topModel = cardModels.last {
-            removeTapGesture(topModel.cardView)
         }
     }
     
@@ -439,22 +477,10 @@ extension ModeState {
         }
     }
     
-    private func addPanGestureForTopCard() {
-        if let topModel = cardModels.last {
-            addPanGesture(topModel.cardView)
-        }
-    }
-    
     private func addPanGesture(_ cardView: UIView) {
         removePanGesture(cardView)
         let panGesture = PanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
         cardView.addGestureRecognizer(panGesture)
-    }
-    
-    private func addTapGestureForTopCard() {
-        if let topModel = cardModels.last {
-            addTapGesture(topModel.cardView)
-        }
     }
     
     private func addTapGesture(_ cardView: UIView) {
@@ -479,13 +505,13 @@ extension ModeState {
                 return movement
             case .right:
                 let movement = Movement(translation: CGPoint(x: 1,
-                                                             y: -0.5),
+                                                             y: -0.2),
                                         velocity: CGPoint(x: metrics.minimumVelocityInPointPerSecond,
                                                           y: 0))
                 return movement
             case .left:
                 let movement = Movement(translation: CGPoint(x: -1,
-                                                             y: -0.5),
+                                                             y: -0.2),
                                         velocity: CGPoint(x: -metrics.minimumVelocityInPointPerSecond,
                                                           y: 0))
                 return movement
@@ -497,13 +523,7 @@ extension ModeState {
     private func endTransform(movement: Movement) -> CGAffineTransform {
         let toTranslation = finalTranslation(movement: movement)
         let translationTransform = CGAffineTransform(translationX: toTranslation.x, y: toTranslation.y)
-        
-        print("😄\(toTranslation)")
-        
-        let rotationTransform = CGAffineTransform(rotationAngle: metrics.cardRotationMaximumAngle.radius)
-        
-        let transform = translationTransform.concatenating(rotationTransform)
-        
+        let transform = translationTransform.rotated(by: metrics.cardRotationMaximumAngle.radius)
         return transform
     }
     
@@ -533,8 +553,6 @@ extension ModeState {
             
             let dragOutMovement = model.dragOutMovement
             let finalTranslation = finalTranslation(movement: dragOutMovement)
-            
-            //let initialSpringVelocity = dragOutMovement.velocity.magnitude
             
             let transform = endTransform(movement: dragOutMovement)
             
@@ -591,14 +609,14 @@ extension ModeState {
     private func delegateForFinishRemoveLastCard(model: CardModel) {
         if model.index == metrics.numberOfCount - 1 && !metrics.infiniteLoop {
             cardContainer.delegate?.dragCard(cardContainer,
-                                             didFinishRemoveLast: model.cardView)
+                                             didRemovedLast: model.cardView)
         }
     }
     
     private func delegateForRemoveTopCard(model: CardModel) {
         let direction = Direction.fromPoint(model.dragOutMovement.translation)
         cardContainer.delegate?.dragCard(cardContainer,
-                                         didRemoveTopCardAt: model.index,
+                                         didRemovedTopCardAt: model.index,
                                          direction: direction,
                                          with: model.cardView)
     }
@@ -614,15 +632,12 @@ extension ModeState {
 extension ModeState {
     @objc private func handlePan(_ recognizer: PanGestureRecognizer) {
         let translation = recognizer.translation(in: cardContainer.containerView)
-        //let location = recognizer.location(in: cardContainer.containerView)
         let velocity = recognizer.velocity(in: cardContainer.containerView)
         
         let movement = Movement(translation: translation, velocity: velocity)
         
         switch recognizer.state {
             case .began:
-                print("begin")
-                
                 currentHoldCardModel = cardModels.last
                 cardModels.removeLast() // remove last
                 
@@ -633,6 +648,8 @@ extension ModeState {
                 
                 activeCardsAnimator?.stopAnimation(false)
                 activeCardsAnimator?.finishAnimation(at: .end)
+                activeCardsAnimator = nil
+                
                 activeCardsAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
                                                              curve: .easeInOut,
                                                              animations: {
@@ -644,17 +661,13 @@ extension ModeState {
                 })
                 
             case .changed:
-                print("changed")
                 // rotate and translate
                 activeCardsAnimator?.fractionComplete = dragFraction(movement: movement)
                 
                 if let currentHoldCardModel = currentHoldCardModel {
                     let translationTransform = CGAffineTransform(translationX: translation.x, y: translation.y)
-                    
                     let rotationAngle = rotationAngle(movement: movement)
-                    let rotationTransform = CGAffineTransform(rotationAngle: rotationAngle)
-                    
-                    let holdCardTransform = translationTransform.concatenating(rotationTransform)
+                    let holdCardTransform = translationTransform.rotated(by: rotationAngle)
                     
                     currentHoldCardModel.cardView.transform = holdCardTransform
                     
@@ -663,7 +676,6 @@ extension ModeState {
                     delegateForMovementCard(model: currentHoldCardModel, translation: translation)
                 }
             case .ended, .cancelled:
-                print("ended or cancelled")
                 if shouldDragOut(movement: movement) {
                     // Drag out
                     activeCardsAnimator?.fractionComplete = 1.0
@@ -681,6 +693,7 @@ extension ModeState {
                     // Restore
                     activeCardsAnimator?.stopAnimation(true)
                     activeCardsAnimator?.finishAnimation(at: .current)
+                    activeCardsAnimator = nil
                     
                     restoreCard()
                 }

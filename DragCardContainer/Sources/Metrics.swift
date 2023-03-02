@@ -88,7 +88,13 @@ internal final class Metrics {
         
         let minimumScale = modeState.cardContainer.minimumScale
         assert(minimumScale.isLessThanOrEqualTo(1.0), "`minimumScale` must be less than or equal to 1.0")
-        let magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
+        
+        var magnitudeScale: CGFloat
+        if visibleCount <= 1 {
+            magnitudeScale = 1
+        } else {
+            magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
+        }
         self.minimumScale = minimumScale
         
         self.infiniteLoop = modeState.cardContainer.infiniteLoop

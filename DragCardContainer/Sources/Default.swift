@@ -51,7 +51,7 @@ import Foundation
 internal struct Default {
     internal static let minimumTranslationInPercent: CGFloat = 0.25
     internal static let minimumVelocityInPointPerSecond: CGFloat = 750
-    internal static let cardRotationMaximumAngle: CGFloat = 20.0
+    internal static let cardRotationMaximumAngle: CGFloat = 10.0
     internal static let allowedDirection = Direction.horizontal
     internal static let infiniteLoop: Bool = false
     internal static let minimumScale: CGFloat = 0.8

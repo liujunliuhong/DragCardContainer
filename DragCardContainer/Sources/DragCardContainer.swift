@@ -65,7 +65,7 @@ public class DragCardContainer: UIView {
     /// Delegate
     public weak var delegate: DragCardDelegate?
     
-    /// Visible sard count
+    /// Visible card count
     public var visibleCount: Int = Default.visibleCount {
         didSet {
             reloadDataIfNeeded()
@@ -121,51 +121,37 @@ public class DragCardContainer: UIView {
         }
     }
     
+    /// Current top index.
+    public var currentTopIndex: Int? {
+        set {
+            modeState.topIndex = newValue
+        }
+        get {
+            return modeState.topIndex
+        }
+    }
     
-//    /// 当数据源只有1个的时候，是否可以撤销
-//    public var canRevokeWhenOnlyOneDataSource: Bool = false {
-//        didSet {
-//            reloadData()
-//        }
-//    }
-//
-//    /// 当前卡片索引（顶层卡片的索引，可以直接与用户发生交互）
-//    public var currentIndex: Int {
-//        set {
-//            _currentIndex = newValue
-//            reloadData()
-//        }
-//        get {
-//            return _currentIndex
-//        }
-//    }
-//
-//    /// 是否禁用拖动
-//    public var disableDrag: Bool = false {
-//        didSet {
-//            for (_, info) in activeCardProperties.enumerated() {
-//                if disableDrag {
-//                    removePanGesture(for: info.cell)
-//                } else {
-//                    addPanGesture(for: info.cell)
-//                }
-//            }
-//        }
-//    }
-//
-//    /// 是否禁用卡片的点击事件
-//    public var disableClick: Bool = false {
-//        didSet {
-//            for (_, info) in activeCardProperties.enumerated() {
-//                if disableClick {
-//                    removeTapGesture(for: info.cell)
-//                } else {
-//                    addTapGesture(for: info.cell)
-//                }
-//            }
-//        }
-//    }
+    /// Disable drag action for top card
+    public var disableTopCardDrag: Bool = false {
+        didSet {
+            if disableTopCardDrag {
+                modeState.removePanGestureForTopCard()
+            } else {
+                modeState.addPanGestureForTopCard()
+            }
+        }
+    }
     
+    /// Disable click action for top card
+    public var disableTopCardClick: Bool = false {
+        didSet {
+            if disableTopCardClick {
+                modeState.removeTapGestureForTopCard()
+            } else {
+                modeState.addTapGestureForTopCard()
+            }
+        }
+    }
     
     private lazy var modeState: ModeState = {
         let modeState = ModeState(cardContainer: self)
@@ -201,6 +187,10 @@ extension DragCardContainer {
 }
 
 extension DragCardContainer {
+    public func reloadData(animation: Bool = false) {
+        modeState.invalidate(forceReset: true, animation: animation)
+    }
+    
     public func rewind(from: Direction) {
         modeState.rewind(from: from)
     }
@@ -213,7 +203,7 @@ extension DragCardContainer {
 extension DragCardContainer {
     private func reloadDataIfNeeded() {
         if dataSource != nil {
-            modeState.prepare()
+            modeState.invalidate(forceReset: false, animation: false)
         }
     }
 }

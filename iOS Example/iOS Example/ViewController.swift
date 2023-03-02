@@ -13,9 +13,10 @@ public class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
-        cardContainer.infiniteLoop = true
+        cardContainer.infiniteLoop = false
         cardContainer.dataSource = self
         cardContainer.delegate = self
+        //cardContainer.visibleCount = 2
         return cardContainer
     }()
     
@@ -25,7 +26,8 @@ public class ViewController: UIViewController {
         navigationItem.title = "Demo"
         
         navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "next", style: .plain, target: self, action: #selector(nextAction)),
-                                              UIBarButtonItem(title: "rewind", style: .plain, target: self, action: #selector(rewindAction))]
+                                              UIBarButtonItem(title: "rewind_form_right", style: .plain, target: self, action: #selector(rewindFromRightAction)),
+                                              UIBarButtonItem(title: "rewind_form_left", style: .plain, target: self, action: #selector(rewindFromLeftAction))]
         
         view.addSubview(cardContainer)
         cardContainer.snp.makeConstraints { make in
@@ -37,17 +39,23 @@ public class ViewController: UIViewController {
     }
     
     @objc private func nextAction() {
-        cardContainer.swipeTopCard(to: .right)
+        //cardContainer.swipeTopCard(to: .right)
+        //cardContainer.visibleCount = 5
+        cardContainer.currentTopIndex = 3
     }
     
-    @objc private func rewindAction() {
+    @objc private func rewindFromRightAction() {
         cardContainer.rewind(from: .right)
+    }
+    
+    @objc private func rewindFromLeftAction() {
+        cardContainer.rewind(from: .left)
     }
 }
 
 extension ViewController: DragCardDataSource {
     public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
-        return 6
+        return 1
     }
     
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView {
@@ -70,12 +78,12 @@ extension ViewController: DragCardDelegate {
         print("movementCardAt: \(index) - \(translation)")
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, didRemoveTopCardAt index: Int, direction: Direction, with card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with card: UIView) {
         print("didRemoveTopCardAt: \(index)")
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, didFinishRemoveLast card: UIView) {
-        print("didFinishRemoveLast")
+    public func dragCard(_ dragCard: DragCardContainer, didRemovedLast card: UIView) {
+        print("didRemovedLast")
     }
     
     public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with card: UIView) {
