@@ -51,5 +51,5 @@ import UIKit
 
 public protocol DragCardDataSource: NSObjectProtocol {
     func numberOfCards(_ dragCard: DragCardContainer) -> Int
-    func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView
+    func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView
 }

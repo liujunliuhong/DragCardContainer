@@ -13,7 +13,7 @@ public class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
-        cardContainer.infiniteLoop = false
+        cardContainer.infiniteLoop = true
         cardContainer.dataSource = self
         cardContainer.delegate = self
         cardContainer.visibleCount = 3
@@ -32,10 +32,10 @@ public class ViewController: UIViewController {
         
         view.addSubview(cardContainer)
         cardContainer.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()//.offset(-100)
-            make.width.equalTo(150)
+            make.centerX.equalToSuperview()
+            make.width.equalTo(250)
             make.centerY.equalToSuperview()
-            make.height.equalTo(250)
+            make.height.equalTo(350)
         }
     }
     
@@ -60,14 +60,14 @@ extension ViewController: DragCardDataSource {
         return 10
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView {
-        let label = UILabel()
-        label.backgroundColor = RandomColor()
-        label.textAlignment = .center
-        label.font = .boldSystemFont(ofSize: 60)
-        label.text = "\(index)"
-        label.isUserInteractionEnabled = true
-        return label
+    public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView {
+        let cardView = CardView()
+        cardView.setAlphaOverlay(CardOverLayView(direction: .right),
+                                 forDirection: .right)
+        cardView.setAlphaOverlay(CardOverLayView(direction: .left),
+                                 forDirection: .left)
+        cardView.label.text = "\(index)"
+        return cardView
     }
 }
 

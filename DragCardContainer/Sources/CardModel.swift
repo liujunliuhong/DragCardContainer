@@ -50,7 +50,7 @@ import Foundation
 import UIKit
 
 internal final class CardModel {
-    internal let cardView: UIView
+    internal let cardView: DragCardView
     internal let index: Int
     
     internal var targetBasicInfo: BasicInfo = .default
@@ -59,7 +59,7 @@ internal final class CardModel {
     internal var dragOutMovement: Movement = .default
     internal var dragOutStatus: DragOutStatus = .ready
     
-    internal init(cardView: UIView, index: Int) {
+    internal init(cardView: DragCardView, index: Int) {
         self.cardView = cardView
         self.index = index
     }

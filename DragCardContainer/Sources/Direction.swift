@@ -48,7 +48,7 @@
 
 import Foundation
 
-public struct Direction: OptionSet, CustomStringConvertible {
+public struct Direction: OptionSet, CustomStringConvertible, Hashable {
     public let rawValue: UInt
     
     public init(rawValue: UInt) {

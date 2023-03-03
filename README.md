@@ -64,6 +64,8 @@ cardContainer.allowedDirection = .horizontal
 
 #### Configuring the datasource
 
+You must conform the protocol `DragCardDataSource`.
+
 ```swift
 public func numberOfCards(_ dragCard: DragCardContainer) -> Int {
     return 10

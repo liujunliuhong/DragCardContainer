@@ -166,7 +166,6 @@ public class DragCardContainer: UIView {
 
 extension DragCardContainer {
     private func setupUI() {
-        backgroundColor = .orange
         addSubview(containerView)
     }
 }
