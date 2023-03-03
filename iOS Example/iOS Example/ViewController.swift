@@ -16,7 +16,8 @@ public class ViewController: UIViewController {
         cardContainer.infiniteLoop = false
         cardContainer.dataSource = self
         cardContainer.delegate = self
-        //cardContainer.visibleCount = 2
+        cardContainer.visibleCount = 3
+        cardContainer.allowedDirection = .horizontal
         return cardContainer
     }()
     
@@ -50,12 +51,13 @@ public class ViewController: UIViewController {
     
     @objc private func rewindFromLeftAction() {
         cardContainer.rewind(from: .left)
+        
     }
 }
 
 extension ViewController: DragCardDataSource {
-    public func numberOfCount(_ dragCard: DragCardContainer) -> Int {
-        return 1
+    public func numberOfCards(_ dragCard: DragCardContainer) -> Int {
+        return 10
     }
     
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView {
@@ -79,7 +81,7 @@ extension ViewController: DragCardDelegate {
     }
     
     public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with card: UIView) {
-        print("didRemoveTopCardAt: \(index)")
+        print("didRemovedTopCardAt: \(index)")
     }
     
     public func dragCard(_ dragCard: DragCardContainer, didRemovedLast card: UIView) {
@@ -104,3 +106,4 @@ internal func RandomColor() -> UIColor {
     let A: CGFloat = 1.0
     return RBA(R: R, G: G, B: B, A: A)
 }
+

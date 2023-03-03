@@ -48,9 +48,9 @@
 
 import Foundation
 
-public struct Movement {
-    public let translation: CGPoint
-    public let velocity: CGPoint
+internal final class Movement {
+    internal let translation: CGPoint
+    internal let velocity: CGPoint
     
     internal init(translation: CGPoint, velocity: CGPoint) {
         self.translation = translation

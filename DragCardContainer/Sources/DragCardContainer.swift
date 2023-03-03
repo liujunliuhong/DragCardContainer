@@ -65,22 +65,15 @@ public class DragCardContainer: UIView {
     /// Delegate
     public weak var delegate: DragCardDelegate?
     
-    /// Visible card count
+    /// Visible card count.
     public var visibleCount: Int = Default.visibleCount {
         didSet {
             reloadDataIfNeeded()
         }
     }
     
-    /// Card spacing
-    public var cardSpacing: CGFloat = Default.cardSpacing {
-        didSet {
-            reloadDataIfNeeded()
-        }
-    }
-    
-    /// Minimum card scale
-    public var minimumScale: CGFloat = Default.minimumScale {
+    /// Mode
+    public var mode: Mode = Default.mode {
         didSet {
             reloadDataIfNeeded()
         }
@@ -100,21 +93,21 @@ public class DragCardContainer: UIView {
         }
     }
     
-    /// Minimum translation in percent base on container width or container height
+    /// Minimum translation in percent base on container width or container height.
     public var minimumTranslationInPercent: CGFloat = Default.minimumTranslationInPercent {
         didSet {
             reloadDataIfNeeded()
         }
     }
     
-    /// Minimum velocity in point per second
+    /// Minimum velocity in point per second.
     public var minimumVelocityInPointPerSecond: CGFloat = Default.minimumVelocityInPointPerSecond {
         didSet {
             reloadDataIfNeeded()
         }
     }
     
-    /// The card maximum rotation angle
+    /// The card maximum rotation angle.
     public var cardRotationMaximumAngle: CGFloat = Default.cardRotationMaximumAngle {
         didSet {
             reloadDataIfNeeded()
@@ -124,38 +117,38 @@ public class DragCardContainer: UIView {
     /// Current top index.
     public var currentTopIndex: Int? {
         set {
-            modeState.topIndex = newValue
+            engine.topIndex = newValue
         }
         get {
-            return modeState.topIndex
+            return engine.topIndex
         }
     }
     
-    /// Disable drag action for top card
+    /// Disable drag action for top card.
     public var disableTopCardDrag: Bool = false {
         didSet {
             if disableTopCardDrag {
-                modeState.removePanGestureForTopCard()
+                engine.removePanGestureForTopCard()
             } else {
-                modeState.addPanGestureForTopCard()
+                engine.addPanGestureForTopCard()
             }
         }
     }
     
-    /// Disable click action for top card
+    /// Disable click action for top card.
     public var disableTopCardClick: Bool = false {
         didSet {
             if disableTopCardClick {
-                modeState.removeTapGestureForTopCard()
+                engine.removeTapGestureForTopCard()
             } else {
-                modeState.addTapGestureForTopCard()
+                engine.addTapGestureForTopCard()
             }
         }
     }
     
-    private lazy var modeState: ModeState = {
-        let modeState = ModeState(cardContainer: self)
-        return modeState
+    private lazy var engine: CardEngine = {
+        let engine = CardEngine(cardContainer: self)
+        return engine
     }()
     
     internal lazy var containerView = UIView()
@@ -188,22 +181,22 @@ extension DragCardContainer {
 
 extension DragCardContainer {
     public func reloadData(animation: Bool = false) {
-        modeState.invalidate(forceReset: true, animation: animation)
+        engine.start(forceReset: true, animation: animation)
     }
     
     public func rewind(from: Direction) {
-        modeState.rewind(from: from)
+        engine.rewind(from: from)
     }
     
     public func swipeTopCard(to: Direction) {
-        modeState.swipeTopCard(to: to)
+        engine.swipeTopCard(to: to)
     }
 }
 
 extension DragCardContainer {
     private func reloadDataIfNeeded() {
         if dataSource != nil {
-            modeState.invalidate(forceReset: false, animation: false)
+            engine.start(forceReset: false, animation: false)
         }
     }
 }

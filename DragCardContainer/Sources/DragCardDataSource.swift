@@ -50,6 +50,6 @@ import Foundation
 import UIKit
 
 public protocol DragCardDataSource: NSObjectProtocol {
-    func numberOfCount(_ dragCard: DragCardContainer) -> Int
+    func numberOfCards(_ dragCard: DragCardContainer) -> Int
     func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView
 }

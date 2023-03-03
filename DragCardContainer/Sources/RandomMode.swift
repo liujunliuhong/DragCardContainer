@@ -1,9 +1,8 @@
 //
-//  BasicInfo.swift
+//  RandomMode.swift
 //  DragCardContainer
 //
-//  Created by dfsx6 on 2023/3/1.
-//
+//  Created by dfsx6 on 2023/3/3.
 //
 //
 //                              ┌───────────────────────────────────────────┐
@@ -45,20 +44,37 @@
 //                                └───────────────────────────────────────┘
 
 
-
 import Foundation
 import QuartzCore
 
-public struct BasicInfo {
-    public let transform3D: CATransform3D
-    public let frame: CGRect
-    public let anchorPoint: CGPoint
+public final class RandomMode {
     
-    public init(transform3D: CATransform3D, frame: CGRect, anchorPoint: CGPoint) {
-        self.transform3D = transform3D
-        self.frame = frame
-        self.anchorPoint = anchorPoint
+    /// Maximum angle.
+    public var maximumAngle: CGFloat = 3.0
+    
+    public static let `default` = RandomMode()
+    
+    public init() {}
+}
+
+extension RandomMode: Mode {
+    public func basicInfos(visibleCount: Int, containerSize: CGSize) -> [BasicInfo] {
+        var basicInfos: [BasicInfo] = []
+        
+        let anchorPoint = CGPoint(x: 0.5, y: 0.5)
+        
+        for _ in 0..<visibleCount {
+            let radius = CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
+            let transform = CATransform3DRotate(CATransform3DIdentity, radius, 0, 0, 1)
+            
+            let basicInfo = BasicInfo(transform3D: transform,
+                                      frame: CGRect(x: .zero,
+                                                    y: .zero,
+                                                    width: containerSize.width,
+                                                    height: containerSize.height),
+                                      anchorPoint: anchorPoint)
+            basicInfos.append(basicInfo)
+        }
+        return basicInfos
     }
-    
-    public static let `default` = BasicInfo(transform3D: CATransform3DIdentity, frame: .zero, anchorPoint: .zero)
 }
