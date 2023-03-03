@@ -18,6 +18,12 @@ public final class CardView: DragCardView {
         return label
     }()
     
+    public private(set) lazy var overlayView: CardOverlayView = {
+        let overlayView = CardOverlayView()
+        overlayView.isUserInteractionEnabled = false
+        return overlayView
+    }()
+    
     public override init(frame: CGRect) {
         super.init(frame: frame)
         initUI()
@@ -42,8 +48,12 @@ extension CardView {
     
     private func setupUI() {
         contentView.addSubview(label)
+        contentView.addSubview(overlayView)
         
         label.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        overlayView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
     }

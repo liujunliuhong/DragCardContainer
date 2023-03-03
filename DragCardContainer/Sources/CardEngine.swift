@@ -135,6 +135,7 @@ extension CardEngine {
                     model.cardView.layer.transform = CATransform3DIdentity
                     model.cardView.frame = model.targetBasicInfo.frame
                     model.cardView.layer.transform = model.targetBasicInfo.transform3D
+                    model.cardView.alpha = model.targetBasicInfo.alpha
                 }
             }
             animator.startAnimation()
@@ -143,6 +144,7 @@ extension CardEngine {
                 model.cardView.layer.transform = CATransform3DIdentity
                 model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
         }
         
@@ -185,6 +187,7 @@ extension CardEngine {
                 model.cardView.layer.transform = CATransform3DIdentity
                 model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
         })
         activeCardsAnimator?.startAnimation()
@@ -223,6 +226,7 @@ extension CardEngine {
         }
         
         let endMovement = autoEndMovement(direction: from)
+        let finalTranslation = finalTranslation(movement: endMovement)
         let endTransform = endTransform(movement: endMovement)
         
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: index)
@@ -231,20 +235,14 @@ extension CardEngine {
         cardView.layer.transform = CATransform3DIdentity
         cardView.frame = metrics.maximumBasicInfo.frame
         cardView.layer.transform = endTransform
+        cardView.alpha = 1
         cardContainer.containerView.addSubview(cardView)
-        
-        let endDirection = Direction.fromPoint(endMovement.translation)
-        for (k, v) in cardView.alphaOverlays {
-            if k == endDirection {
-                v.alpha = 1
-            } else {
-                v.alpha = 0
-            }
-        }
         
         let cardModel = CardModel(cardView: cardView, index: index)
         
         currentHoldCardModel = cardModel
+        
+        delegateForMovementCard(model: cardModel, translation: finalTranslation)
         
         restoreCard()
     }
@@ -308,9 +306,8 @@ extension CardEngine {
         cardView.layer.transform = CATransform3DIdentity
         cardView.frame = metrics.minimumBasicInfo.frame
         cardView.layer.transform = metrics.minimumBasicInfo.transform3D
+        cardView.alpha = metrics.minimumBasicInfo.alpha
         cardContainer.containerView.insertSubview(cardView, at: 0)
-        
-        cardView.allAlphaOverlays().forEach{ $0.alpha = 0 }
         
         let cardModel = CardModel(cardView: cardView, index: index)
         cardModels.insert(cardModel, at: 0)
@@ -340,14 +337,10 @@ extension CardEngine {
                 model.cardView.layer.transform = CATransform3DIdentity
                 model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
             self.delegateForMovementCard(model: currentHoldCardModel, translation: .zero)
         }
-        animator.addAnimations({
-            for model in self.cardModels {
-                model.cardView.allAlphaOverlays().forEach{ $0.alpha = 0 }
-            }
-        }, delayFactor: 0.2)
         
         animator.addCompletion { p in
             if p == .end {
@@ -453,7 +446,7 @@ extension CardEngine {
         return isDirectionAllowed() && (isTranslationLargeEnough() || isVelocityLargeEnough())
     }
     
-    private func dragFraction(movement: Movement) -> CGFloat {
+    private func horizontalDragFraction(movement: Movement) -> CGFloat {
         let bounds = cardContainer.containerView.bounds
         let translation = movement.translation
         
@@ -528,13 +521,13 @@ extension CardEngine {
                 return movement
             case .right:
                 let movement = Movement(translation: CGPoint(x: 1,
-                                                             y: -0.2),
+                                                             y: 0),
                                         velocity: CGPoint(x: metrics.minimumVelocityInPointPerSecond,
                                                           y: 0))
                 return movement
             case .left:
                 let movement = Movement(translation: CGPoint(x: -1,
-                                                             y: -0.2),
+                                                             y: 0),
                                         velocity: CGPoint(x: -metrics.minimumVelocityInPointPerSecond,
                                                           y: 0))
                 return movement
@@ -576,8 +569,6 @@ extension CardEngine {
             
             let dragOutMovement = model.dragOutMovement
             
-            let dragOutDirection = Direction.fromPoint(dragOutMovement.translation)
-            
             let finalTranslation = finalTranslation(movement: dragOutMovement)
             
             let transform = endTransform(movement: dragOutMovement)
@@ -588,14 +579,7 @@ extension CardEngine {
                            initialSpringVelocity: 0,
                            options: .curveEaseInOut) {
                 model.cardView.layer.transform = transform
-                
-                for (k, v) in model.cardView.alphaOverlays {
-                    if k == dragOutDirection {
-                        v.alpha = 1.0
-                    } else {
-                        v.alpha = 0
-                    }
-                }
+                model.cardView.alpha = 1
                 
                 if triggerDelegate {
                     self.delegateForMovementCard(model: model, translation: finalTranslation)
@@ -695,26 +679,16 @@ extension CardEngine {
                         model.cardView.layer.transform = CATransform3DIdentity
                         model.cardView.frame = model.targetBasicInfo.frame
                         model.cardView.layer.transform = model.targetBasicInfo.transform3D
+                        model.cardView.alpha = model.targetBasicInfo.alpha
                     }
                 })
                 
             case .changed:
                 // rotate and translate
-                let fractionComplete = dragFraction(movement: movement)
-                activeCardsAnimator?.fractionComplete = fractionComplete
-                
-                let holdDirection = Direction.fromPoint(movement.translation)
+                let horizontalFractionComplete = horizontalDragFraction(movement: movement)
+                activeCardsAnimator?.fractionComplete = horizontalFractionComplete
                 
                 if let currentHoldCardModel = currentHoldCardModel {
-                    
-                    for (k, v) in currentHoldCardModel.cardView.alphaOverlays {
-                        if k == holdDirection {
-                            v.alpha = fractionComplete
-                        } else {
-                            v.alpha = 0
-                        }
-                    }
-                    
                     let rotationAngle = rotationAngle(movement: movement)
                     let translationTransform = CATransform3DTranslate(CATransform3DIdentity, translation.x, translation.y, .zero)
                     let holdCardTransform = CATransform3DRotate(translationTransform, rotationAngle, 0, 0, 1)

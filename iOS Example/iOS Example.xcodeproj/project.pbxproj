@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1885F2FA3A6B8CBF22EA66E3 /* Pods_iOS_Example.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5AE42063DCDE93D2B0037C60 /* Pods_iOS_Example.framework */; };
+		85F076DB29B243E2007F4504 /* CardOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F076DA29B243E2007F4504 /* CardOverlayView.swift */; };
 		D107965629B1D16E003CC604 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965529B1D16E003CC604 /* CardView.swift */; };
 		D107965829B1D306003CC604 /* OverlayLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965729B1D306003CC604 /* OverlayLabelView.swift */; };
-		D10796A529B1F424003CC604 /* CardOverLayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D10796A429B1F424003CC604 /* CardOverLayView.swift */; };
 		D15CD6CB29A30C8D00086A1B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6CA29A30C8D00086A1B /* AppDelegate.swift */; };
 		D15CD6CF29A30C8D00086A1B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6CE29A30C8D00086A1B /* ViewController.swift */; };
 		D15CD6D229A30C8D00086A1B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D15CD6D029A30C8D00086A1B /* Main.storyboard */; };
@@ -45,10 +45,10 @@
 /* Begin PBXFileReference section */
 		5AE42063DCDE93D2B0037C60 /* Pods_iOS_Example.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iOS_Example.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		8281919F37B8A1A62947D281 /* Pods-iOS Example.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS Example.release.xcconfig"; path = "Target Support Files/Pods-iOS Example/Pods-iOS Example.release.xcconfig"; sourceTree = "<group>"; };
+		85F076DA29B243E2007F4504 /* CardOverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardOverlayView.swift; sourceTree = "<group>"; };
 		C68F1CC37F74AAB7C363B2CC /* Pods-iOS Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS Example.debug.xcconfig"; path = "Target Support Files/Pods-iOS Example/Pods-iOS Example.debug.xcconfig"; sourceTree = "<group>"; };
 		D107965529B1D16E003CC604 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		D107965729B1D306003CC604 /* OverlayLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLabelView.swift; sourceTree = "<group>"; };
-		D10796A429B1F424003CC604 /* CardOverLayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardOverLayView.swift; sourceTree = "<group>"; };
 		D15CD6C729A30C8D00086A1B /* iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D15CD6CA29A30C8D00086A1B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D15CD6CE29A30C8D00086A1B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -122,7 +122,7 @@
 				D15CD6CA29A30C8D00086A1B /* AppDelegate.swift */,
 				D15CD6CE29A30C8D00086A1B /* ViewController.swift */,
 				D107965529B1D16E003CC604 /* CardView.swift */,
-				D10796A429B1F424003CC604 /* CardOverLayView.swift */,
+				85F076DA29B243E2007F4504 /* CardOverlayView.swift */,
 				D107965729B1D306003CC604 /* OverlayLabelView.swift */,
 				D15CD6F729A30D6100086A1B /* Demo */,
 				D15CD6D029A30C8D00086A1B /* Main.storyboard */,
@@ -268,11 +268,11 @@
 				D15CD70229A30D6100086A1B /* CardCell.swift in Sources */,
 				D15CD70029A30D6100086A1B /* OnlyOneViewController.swift in Sources */,
 				D15CD6CF29A30C8D00086A1B /* ViewController.swift in Sources */,
+				85F076DB29B243E2007F4504 /* CardOverlayView.swift in Sources */,
 				D15CD70129A30D6100086A1B /* FullFunctionViewController.swift in Sources */,
 				D15CD70529A30D6100086A1B /* HorizontalDragViewController.swift in Sources */,
 				D107965829B1D306003CC604 /* OverlayLabelView.swift in Sources */,
 				D15CD6CB29A30C8D00086A1B /* AppDelegate.swift in Sources */,
-				D10796A529B1F424003CC604 /* CardOverLayView.swift in Sources */,
 				D15CD70329A30D6100086A1B /* BaseViewController.swift in Sources */,
 				D15CD70629A30D6100086A1B /* VerticalDragViewController.swift in Sources */,
 				D107965629B1D16E003CC604 /* CardView.swift in Sources */,

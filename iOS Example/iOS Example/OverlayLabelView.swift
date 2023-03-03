@@ -13,6 +13,7 @@ public final class OverlayLabelView: UIView {
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.textAlignment = .center
+        label.numberOfLines = 0
         return label
     }()
     

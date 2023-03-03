@@ -67,6 +67,9 @@ public final class ScaleMode {
     /// Minimum card scale.
     public var minimumScale: CGFloat = 0.8
     
+    /// Minimum card alpha.
+    public var minimumCardAlpha: CGFloat = 1
+    
     /// Scale direction.
     public var direction: ScaleMode.Direction = .bottom
     
@@ -85,6 +88,21 @@ extension ScaleMode: Mode {
             assert(!cardSpacing.isLessThanOrEqualTo(.zero), "`cardSpacing` must be greater than 0")
         }
         
+        var magnitudeScale: CGFloat
+        if visibleCount <= 1 {
+            magnitudeScale = 1
+        } else {
+            magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
+        }
+        
+        var magnitudeAlpha: CGFloat
+        if visibleCount <= 1 {
+            magnitudeAlpha = 1
+        } else {
+            magnitudeAlpha = CGFloat(1.0 - minimumCardAlpha) / CGFloat(visibleCount - 1)
+        }
+        
+        
         var basicInfos: [BasicInfo] = []
         
         switch direction {
@@ -93,16 +111,10 @@ extension ScaleMode: Mode {
                 let normalCardHeight = containerSize.height - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
                 let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 
-                var magnitudeScale: CGFloat
-                if visibleCount <= 1 {
-                    magnitudeScale = 1
-                } else {
-                    magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
-                }
-                
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0.5, y: 1.0)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
+                    let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
                     let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
                     
@@ -111,7 +123,8 @@ extension ScaleMode: Mode {
                                                             y: cardSpacing * CGFloat(i),
                                                             width: normalCardSize.width,
                                                             height: normalCardSize.height),
-                                              anchorPoint: anchorPoint)
+                                              anchorPoint: anchorPoint,
+                                              alpha: alpha)
                     basicInfos.append(basicInfo)
                 }
             case .top:
@@ -119,16 +132,10 @@ extension ScaleMode: Mode {
                 let normalCardHeight = containerSize.height - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
                 let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 
-                var magnitudeScale: CGFloat
-                if visibleCount <= 1 {
-                    magnitudeScale = 1
-                } else {
-                    magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
-                }
-                
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0.5, y: 0)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
+                    let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
                     let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
                     
@@ -137,7 +144,8 @@ extension ScaleMode: Mode {
                                                             y: cardSpacing * CGFloat(visibleCount - i - 1),
                                                             width: normalCardSize.width,
                                                             height: normalCardSize.height),
-                                              anchorPoint: anchorPoint)
+                                              anchorPoint: anchorPoint,
+                                              alpha: alpha)
                     basicInfos.append(basicInfo)
                 }
             case .left:
@@ -145,16 +153,10 @@ extension ScaleMode: Mode {
                 let normalCardHeight = containerSize.height
                 let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 
-                var magnitudeScale: CGFloat
-                if visibleCount <= 1 {
-                    magnitudeScale = 1
-                } else {
-                    magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
-                }
-                
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0, y: 0.5)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
+                    let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
                     let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
                     
@@ -163,7 +165,8 @@ extension ScaleMode: Mode {
                                                             y: .zero,
                                                             width: normalCardSize.width,
                                                             height: normalCardSize.height),
-                                              anchorPoint: anchorPoint)
+                                              anchorPoint: anchorPoint,
+                                              alpha: alpha)
                     basicInfos.append(basicInfo)
                 }
             case .right:
@@ -171,16 +174,10 @@ extension ScaleMode: Mode {
                 let normalCardHeight = containerSize.height
                 let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 
-                var magnitudeScale: CGFloat
-                if visibleCount <= 1 {
-                    magnitudeScale = 1
-                } else {
-                    magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
-                }
-                
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 1, y: 0.5)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
+                    let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
                     let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
                     
@@ -189,7 +186,8 @@ extension ScaleMode: Mode {
                                                             y: .zero,
                                                             width: normalCardSize.width,
                                                             height: normalCardSize.height),
-                                              anchorPoint: anchorPoint)
+                                              anchorPoint: anchorPoint,
+                                              alpha: alpha)
                     basicInfos.append(basicInfo)
                 }
             case .center:
@@ -197,16 +195,10 @@ extension ScaleMode: Mode {
                 let normalCardHeight = containerSize.height
                 let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 
-                var magnitudeScale: CGFloat
-                if visibleCount <= 1 {
-                    magnitudeScale = 1
-                } else {
-                    magnitudeScale = CGFloat(1.0 - minimumScale) / CGFloat(visibleCount - 1)
-                }
-                
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0.5, y: 0.5)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
+                    let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
                     let newTransform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
                     
@@ -215,7 +207,8 @@ extension ScaleMode: Mode {
                                                             y: .zero,
                                                             width: normalCardSize.width,
                                                             height: normalCardSize.height),
-                                              anchorPoint: anchorPoint)
+                                              anchorPoint: anchorPoint,
+                                              alpha: alpha)
                     basicInfos.append(basicInfo)
                 }
         }

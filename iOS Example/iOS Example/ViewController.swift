@@ -9,6 +9,8 @@ import UIKit
 import SnapKit
 import DragCardContainer
 
+private let targetLength: CGFloat = 150.0
+
 public class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
@@ -17,7 +19,7 @@ public class ViewController: UIViewController {
         cardContainer.dataSource = self
         cardContainer.delegate = self
         cardContainer.visibleCount = 3
-        cardContainer.allowedDirection = .horizontal
+        cardContainer.allowedDirection = [.left, .right, .up]
         return cardContainer
     }()
     
@@ -33,9 +35,9 @@ public class ViewController: UIViewController {
         view.addSubview(cardContainer)
         cardContainer.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.width.equalTo(250)
-            make.centerY.equalToSuperview()
-            make.height.equalTo(350)
+            make.width.equalTo(280)
+            make.top.equalToSuperview().offset(150)
+            make.bottom.equalToSuperview().offset(-150)
         }
     }
     
@@ -62,33 +64,61 @@ extension ViewController: DragCardDataSource {
     
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView {
         let cardView = CardView()
-        cardView.setAlphaOverlay(CardOverLayView(direction: .right),
-                                 forDirection: .right)
-        cardView.setAlphaOverlay(CardOverLayView(direction: .left),
-                                 forDirection: .left)
+        cardView.overlayView.likeView.alpha = 0
+        cardView.overlayView.nopeView.alpha = 0
+        cardView.overlayView.superLikeView.alpha = 0
         cardView.label.text = "\(index)"
         return cardView
     }
 }
 
 extension ViewController: DragCardDelegate {
-    public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with cardView: DragCardView) {
         print("displayTopCardAt: \(index)")
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with cardView: DragCardView) {
         print("movementCardAt: \(index) - \(translation)")
+        
+        if let cardView = cardView as? CardView {
+            var horizontalRatio = abs(translation.x) / targetLength
+            if horizontalRatio >= 1.0 {
+                horizontalRatio = 1.0
+            }
+            if translation.x.isLess(than: .zero) {
+                cardView.overlayView.nopeView.alpha = horizontalRatio
+                cardView.overlayView.likeView.alpha = 0
+            } else if translation.x.isEqual(to: .zero) {
+                cardView.overlayView.nopeView.alpha = 0
+                cardView.overlayView.likeView.alpha = 0
+            } else {
+                cardView.overlayView.nopeView.alpha = 0
+                cardView.overlayView.likeView.alpha = horizontalRatio
+            }
+
+            var verticalRatio = abs(translation.y) / targetLength
+            verticalRatio = verticalRatio - horizontalRatio
+            if verticalRatio >= 1.0 {
+                verticalRatio = 1.0
+            } else if verticalRatio <= 0 {
+                verticalRatio = 0
+            }
+            if !translation.y.isLess(than: .zero) {
+                verticalRatio = 0.0
+            }
+            cardView.overlayView.superLikeView.alpha = verticalRatio
+        }
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with cardView: DragCardView) {
         print("didRemovedTopCardAt: \(index)")
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, didRemovedLast card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, didRemovedLast cardView: DragCardView) {
         print("didRemovedLast")
     }
     
-    public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with card: UIView) {
+    public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
         print("didSelectTopCardAt: \(index)")
     }
 }
