@@ -109,20 +109,18 @@ extension ScaleMode: Mode {
             case .bottom:
                 let normalCardWidth = containerSize.width
                 let normalCardHeight = containerSize.height - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
-                let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
+                let normalCardFrame = CGRect(x: .zero, y: .zero, width: normalCardWidth, height: normalCardHeight)
                 
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0.5, y: 1.0)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
-                    let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
+                    let translate = CATransform3DTranslate(CATransform3DIdentity, 0, cardSpacing * CGFloat(i), 0)
+                    let transform3D = CATransform3DScale(translate, scale, scale, 1.0)
                     
                     let basicInfo = BasicInfo(transform3D: transform3D,
-                                              frame: CGRect(x: .zero,
-                                                            y: cardSpacing * CGFloat(i),
-                                                            width: normalCardSize.width,
-                                                            height: normalCardSize.height),
+                                              frame: normalCardFrame,
                                               anchorPoint: anchorPoint,
                                               alpha: alpha)
                     basicInfos.append(basicInfo)
@@ -130,20 +128,18 @@ extension ScaleMode: Mode {
             case .top:
                 let normalCardWidth = containerSize.width
                 let normalCardHeight = containerSize.height - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
-                let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
+                let normalCardFrame = CGRect(x: .zero, y: cardSpacing * CGFloat(visibleCount - 1), width: normalCardWidth, height: normalCardHeight)
                 
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0.5, y: 0)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
-                    let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
+                    let translate = CATransform3DTranslate(CATransform3DIdentity, 0, -cardSpacing * CGFloat(i), 0)
+                    let transform3D = CATransform3DScale(translate, scale, scale, 1.0)
                     
                     let basicInfo = BasicInfo(transform3D: transform3D,
-                                              frame: CGRect(x: .zero,
-                                                            y: cardSpacing * CGFloat(visibleCount - i - 1),
-                                                            width: normalCardSize.width,
-                                                            height: normalCardSize.height),
+                                              frame: normalCardFrame,
                                               anchorPoint: anchorPoint,
                                               alpha: alpha)
                     basicInfos.append(basicInfo)
@@ -151,20 +147,18 @@ extension ScaleMode: Mode {
             case .left:
                 let normalCardWidth = containerSize.width - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
                 let normalCardHeight = containerSize.height
-                let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
+                let normalCardFrame = CGRect(x: cardSpacing * CGFloat(visibleCount - 1), y: .zero, width: normalCardWidth, height: normalCardHeight)
                 
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 0, y: 0.5)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
-                    let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
+                    let translate = CATransform3DTranslate(CATransform3DIdentity, -cardSpacing * CGFloat(i), 0, 0)
+                    let transform3D = CATransform3DScale(translate, scale, scale, 1.0)
                     
                     let basicInfo = BasicInfo(transform3D: transform3D,
-                                              frame: CGRect(x: cardSpacing * CGFloat(visibleCount - i - 1),
-                                                            y: .zero,
-                                                            width: normalCardSize.width,
-                                                            height: normalCardSize.height),
+                                              frame: normalCardFrame,
                                               anchorPoint: anchorPoint,
                                               alpha: alpha)
                     basicInfos.append(basicInfo)
@@ -172,20 +166,18 @@ extension ScaleMode: Mode {
             case .right:
                 let normalCardWidth = containerSize.width - (CGFloat(visibleCount - 1) * CGFloat(cardSpacing))
                 let normalCardHeight = containerSize.height
-                let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
+                let normalCardFrame = CGRect(x: .zero, y: .zero, width: normalCardWidth, height: normalCardHeight)
                 
                 for i in 0..<visibleCount {
                     let anchorPoint = CGPoint(x: 1, y: 0.5)
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let alpha = 1.0 - magnitudeAlpha * CGFloat(i)
                     
-                    let transform3D = CATransform3DScale(CATransform3DIdentity, scale, scale, 1.0)
+                    let translate = CATransform3DTranslate(CATransform3DIdentity, cardSpacing * CGFloat(i), 0, 0)
+                    let transform3D = CATransform3DScale(translate, scale, scale, 1.0)
                     
                     let basicInfo = BasicInfo(transform3D: transform3D,
-                                              frame: CGRect(x: cardSpacing * CGFloat(i),
-                                                            y: .zero,
-                                                            width: normalCardSize.width,
-                                                            height: normalCardSize.height),
+                                              frame: normalCardFrame,
                                               anchorPoint: anchorPoint,
                                               alpha: alpha)
                     basicInfos.append(basicInfo)

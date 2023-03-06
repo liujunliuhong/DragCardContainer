@@ -59,6 +59,12 @@ public final class RandomMode {
 
 extension RandomMode: Mode {
     public func basicInfos(visibleCount: Int, containerSize: CGSize) -> [BasicInfo] {
+        
+        let frame = CGRect(x: .zero,
+                           y: .zero,
+                           width: containerSize.width,
+                           height: containerSize.height)
+        
         var basicInfos: [BasicInfo] = []
         
         let anchorPoint = CGPoint(x: 0.5, y: 0.5)
@@ -68,10 +74,7 @@ extension RandomMode: Mode {
             let transform = CATransform3DRotate(CATransform3DIdentity, radius, 0, 0, 1)
             
             let basicInfo = BasicInfo(transform3D: transform,
-                                      frame: CGRect(x: .zero,
-                                                    y: .zero,
-                                                    width: containerSize.width,
-                                                    height: containerSize.height),
+                                      frame: frame,
                                       anchorPoint: anchorPoint)
             basicInfos.append(basicInfo)
         }

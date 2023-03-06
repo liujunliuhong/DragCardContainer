@@ -11,7 +11,7 @@ import DragCardContainer
 
 private let targetLength: CGFloat = 150.0
 
-public class ViewController: UIViewController {
+public final class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
@@ -23,37 +23,53 @@ public class ViewController: UIViewController {
         return cardContainer
     }()
     
+    private lazy var bottmView: BottomView = {
+        let bottmView = BottomView()
+        bottmView.likeButton.addTarget(self, action: #selector(likeAction), for: .touchUpInside)
+        bottmView.passButton.addTarget(self, action: #selector(passAction), for: .touchUpInside)
+        bottmView.superLikeButton.addTarget(self, action: #selector(superLikeAction), for: .touchUpInside)
+        bottmView.refreshButton.addTarget(self, action: #selector(refreshAction), for: .touchUpInside)
+        return bottmView
+    }()
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         navigationItem.title = "Demo"
         
-        navigationItem.rightBarButtonItems = [UIBarButtonItem(title: "next", style: .plain, target: self, action: #selector(nextAction)),
-                                              UIBarButtonItem(title: "rewind_form_right", style: .plain, target: self, action: #selector(rewindFromRightAction)),
-                                              UIBarButtonItem(title: "rewind_form_left", style: .plain, target: self, action: #selector(rewindFromLeftAction))]
-        
         view.addSubview(cardContainer)
+        view.addSubview(bottmView)
+        
         cardContainer.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.width.equalTo(280)
             make.top.equalToSuperview().offset(150)
             make.bottom.equalToSuperview().offset(-150)
         }
+        bottmView.snp.makeConstraints { make in
+            make.centerX.equalToSuperview()
+            make.top.equalTo(cardContainer.snp.bottom).offset(35)
+            make.height.equalTo(50)
+        }
+    }
+}
+
+extension ViewController {
+    @objc private func likeAction() {
+        cardContainer.swipeTopCard(to: .right)
     }
     
-    @objc private func nextAction() {
-        //cardContainer.swipeTopCard(to: .right)
-        //cardContainer.visibleCount = 5
-        cardContainer.currentTopIndex = 3
+    @objc private func passAction() {
+        cardContainer.swipeTopCard(to: .left)
     }
     
-    @objc private func rewindFromRightAction() {
+    @objc private func superLikeAction() {
+        cardContainer.swipeTopCard(to: .up)
+    }
+    
+    @objc private func refreshAction() {
+        //cardContainer.reloadData(animation: true)
         cardContainer.rewind(from: .right)
-    }
-    
-    @objc private func rewindFromLeftAction() {
-        cardContainer.rewind(from: .left)
-        
     }
 }
 
@@ -107,6 +123,22 @@ extension ViewController: DragCardDelegate {
                 verticalRatio = 0.0
             }
             cardView.overlayView.superLikeView.alpha = verticalRatio
+            
+            
+            
+            let direction = Direction.fromPoint(translation)
+            switch direction {
+                case .right:
+                    let targetRatio = 1.5
+                    var newHorizontalRatio = horizontalRatio + 1
+                    if newHorizontalRatio > targetRatio {
+                        newHorizontalRatio = newHorizontalRatio - targetRatio
+                    }
+                    bottmView.passButton.transform = .identity
+                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, horizontalRatio, horizontalRatio)
+                default:
+                    break
+            }
         }
     }
     
@@ -120,6 +152,9 @@ extension ViewController: DragCardDelegate {
     
     public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
         print("didSelectTopCardAt: \(index)")
+        let vc = DetailViewController()
+        vc.index = index
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 

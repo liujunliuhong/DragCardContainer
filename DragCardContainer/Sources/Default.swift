@@ -56,5 +56,5 @@ internal struct Default {
     internal static let infiniteLoop: Bool = false
     internal static let mode: Mode = ScaleMode.default
     internal static let visibleCount: Int = 3
-    internal static let animationDuration: TimeInterval = 0.5
+    internal static let animationDuration: TimeInterval = 3
 }

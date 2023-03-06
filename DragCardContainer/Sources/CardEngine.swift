@@ -67,7 +67,9 @@ internal final class CardEngine {
     private var dragOutCardModels: [CardModel] = []
     
     private var currentHoldCardModel: CardModel?
-    private var activeCardsAnimator: UIViewPropertyAnimator?
+    
+    private var activePanCardsAnimator: UIViewPropertyAnimator?
+    private var restoreCardsAnimators: [UIViewPropertyAnimator] = []
     
     private var isPanDirectionUp: Bool = true
     
@@ -129,20 +131,16 @@ extension CardEngine {
         updateAllCardModelsTargetBasicInfo()
         
         if animation {
-            let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                                  curve: .easeInOut) {
+            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Default.animationDuration,
+                                                           delay: 0,
+                                                           options: .curveEaseInOut) {
                 for model in self.cardModels {
-                    model.cardView.layer.transform = CATransform3DIdentity
-                    model.cardView.frame = model.targetBasicInfo.frame
                     model.cardView.layer.transform = model.targetBasicInfo.transform3D
                     model.cardView.alpha = model.targetBasicInfo.alpha
                 }
             }
-            animator.startAnimation()
         } else {
             for model in self.cardModels {
-                model.cardView.layer.transform = CATransform3DIdentity
-                model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
                 model.cardView.alpha = model.targetBasicInfo.alpha
             }
@@ -160,6 +158,7 @@ extension CardEngine {
         }
         
         if let dragOutCardModel = cardModels.last {
+//            dragOutCardModel.cardView.layer.transform = CATransform3DIdentity
             dragOutCardModel.dragOutMovement = autoEndMovement(direction: to)
             dragOutCardModels.append(dragOutCardModel)
             cardModels.removeLast() // remove last
@@ -176,22 +175,22 @@ extension CardEngine {
         
         updateAllCardModelsTargetBasicInfo()
         
-        activeCardsAnimator?.stopAnimation(false)
-        activeCardsAnimator?.finishAnimation(at: .current)
-        activeCardsAnimator = nil
+        activePanCardsAnimator?.stopAnimation(false)
+        activePanCardsAnimator?.finishAnimation(at: .current)
+        activePanCardsAnimator = nil
         
-        activeCardsAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                                     curve: .easeInOut,
-                                                     animations: {
+//        restoreCardsAnimator?.stopAnimation(false)
+//        restoreCardsAnimator?.finishAnimation(at: .current)
+//        restoreCardsAnimator = nil
+        
+        UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Default.animationDuration,
+                                                       delay: 0,
+                                                       options: .curveEaseInOut) {
             for model in self.cardModels {
-                model.cardView.layer.transform = CATransform3DIdentity
-                model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
                 model.cardView.alpha = model.targetBasicInfo.alpha
             }
-        })
-        activeCardsAnimator?.startAnimation()
-        
+        }
         dragOut()
     }
     
@@ -232,7 +231,6 @@ extension CardEngine {
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: index)
         
         cardView.layer.anchorPoint = metrics.maximumBasicInfo.anchorPoint
-        cardView.layer.transform = CATransform3DIdentity
         cardView.frame = metrics.maximumBasicInfo.frame
         cardView.layer.transform = endTransform
         cardView.alpha = 1
@@ -286,11 +284,17 @@ extension CardEngine {
         //
         dragOut(triggerDelegate: false)
         //
-        if let activeCardsAnimator = activeCardsAnimator {
-            activeCardsAnimator.stopAnimation(true)
-            activeCardsAnimator.finishAnimation(at: .current)
+        if let activePanCardsAnimator = activePanCardsAnimator {
+            activePanCardsAnimator.stopAnimation(true)
+            activePanCardsAnimator.finishAnimation(at: .current)
         }
-        activeCardsAnimator = nil
+        activePanCardsAnimator = nil
+        
+//        if let restoreCardsAnimator = restoreCardsAnimator {
+//            restoreCardsAnimator.stopAnimation(true)
+//            restoreCardsAnimator.finishAnimation(at: .current)
+//        }
+//        restoreCardsAnimator = nil
     }
     
     private func installNextCard() {
@@ -303,7 +307,6 @@ extension CardEngine {
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: index)
         
         cardView.layer.anchorPoint = metrics.minimumBasicInfo.anchorPoint
-        cardView.layer.transform = CATransform3DIdentity
         cardView.frame = metrics.minimumBasicInfo.frame
         cardView.layer.transform = metrics.minimumBasicInfo.transform3D
         cardView.alpha = metrics.minimumBasicInfo.alpha
@@ -330,12 +333,19 @@ extension CardEngine {
         
         updateAllCardModelsTargetBasicInfo()
         
+        activePanCardsAnimator?.stopAnimation(false)
+        activePanCardsAnimator?.finishAnimation(at: .current)
+        
+//        UIView.animate(withDuration: Default.animationDuration, delay: 0) {
+//            self.restoreCardsAnimator?.stopAnimation(false)
+//            self.restoreCardsAnimator?.finishAnimation(at: .end)
+//        }
+//        restoreCardsAnimator?.stopAnimation(false)
+//        restoreCardsAnimator?.finishAnimation(at: .end)
         
         let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                              dampingRatio: 0.9) {
+                                              dampingRatio: 0.8) {
             for model in self.cardModels {
-                model.cardView.layer.transform = CATransform3DIdentity
-                model.cardView.frame = model.targetBasicInfo.frame
                 model.cardView.layer.transform = model.targetBasicInfo.transform3D
                 model.cardView.alpha = model.targetBasicInfo.alpha
             }
@@ -354,9 +364,17 @@ extension CardEngine {
                 }
                 self.addPanGestureForTopCard()
                 self.addTapGestureForTopCard()
+                
+//                for (i, a) in self.restoreCardsAnimators.enumerated() {
+//                    if a == animator {
+//                        self.restoreCardsAnimators.remove(at: i)
+//                    }
+//                }
             }
         }
         animator.startAnimation()
+//        restoreCardsAnimators.append(animator)
+//        restoreCardsAnimator = animator
         
         delegateForDisplayTopCard()
     }
@@ -539,8 +557,11 @@ extension CardEngine {
     private func endTransform(movement: Movement) -> CATransform3D {
         let toTranslation = finalTranslation(movement: movement)
         let translationTransform = CATransform3DTranslate(CATransform3DIdentity, toTranslation.x, toTranslation.y, .zero)
-        let transform = CATransform3DRotate(translationTransform, metrics.cardRotationMaximumAngle.radius, 0, 0, 1)
-        return transform
+        if Direction.fromPoint(movement.translation) == .horizontal {
+            let transform = CATransform3DRotate(translationTransform, metrics.cardRotationMaximumAngle.radius, 0, 0, 1)
+            return transform
+        }
+        return translationTransform
     }
     
     private func finalTranslation(movement: Movement) -> CGPoint {
@@ -580,7 +601,6 @@ extension CardEngine {
                            options: .curveEaseInOut) {
                 model.cardView.layer.transform = transform
                 model.cardView.alpha = 1
-                
                 if triggerDelegate {
                     self.delegateForMovementCard(model: model, translation: finalTranslation)
                 }
@@ -605,8 +625,6 @@ extension CardEngine {
             }
         }
     }
-    
-    
 }
 
 extension CardEngine {
@@ -668,16 +686,20 @@ extension CardEngine {
                 
                 updateAllCardModelsTargetBasicInfo()
                 
-                activeCardsAnimator?.stopAnimation(false)
-                activeCardsAnimator?.finishAnimation(at: .end)
-                activeCardsAnimator = nil
+//                for a in restoreCardsAnimators {
+//                    a.stopAnimation(true)
+//                    a.finishAnimation(at: .current)
+//                }
+//                restoreCardsAnimators.removeAll()
                 
-                activeCardsAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
+                
+                activePanCardsAnimator?.stopAnimation(true)
+                activePanCardsAnimator?.finishAnimation(at: .current)
+                
+                activePanCardsAnimator = UIViewPropertyAnimator(duration: Default.animationDuration,
                                                              curve: .easeInOut,
                                                              animations: {
                     for model in self.cardModels {
-                        model.cardView.layer.transform = CATransform3DIdentity
-                        model.cardView.frame = model.targetBasicInfo.frame
                         model.cardView.layer.transform = model.targetBasicInfo.transform3D
                         model.cardView.alpha = model.targetBasicInfo.alpha
                     }
@@ -686,7 +708,7 @@ extension CardEngine {
             case .changed:
                 // rotate and translate
                 let horizontalFractionComplete = horizontalDragFraction(movement: movement)
-                activeCardsAnimator?.fractionComplete = horizontalFractionComplete
+                activePanCardsAnimator?.fractionComplete = horizontalFractionComplete
                 
                 if let currentHoldCardModel = currentHoldCardModel {
                     let rotationAngle = rotationAngle(movement: movement)
@@ -702,7 +724,8 @@ extension CardEngine {
             case .ended, .cancelled:
                 if shouldDragOut(movement: movement) {
                     // Drag out
-                    activeCardsAnimator?.fractionComplete = 1.0
+                    let timingParameters = UICubicTimingParameters(animationCurve: .easeInOut)
+                    activePanCardsAnimator?.continueAnimation(withTimingParameters: timingParameters, durationFactor: 1)
                     
                     if let currentHoldCardModel = currentHoldCardModel {
                         dragOutCardModels.append(currentHoldCardModel)
@@ -715,10 +738,6 @@ extension CardEngine {
                     dragOut()
                 } else {
                     // Restore
-                    activeCardsAnimator?.stopAnimation(true)
-                    activeCardsAnimator?.finishAnimation(at: .current)
-                    activeCardsAnimator = nil
-                    
                     restoreCard()
                 }
             default:

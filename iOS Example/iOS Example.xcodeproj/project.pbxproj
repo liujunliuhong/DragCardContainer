@@ -11,6 +11,8 @@
 		85F076DB29B243E2007F4504 /* CardOverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85F076DA29B243E2007F4504 /* CardOverlayView.swift */; };
 		D107965629B1D16E003CC604 /* CardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965529B1D16E003CC604 /* CardView.swift */; };
 		D107965829B1D306003CC604 /* OverlayLabelView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965729B1D306003CC604 /* OverlayLabelView.swift */; };
+		D14DC70429B584EF00DCC01C /* BottomView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14DC70329B584EF00DCC01C /* BottomView.swift */; };
+		D14DC70629B587E200DCC01C /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D14DC70529B587E200DCC01C /* DetailViewController.swift */; };
 		D15CD6CB29A30C8D00086A1B /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6CA29A30C8D00086A1B /* AppDelegate.swift */; };
 		D15CD6CF29A30C8D00086A1B /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6CE29A30C8D00086A1B /* ViewController.swift */; };
 		D15CD6D229A30C8D00086A1B /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = D15CD6D029A30C8D00086A1B /* Main.storyboard */; };
@@ -20,7 +22,6 @@
 		D15CD70129A30D6100086A1B /* FullFunctionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6F929A30D6100086A1B /* FullFunctionViewController.swift */; };
 		D15CD70229A30D6100086A1B /* CardCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FA29A30D6100086A1B /* CardCell.swift */; };
 		D15CD70329A30D6100086A1B /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FB29A30D6100086A1B /* BaseViewController.swift */; };
-		D15CD70429A30D6100086A1B /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FC29A30D6100086A1B /* DetailViewController.swift */; };
 		D15CD70529A30D6100086A1B /* HorizontalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FD29A30D6100086A1B /* HorizontalDragViewController.swift */; };
 		D15CD70629A30D6100086A1B /* VerticalDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FE29A30D6100086A1B /* VerticalDragViewController.swift */; };
 		D15CD70729A30D6100086A1B /* InfiniteLoopDragViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */; };
@@ -49,6 +50,8 @@
 		C68F1CC37F74AAB7C363B2CC /* Pods-iOS Example.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iOS Example.debug.xcconfig"; path = "Target Support Files/Pods-iOS Example/Pods-iOS Example.debug.xcconfig"; sourceTree = "<group>"; };
 		D107965529B1D16E003CC604 /* CardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardView.swift; sourceTree = "<group>"; };
 		D107965729B1D306003CC604 /* OverlayLabelView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayLabelView.swift; sourceTree = "<group>"; };
+		D14DC70329B584EF00DCC01C /* BottomView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BottomView.swift; sourceTree = "<group>"; };
+		D14DC70529B587E200DCC01C /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		D15CD6C729A30C8D00086A1B /* iOS Example.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "iOS Example.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D15CD6CA29A30C8D00086A1B /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		D15CD6CE29A30C8D00086A1B /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -60,7 +63,6 @@
 		D15CD6F929A30D6100086A1B /* FullFunctionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FullFunctionViewController.swift; sourceTree = "<group>"; };
 		D15CD6FA29A30D6100086A1B /* CardCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CardCell.swift; sourceTree = "<group>"; };
 		D15CD6FB29A30D6100086A1B /* BaseViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		D15CD6FC29A30D6100086A1B /* DetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		D15CD6FD29A30D6100086A1B /* HorizontalDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HorizontalDragViewController.swift; sourceTree = "<group>"; };
 		D15CD6FE29A30D6100086A1B /* VerticalDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VerticalDragViewController.swift; sourceTree = "<group>"; };
 		D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = InfiniteLoopDragViewController.swift; sourceTree = "<group>"; };
@@ -124,6 +126,8 @@
 				D107965529B1D16E003CC604 /* CardView.swift */,
 				85F076DA29B243E2007F4504 /* CardOverlayView.swift */,
 				D107965729B1D306003CC604 /* OverlayLabelView.swift */,
+				D14DC70329B584EF00DCC01C /* BottomView.swift */,
+				D14DC70529B587E200DCC01C /* DetailViewController.swift */,
 				D15CD6F729A30D6100086A1B /* Demo */,
 				D15CD6D029A30C8D00086A1B /* Main.storyboard */,
 				D15CD6D329A30C8E00086A1B /* Assets.xcassets */,
@@ -140,7 +144,6 @@
 				D15CD6F929A30D6100086A1B /* FullFunctionViewController.swift */,
 				D15CD6FA29A30D6100086A1B /* CardCell.swift */,
 				D15CD6FB29A30D6100086A1B /* BaseViewController.swift */,
-				D15CD6FC29A30D6100086A1B /* DetailViewController.swift */,
 				D15CD6FD29A30D6100086A1B /* HorizontalDragViewController.swift */,
 				D15CD6FE29A30D6100086A1B /* VerticalDragViewController.swift */,
 				D15CD6FF29A30D6100086A1B /* InfiniteLoopDragViewController.swift */,
@@ -275,8 +278,9 @@
 				D15CD6CB29A30C8D00086A1B /* AppDelegate.swift in Sources */,
 				D15CD70329A30D6100086A1B /* BaseViewController.swift in Sources */,
 				D15CD70629A30D6100086A1B /* VerticalDragViewController.swift in Sources */,
+				D14DC70429B584EF00DCC01C /* BottomView.swift in Sources */,
+				D14DC70629B587E200DCC01C /* DetailViewController.swift in Sources */,
 				D107965629B1D16E003CC604 /* CardView.swift in Sources */,
-				D15CD70429A30D6100086A1B /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
