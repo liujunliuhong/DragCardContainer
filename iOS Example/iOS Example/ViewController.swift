@@ -8,6 +8,7 @@
 import UIKit
 import SnapKit
 import DragCardContainer
+import CoreGraphics
 
 private let targetLength: CGFloat = 150.0
 
@@ -39,6 +40,11 @@ public final class ViewController: UIViewController {
         
         view.addSubview(cardContainer)
         view.addSubview(bottmView)
+        
+        let s1 = CGVector(dx: 1, dy: 1)
+        let s2 = CGVector(dx: 1, dy: 1)
+        let s = s1 * s2
+        
         
         cardContainer.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -113,7 +119,7 @@ extension ViewController: DragCardDelegate {
             }
 
             var verticalRatio = abs(translation.y) / targetLength
-            verticalRatio = verticalRatio - horizontalRatio
+            verticalRatio = verticalRatio - horizontalRatio - horizontalRatio
             if verticalRatio >= 1.0 {
                 verticalRatio = 1.0
             } else if verticalRatio <= 0 {
@@ -131,13 +137,15 @@ extension ViewController: DragCardDelegate {
                 case .right:
                     let targetRatio = 1.5
                     var newHorizontalRatio = horizontalRatio + 1
+                    
                     if newHorizontalRatio > targetRatio {
-                        newHorizontalRatio = newHorizontalRatio - targetRatio
+                        newHorizontalRatio = targetRatio - (newHorizontalRatio - targetRatio)
                     }
                     bottmView.passButton.transform = .identity
-                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, horizontalRatio, horizontalRatio)
+                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
                 default:
-                    break
+                    bottmView.passButton.transform = .identity
+                    bottmView.likeButton.transform = .identity
             }
         }
     }

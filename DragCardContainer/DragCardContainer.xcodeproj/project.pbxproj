@@ -20,6 +20,9 @@
 		D15CD69F29A30A8000086A1B /* DragCardDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69329A30A8000086A1B /* DragCardDelegate.swift */; };
 		D15CD6A229A30A8000086A1B /* DragCardContainer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69629A30A8000086A1B /* DragCardContainer.swift */; };
 		D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */; };
+		D1740C5929B9CC77002DBAD8 /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1740C5829B9CC77002DBAD8 /* Animator.swift */; };
+		D1740C5B29B9CD32002DBAD8 /* UIView+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1740C5A29B9CD32002DBAD8 /* UIView+Extension.swift */; };
+		D1740C5D29B9D537002DBAD8 /* CGVector+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1740C5C29B9D537002DBAD8 /* CGVector+Extension.swift */; };
 		D185877829AEFFC4001FCBB5 /* CardModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877729AEFFC4001FCBB5 /* CardModel.swift */; };
 		D185877A29AF01E8001FCBB5 /* BasicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877929AF01E8001FCBB5 /* BasicInfo.swift */; };
 		D185877C29AF0239001FCBB5 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877B29AF0239001FCBB5 /* Default.swift */; };
@@ -44,6 +47,9 @@
 		D15CD69329A30A8000086A1B /* DragCardDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDelegate.swift; sourceTree = "<group>"; };
 		D15CD69629A30A8000086A1B /* DragCardContainer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardContainer.swift; sourceTree = "<group>"; };
 		D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DragCardDataSource.swift; sourceTree = "<group>"; };
+		D1740C5829B9CC77002DBAD8 /* Animator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
+		D1740C5A29B9CD32002DBAD8 /* UIView+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extension.swift"; sourceTree = "<group>"; };
+		D1740C5C29B9D537002DBAD8 /* CGVector+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGVector+Extension.swift"; sourceTree = "<group>"; };
 		D185877729AEFFC4001FCBB5 /* CardModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardModel.swift; sourceTree = "<group>"; };
 		D185877929AF01E8001FCBB5 /* BasicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfo.swift; sourceTree = "<group>"; };
 		D185877B29AF0239001FCBB5 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
@@ -93,7 +99,6 @@
 			isa = PBXGroup;
 			children = (
 				D15CD69629A30A8000086A1B /* DragCardContainer.swift */,
-				D107965929B1D6BF003CC604 /* DragCardView.swift */,
 				D107964F29B1B670003CC604 /* CardEngine.swift */,
 				D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */,
 				D15CD69329A30A8000086A1B /* DragCardDelegate.swift */,
@@ -102,6 +107,7 @@
 				D185878329AF39D0001FCBB5 /* Metrics.swift */,
 				D185878729AF53DD001FCBB5 /* Movement.swift */,
 				D185878B29AF5508001FCBB5 /* Direction.swift */,
+				D107965929B1D6BF003CC604 /* DragCardView.swift */,
 				D113EF4229B049B300BA78D5 /* DragOutStatus.swift */,
 				D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */,
 				8559819229AFA79300365130 /* CGFloat+Extension.swift */,
@@ -111,6 +117,9 @@
 				D107964929B19689003CC604 /* Mode.swift */,
 				D107964D29B19C9F003CC604 /* ScaleMode.swift */,
 				D107965329B1C09A003CC604 /* RandomMode.swift */,
+				D1740C5829B9CC77002DBAD8 /* Animator.swift */,
+				D1740C5A29B9CD32002DBAD8 /* UIView+Extension.swift */,
+				D1740C5C29B9D537002DBAD8 /* CGVector+Extension.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -194,7 +203,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D1740C5929B9CC77002DBAD8 /* Animator.swift in Sources */,
 				D185877A29AF01E8001FCBB5 /* BasicInfo.swift in Sources */,
+				D1740C5D29B9D537002DBAD8 /* CGVector+Extension.swift in Sources */,
 				D113EF4929B09D5900BA78D5 /* TapGestureRecognizer.swift in Sources */,
 				D15CD6A629A30A8000086A1B /* DragCardDataSource.swift in Sources */,
 				D185878429AF39D0001FCBB5 /* Metrics.swift in Sources */,
@@ -208,6 +219,7 @@
 				D107964A29B19689003CC604 /* Mode.swift in Sources */,
 				D113EF4729B09D3200BA78D5 /* PanGestureRecognizer.swift in Sources */,
 				D15CD69F29A30A8000086A1B /* DragCardDelegate.swift in Sources */,
+				D1740C5B29B9CD32002DBAD8 /* UIView+Extension.swift in Sources */,
 				D107965A29B1D6BF003CC604 /* DragCardView.swift in Sources */,
 				D185878A29AF547E001FCBB5 /* CGPoint+Extension.swift in Sources */,
 				D185877C29AF0239001FCBB5 /* Default.swift in Sources */,

@@ -48,28 +48,33 @@
 
 import Foundation
 
-public struct Direction: OptionSet, CustomStringConvertible, Hashable {
-    public let rawValue: UInt
+public enum Direction: Int, CaseIterable {
+    case left
+    case right
+    case up
+    case down
     
-    public init(rawValue: UInt) {
-        self.rawValue = rawValue
+    public static let horizontal: [Direction] = [.left, .right]
+    public static let vertical: [Direction] = [.up, .down]
+    public static let all: [Direction] = Direction.allCases
+    
+    public var vector: CGVector {
+        switch self {
+            case .left:
+                return CGVector(dx: -1, dy: 0)
+            case .right:
+                return CGVector(dx: 1, dy: 0)
+            case .up:
+                return CGVector(dx: 0, dy: -1)
+            case .down:
+                return CGVector(dx: 0, dy: 1)
+        }
     }
-    
-    public static let none = Direction([])
-    public static let left = Direction(rawValue: 1 << 0)
-    public static let right = Direction(rawValue: 1 << 1)
-    public static let down = Direction(rawValue: 1 << 2)
-    public static let up = Direction(rawValue: 1 << 3)
-    
-    public static let horizontal: Direction = [left, right]
-    public static let vertical: Direction = [up, down]
-    
-    public static let all: Direction = [horizontal, vertical]
-    
+}
+
+extension Direction: CustomStringConvertible {
     public var description: String {
         switch self {
-            case .none:
-                return "None"
             case .left:
                 return "Left"
             case .right:
@@ -78,25 +83,23 @@ public struct Direction: OptionSet, CustomStringConvertible, Hashable {
                 return "Up"
             case .down:
                 return "Down"
-            default:
-                return "Unknown"
         }
     }
 }
 
-extension Direction {
-    public static func fromPoint(_ point: CGPoint) -> Direction {
-        switch (point.x, point.y) {
-            case let (x, y) where abs(x) >= abs(y) && x > 0:
-                return .right
-            case let (x, y) where abs(x) >= abs(y) && x < 0:
-                return .left
-            case let (x, y) where abs(x) < abs(y) && y < 0:
-                return .up
-            case let (x, y) where abs(x) < abs(y) && y > 0:
-                return .down
-            case (_, _):
-                return .none
-        }
-    }
-}
+//extension Direction {
+//    public static func fromPoint(_ point: CGPoint) -> Direction {
+//        switch (point.x, point.y) {
+//            case let (x, y) where abs(x) >= abs(y) && x > 0:
+//                return .right
+//            case let (x, y) where abs(x) >= abs(y) && x < 0:
+//                return .left
+//            case let (x, y) where abs(x) < abs(y) && y < 0:
+//                return .up
+//            case let (x, y) where abs(x) < abs(y) && y > 0:
+//                return .down
+//            case (_, _):
+//                return .none
+//        }
+//    }
+//}
