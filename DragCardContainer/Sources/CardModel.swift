@@ -50,14 +50,13 @@ import Foundation
 import UIKit
 
 internal final class CardModel {
+    internal let identifier: String = UUID().uuidString
+    
     internal let cardView: DragCardView
     internal let index: Int
     
+    internal var currentBasicInfo: BasicInfo = .default
     internal var targetBasicInfo: BasicInfo = .default
-    
-    // for drag out
-    internal var dragOutMovement: Movement = .default
-    internal var dragOutStatus: DragOutStatus = .ready
     
     internal init(cardView: DragCardView, index: Int) {
         self.cardView = cardView

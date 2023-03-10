@@ -56,7 +56,6 @@ internal final class CardEngine {
 #if DEBUG
         print("\(self) deinit")
 #endif
-        displayLink.invalidate()
         flush()
     }
     
@@ -65,26 +64,10 @@ internal final class CardEngine {
     private var displayCardIndex: Int = 0
     
     private var cardModels: [CardModel] = []
-    private var dragOutCardModels: [CardModel] = []
     
     private var currentHoldCardModel: CardModel?
     
-    private var activePanCardsAnimator: UIViewPropertyAnimator?
-    private var restoreCardsAnimators: [UIViewPropertyAnimator] = []
-    
-    private var isPanDirectionUp: Bool = true
-    
     private var metrics: Metrics = .default
-    
-    private lazy var displayLink: CADisplayLink = {
-        let displayLink = CADisplayLink(target: self, selector: #selector(displayLinkAction))
-        if #available(iOS 15.0, *) {
-            displayLink.preferredFrameRateRange = CAFrameRateRange(minimum: 30, maximum: 30)
-        } else {
-            displayLink.preferredFramesPerSecond = 30
-        }
-        return displayLink
-    }()
     
     private var _topIndex: Int?
     internal var topIndex: Int? {
@@ -122,7 +105,7 @@ internal final class CardEngine {
 
 extension CardEngine {
     private func setup() {
-        displayLink.add(to: RunLoop.current, forMode: .common)
+        
     }
 }
 
@@ -146,73 +129,75 @@ extension CardEngine {
             }
         }
         
+        updateAllCardModelsCurrentBasicInfo()
         updateAllCardModelsTargetBasicInfo()
         
+        for model in cardModels {
+            model.cardView.removeAllAnimations()
+        }
+        
         if animation {
-            UIViewPropertyAnimator.runningPropertyAnimator(withDuration: Default.animationDuration,
-                                                           delay: 0,
-                                                           options: .curveEaseInOut) {
+            Animator.animate(withDuration: 0.2,
+                             options: [.curveLinear]) {
                 for model in self.cardModels {
-                    model.cardView.layer.transform = model.targetBasicInfo.transform3D
-                    model.cardView.alpha = model.targetBasicInfo.alpha
+                    model.cardView.transform = model.targetBasicInfo.transform
                 }
             }
         } else {
-            for model in self.cardModels {
-                model.cardView.layer.transform = model.targetBasicInfo.transform3D
-                model.cardView.alpha = model.targetBasicInfo.alpha
+            for model in cardModels {
+                model.cardView.transform = model.targetBasicInfo.transform
             }
         }
         
         addPanGestureForTopCard()
         addTapGestureForTopCard()
+        setUserInteractionForTopCard(true)
         
         delegateForDisplayTopCard()
     }
     
     internal func swipeTopCard(to: Direction) {
-        if metrics.allowedDirection.intersection(to) == .none {
-            return
-        }
+        guard let topModel = cardModels.last else { return }
         
-        if let dragOutCardModel = cardModels.last {
-            //            dragOutCardModel.cardView.layer.transform = CATransform3DIdentity
-            dragOutCardModel.dragOutMovement = autoEndMovement(direction: to)
-            dragOutCardModels.append(dragOutCardModel)
-            cardModels.removeLast() // remove last
-            
-            removeTapGesture(dragOutCardModel.cardView)
-            removePanGesture(dragOutCardModel.cardView)
-            
-            addPanGestureForTopCard()
-            addTapGestureForTopCard()
-        }
+        let duration = topModel.cardView.finalDuration(to, forced: true)
+        
+        topModel.cardView.swipe(to: to)
+        
+        delegateForRemoveTopCard(model: topModel, direction: to)
+        delegateForFinishRemoveLastCard(model: topModel)
+        
+        removePanGesture(topModel.cardView)
+        removeTapGesture(topModel.cardView)
+        topModel.cardView.setUserInteraction(false)
+        
+        updateAllCardModelsCurrentBasicInfo()
+        
+        cardModels.removeLast()
+        
+        addPanGestureForTopCard()
+        addTapGestureForTopCard()
+        setUserInteractionForTopCard(true)
         
         incrementDisplayIndex()
         installNextCard()
         
+        delegateForDisplayTopCard()
+        
         updateAllCardModelsTargetBasicInfo()
         
-        activePanCardsAnimator?.stopAnimation(true)
-        activePanCardsAnimator?.finishAnimation(at: .current)
+        for model in cardModels {
+            model.cardView.removeAllAnimations()
+        }
         
-        let animator = UIViewPropertyAnimator(duration: Default.animationDuration, curve: .easeInOut) {
+        Animator.animate(withDuration: duration / 2.0,
+                         options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
-                model.cardView.layer.transform = model.targetBasicInfo.transform3D
-                model.cardView.alpha = model.targetBasicInfo.alpha
+                model.cardView.transform = model.targetBasicInfo.transform
             }
         }
-        animator.startAnimation()
-        activePanCardsAnimator = animator
-        
-        dragOut()
     }
     
     internal func rewind(from: Direction) {
-        if metrics.allowedDirection.intersection(from) == .none {
-            return
-        }
-        
         var index: Int
         
         if let topModel = cardModels.last {
@@ -238,103 +223,84 @@ extension CardEngine {
             return
         }
         
-        let endMovement = autoEndMovement(direction: from)
-        let finalTranslation = finalTranslation(movement: endMovement)
-        let endTransform = endTransform(movement: endMovement)
-        
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: index)
         
-        cardView.layer.anchorPoint = metrics.maximumBasicInfo.anchorPoint
-        cardView.frame = metrics.maximumBasicInfo.frame
-        cardView.layer.transform = endTransform
-        cardView.alpha = 1
+        cardView.layer.anchorPoint = metrics.cardAnchorPoint
+        cardView.frame = metrics.cardFrame
+        cardView.transform = .identity
+        cardView.delegate = self
+        cardView.setUserInteraction(false)
         cardContainer.containerView.addSubview(cardView)
         
+        cardView.rewind(from: from)
+        
         let cardModel = CardModel(cardView: cardView, index: index)
+        cardModel.currentBasicInfo = metrics.maximumBasicInfo
         
         currentHoldCardModel = cardModel
         
-        delegateForMovementCard(model: cardModel, translation: finalTranslation)
-        
-        restoreCard()
-    }
-    
-    internal func addPanGestureForTopCard() {
-        if let topModel = cardModels.last {
-            addPanGesture(topModel.cardView)
-        }
-    }
-    
-    internal func addTapGestureForTopCard() {
-        if let topModel = cardModels.last {
-            addTapGesture(topModel.cardView)
-        }
-    }
-    
-    internal func removePanGestureForTopCard() {
-        if let topModel = cardModels.last {
-            removePanGesture(topModel.cardView)
-        }
-    }
-    
-    internal func removeTapGestureForTopCard() {
-        if let topModel = cardModels.last {
-            removeTapGesture(topModel.cardView)
-        }
+        restoreAllCards()
     }
 }
 
 extension CardEngine {
-    @objc private func displayLinkAction() {
-        var canInvalidateAllRestoreCardsAnimator = true
-        for a in restoreCardsAnimators {
-            if a.isRunning {
-                canInvalidateAllRestoreCardsAnimator = false
-                break
-            }
-        }
-        if canInvalidateAllRestoreCardsAnimator && !restoreCardsAnimators.isEmpty {
-            if cardModels.count > metrics.visibleCount {
-                let willRemoveModels = cardModels.prefix(cardModels.count - metrics.visibleCount)
-                for model in willRemoveModels {
-                    model.cardView.removeFromSuperview()
-                }
-                cardModels = cardModels.suffix(metrics.visibleCount)
-            }
-            
-            addPanGestureForTopCard()
-            addTapGestureForTopCard()
-            
-            restoreCardsAnimators.removeAll()
-        }
+    internal func setUserInteractionForTopCard(_ isEnabled: Bool) {
+        guard let topModel = cardModels.last else { return }
+        topModel.cardView.setUserInteraction(isEnabled)
+    }
+    
+    internal func addPanGestureForTopCard() {
+        guard let topModel = cardModels.last else { return }
+        addPanGesture(topModel.cardView)
+    }
+    
+    internal func addTapGestureForTopCard() {
+        guard let topModel = cardModels.last else { return }
+        addTapGesture(topModel.cardView)
+    }
+    
+    internal func removePanGestureForTopCard() {
+        guard let topModel = cardModels.last else { return }
+        removePanGesture(topModel.cardView)
+    }
+    
+    internal func removeTapGestureForTopCard() {
+        guard let topModel = cardModels.last else { return }
+        removeTapGesture(topModel.cardView)
+    }
+    
+    private func removePanGesture(_ cardView: DragCardView) {
+        cardView.removePanGesture()
+    }
+    
+    private func removeTapGesture(_ cardView: DragCardView) {
+        cardView.removeTapGesture()
+    }
+    
+    private func addPanGesture(_ cardView: DragCardView) {
+        cardView.removePanGesture()
+        cardView.addPanGesture()
+    }
+    
+    private func addTapGesture(_ cardView: DragCardView) {
+        cardView.removeTapGesture()
+        cardView.addTapGesture()
     }
 }
 
 extension CardEngine {
     private func flush() {
         for model in cardModels {
+            model.cardView.removeAllAnimations()
             model.cardView.removeFromSuperview()
         }
         cardModels.removeAll()
         //
         if let currentHoldCardModel = currentHoldCardModel {
-            dragOutCardModels.append(currentHoldCardModel)
+            currentHoldCardModel.cardView.removeAllAnimations()
+            currentHoldCardModel.cardView.removeFromSuperview()
         }
-        for model in dragOutCardModels {
-            model.cardView.removeFromSuperview()
-        }
-        dragOutCardModels.removeAll()
-        //
-        if let animator = activePanCardsAnimator {
-            animator.stopAnimation(true)
-            animator.finishAnimation(at: .current)
-        }
-        //
-        for animator in restoreCardsAnimators {
-            animator.stopAnimation(true)
-            animator.finishAnimation(at: .current)
-        }
-        restoreCardsAnimators.removeAll()
+        currentHoldCardModel = nil
     }
     
     private func installNextCard() {
@@ -346,17 +312,19 @@ extension CardEngine {
         
         let cardView = cardDataSource.dragCard(cardContainer, viewForCard: index)
         
-        cardView.layer.anchorPoint = metrics.minimumBasicInfo.anchorPoint
-        cardView.frame = metrics.minimumBasicInfo.frame
-        cardView.layer.transform = metrics.minimumBasicInfo.transform3D
-        cardView.alpha = metrics.minimumBasicInfo.alpha
+        cardView.layer.anchorPoint = metrics.cardAnchorPoint
+        cardView.frame = metrics.cardFrame
+        cardView.transform = metrics.minimumBasicInfo.transform
+        cardView.delegate = self
+        cardView.setUserInteraction(false)
         cardContainer.containerView.insertSubview(cardView, at: 0)
         
         let cardModel = CardModel(cardView: cardView, index: index)
+        cardModel.currentBasicInfo = metrics.minimumBasicInfo
         cardModels.insert(cardModel, at: 0)
     }
     
-    private func restoreCard() {
+    private func restoreAllCards() {
         guard let currentHoldCardModel = currentHoldCardModel else {
             return
         }
@@ -364,35 +332,66 @@ extension CardEngine {
             return
         }
         
+        let duration = currentHoldCardModel.cardView.totalRewindDuration
+        
         removePanGestureForTopCard()
         removeTapGestureForTopCard()
+        setUserInteractionForTopCard(false)
         
         restoreDisplayIndex()
+        
+        updateAllCardModelsCurrentBasicInfo()
         
         cardModels.append(currentHoldCardModel)
         
         updateAllCardModelsTargetBasicInfo()
         
-        if let animator = activePanCardsAnimator {
-            animator.stopAnimation(true)
-            animator.finishAnimation(at: .current)
+        for model in cardModels {
+            if model.identifier != currentHoldCardModel.identifier {
+                model.cardView.removeAllAnimations()
+            }
         }
         
-        let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                              dampingRatio: 0.8) {
+        Animator.animate(withDuration: duration / 2.0,
+                         options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
-                model.cardView.layer.transform = model.targetBasicInfo.transform3D
-                model.cardView.alpha = model.targetBasicInfo.alpha
+                if model.identifier != currentHoldCardModel.identifier {
+                    model.cardView.transform = model.targetBasicInfo.transform
+                }
             }
-            self.delegateForMovementCard(model: currentHoldCardModel, translation: .zero)
         }
-        animator.startAnimation()
-        restoreCardsAnimators.append(animator)
+        
+        addPanGestureForTopCard()
+        addTapGestureForTopCard()
+        setUserInteractionForTopCard(true)
         
         delegateForDisplayTopCard()
     }
     
+    private func updateAllCardModelsCurrentBasicInfo() {
+        for model in cardModels {
+            model.currentBasicInfo = metrics.minimumBasicInfo
+        }
+        
+        let needModifyModels = cardModels.suffix(metrics.visibleCount).reversed()
+        for (i, model) in needModifyModels.enumerated() {
+            model.currentBasicInfo = metrics.basicInfos[i]
+        }
+    }
     
+    private func updateAllCardModelsTargetBasicInfo() {
+        for model in cardModels {
+            model.targetBasicInfo = metrics.minimumBasicInfo
+        }
+        
+        let needModifyModels = cardModels.suffix(metrics.visibleCount).reversed()
+        for (i, model) in needModifyModels.enumerated() {
+            model.targetBasicInfo = metrics.basicInfos[i]
+        }
+    }
+}
+
+extension CardEngine {
     private func incrementDisplayIndex() {
         if !canInstallNextCard() {
             return
@@ -445,198 +444,77 @@ extension CardEngine {
         }
         return false
     }
-    
-    private func updateAllCardModelsTargetBasicInfo() {
+}
+
+extension CardEngine: CardDelegate {
+    internal func cardDidBeginSwipe(_ card: DragCardView) {
+        updateAllCardModelsCurrentBasicInfo()
+        
+        currentHoldCardModel = cardModels.last
+        cardModels.removeLast() // remove last
+        
+        incrementDisplayIndex()
+        installNextCard()
+        
+        updateAllCardModelsTargetBasicInfo()
+        
         for model in cardModels {
-            model.targetBasicInfo = metrics.minimumBasicInfo
-        }
-        
-        let needModifyModels = cardModels.suffix(metrics.visibleCount).reversed()
-        for (i, model) in needModifyModels.enumerated() {
-            model.targetBasicInfo = metrics.basicInfos[i]
+            model.cardView.removeAllAnimations()
         }
     }
     
-    private func shouldDragOut(movement: Movement) -> Bool {
-        let translation = movement.translation
-        let velocity = movement.velocity
-        let bounds = cardContainer.containerView.bounds
+    internal func cardDidContinueSwipe(_ card: DragCardView) {
+        let panTranslation = card.panGestureRecognizer?.translation(in: card.superview) ?? .zero
+        let minimumSideLength = min(cardContainer.bounds.width, cardContainer.bounds.height)
+        let percentage = min(abs(panTranslation.x) / minimumSideLength, 1)
         
-        func isDirectionAllowed() -> Bool {
-            return Direction.fromPoint(translation).intersection(metrics.allowedDirection) != .none
+        for model in cardModels {
+            let scale = model.currentBasicInfo.scale + (model.targetBasicInfo.scale - model.currentBasicInfo.scale) * percentage
+            let translation = model.currentBasicInfo.translation + (model.targetBasicInfo.translation - model.currentBasicInfo.translation) * percentage
+            
+            let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
+            let t2 = t1.scaledBy(x: scale, y: scale)
+            
+            model.cardView.transform = t2
         }
-        func isTranslationLargeEnough() -> Bool {
-            return abs(translation.x) > metrics.minimumTranslationInPercent * bounds.width || abs(translation.y) > metrics.minimumTranslationInPercent * bounds.height
-        }
-        func isVelocityLargeEnough() -> Bool {
-            return velocity.magnitude > metrics.minimumVelocityInPointPerSecond
-        }
-        // print("direction: \(Direction.fromPoint(translation))")
-        // print("isDirectionAllowed: \(isDirectionAllowed())")
-        // print("isTranslationLargeEnough: \(isTranslationLargeEnough())")
-        return isDirectionAllowed() && (isTranslationLargeEnough() || isVelocityLargeEnough())
     }
     
-    private func horizontalDragFraction(movement: Movement) -> CGFloat {
-        let bounds = cardContainer.containerView.bounds
-        let translation = movement.translation
-        
-        let fraction = abs(translation.x) / (metrics.minimumTranslationInPercent * bounds.width)
-        
-        if fraction.isLessThanOrEqualTo(.zero) {
-            return .zero
-        } else if !fraction.isLessThanOrEqualTo(1.0) {
-            return 1.0
-        }
-        return fraction
+    internal func cardDidCancelSwipe(_ card: DragCardView) {
+        restoreAllCards()
     }
     
-    private func rotationAngle(movement: Movement) -> CGFloat {
-        let bounds = cardContainer.containerView.bounds
-        let translation = movement.translation
+    internal func cardDidSwipe(_ card: DragCardView, withDirection direction: Direction) {
+        let duration = card.finalDuration(direction, forced: false)
         
-        var fraction = translation.x / (metrics.minimumTranslationInPercent * bounds.width)
-        
-        if fraction.isLessThanOrEqualTo(-1.0) {
-            fraction = -1.0
-        } else if !fraction.isLessThanOrEqualTo(1.0) {
-            fraction = 1.0
+        for model in cardModels {
+            model.cardView.removeAllAnimations()
         }
         
-        let cardRotationMaximumAngle = isPanDirectionUp ? metrics.cardRotationMaximumAngle : -metrics.cardRotationMaximumAngle
-        
-        return (fraction * cardRotationMaximumAngle).radius
-    }
-    
-    private func removePanGesture(_ cardView: UIView) {
-        for gesture in (cardView.gestureRecognizers ?? []) {
-            if gesture.isKind(of: PanGestureRecognizer.classForCoder()) {
-                cardView.removeGestureRecognizer(gesture)
+        Animator.animate(withDuration: duration / 2.0,
+                         options: [.curveLinear, .allowUserInteraction]) {
+            for model in self.cardModels {
+                model.cardView.transform = model.targetBasicInfo.transform
             }
         }
-    }
-    
-    private func removeTapGesture(_ cardView: UIView) {
-        for gesture in (cardView.gestureRecognizers ?? []) {
-            if gesture.isKind(of: TapGestureRecognizer.classForCoder()) {
-                cardView.removeGestureRecognizer(gesture)
-            }
-        }
-    }
-    
-    private func addPanGesture(_ cardView: UIView) {
-        removePanGesture(cardView)
-        let panGesture = PanGestureRecognizer(target: self, action: #selector(handlePan(_:)))
-        cardView.addGestureRecognizer(panGesture)
-    }
-    
-    private func addTapGesture(_ cardView: UIView) {
-        removeTapGesture(cardView)
-        let tapGesture = TapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
-        cardView.addGestureRecognizer(tapGesture)
-    }
-    
-    private func autoEndMovement(direction: Direction) -> Movement {
-        switch direction {
-            case .up:
-                let movement = Movement(translation: CGPoint(x: 0,
-                                                             y: -1),
-                                        velocity: CGPoint(x: 0,
-                                                          y: -metrics.minimumVelocityInPointPerSecond))
-                return movement
-            case .down:
-                let movement = Movement(translation: CGPoint(x: 0,
-                                                             y: 1),
-                                        velocity: CGPoint(x: 0,
-                                                          y: metrics.minimumVelocityInPointPerSecond))
-                return movement
-            case .right:
-                let movement = Movement(translation: CGPoint(x: 1,
-                                                             y: 0),
-                                        velocity: CGPoint(x: metrics.minimumVelocityInPointPerSecond,
-                                                          y: 0))
-                return movement
-            case .left:
-                let movement = Movement(translation: CGPoint(x: -1,
-                                                             y: 0),
-                                        velocity: CGPoint(x: -metrics.minimumVelocityInPointPerSecond,
-                                                          y: 0))
-                return movement
-            default:
-                return .default
-        }
-    }
-    
-    private func endTransform(movement: Movement) -> CATransform3D {
-        let toTranslation = finalTranslation(movement: movement)
-        let translationTransform = CATransform3DTranslate(CATransform3DIdentity, toTranslation.x, toTranslation.y, .zero)
-        if Direction.fromPoint(movement.translation) == .horizontal {
-            let transform = CATransform3DRotate(translationTransform, metrics.cardRotationMaximumAngle.radius, 0, 0, 1)
-            return transform
-        }
-        return translationTransform
-    }
-    
-    private func finalTranslation(movement: Movement) -> CGPoint {
-        let toTranslation = movement.translation.normalized * max(movement.velocity.magnitude, metrics.minimumVelocityInPointPerSecond)
-        return toTranslation
-    }
-    
-    private func dragOut(triggerDelegate: Bool = true) {
-        if triggerDelegate {
-            delegateForDisplayTopCard()
+        
+        delegateForDisplayTopCard()
+        
+        if let currentHoldCardModel = currentHoldCardModel {
+            delegateForRemoveTopCard(model: currentHoldCardModel, direction: direction)
+            delegateForFinishRemoveLastCard(model: currentHoldCardModel)
         }
         
-        for model in dragOutCardModels {
-            removePanGesture(model.cardView)
-            
-            if model.dragOutStatus == .ongoing || model.dragOutStatus == .done {
-                continue
-            }
-            
-            if triggerDelegate {
-                delegateForRemoveTopCard(model: model)
-                delegateForFinishRemoveLastCard(model: model)
-            }
-            
-            model.dragOutStatus = .ongoing
-            
-            let dragOutMovement = model.dragOutMovement
-            
-            let finalTranslation = finalTranslation(movement: dragOutMovement)
-            
-            let transform = endTransform(movement: dragOutMovement)
-            
-            UIView.animate(withDuration: Default.animationDuration,
-                           delay: 0,
-                           usingSpringWithDamping: 1,
-                           initialSpringVelocity: 0,
-                           options: [.curveEaseInOut]) {
-                model.cardView.layer.transform = transform
-                model.cardView.alpha = 1
-                if triggerDelegate {
-                    self.delegateForMovementCard(model: model, translation: finalTranslation)
-                }
-                
-            } completion: { _ in
-                model.dragOutStatus = .done
-                model.cardView.removeFromSuperview()
-                
-                var canFlush: Bool = true
-                for model in self.dragOutCardModels {
-                    if model.dragOutStatus != .done {
-                        canFlush = false
-                        break
-                    }
-                }
-                if canFlush {
-                    for model in self.dragOutCardModels {
-                        model.cardView.removeFromSuperview()
-                    }
-                    self.dragOutCardModels.removeAll()
-                }
-            }
-        }
+        addPanGestureForTopCard()
+        addTapGestureForTopCard()
+        setUserInteractionForTopCard(true)
+    }
+    
+    internal func cardDidDragout(_ card: DragCardView) {
+        card.removeFromSuperview()
+    }
+    
+    internal func cardDidTap(_ card: DragCardView) {
+        delegateForTapTopCard()
     }
 }
 
@@ -662,112 +540,17 @@ extension CardEngine {
         }
     }
     
-    private func delegateForRemoveTopCard(model: CardModel) {
-        let direction = Direction.fromPoint(model.dragOutMovement.translation)
+    private func delegateForRemoveTopCard(model: CardModel, direction: Direction) {
         cardContainer.delegate?.dragCard(cardContainer,
                                          didRemovedTopCardAt: model.index,
                                          direction: direction,
                                          with: model.cardView)
     }
     
-    private func delegateForMovementCard(model: CardModel, translation: CGPoint) {
-        cardContainer.delegate?.dragCard(cardContainer,
-                                         movementCardAt: model.index,
-                                         translation: translation,
-                                         with: model.cardView)
-    }
-}
-
-extension CardEngine {
-    @objc private func handlePan(_ recognizer: PanGestureRecognizer) {
-        guard let touchView = recognizer.view else { return }
-        let translation = recognizer.translation(in: cardContainer.containerView)
-        let locationInTouchView = recognizer.location(in: touchView)
-        let velocity = recognizer.velocity(in: cardContainer.containerView)
-        
-        let movement = Movement(translation: translation, velocity: velocity)
-        
-        switch recognizer.state {
-            case .began:
-                isPanDirectionUp = locationInTouchView.y <= touchView.bounds.height / 2.0
-                
-                currentHoldCardModel = cardModels.last
-                cardModels.removeLast() // remove last
-                
-                incrementDisplayIndex()
-                installNextCard()
-                
-                updateAllCardModelsTargetBasicInfo()
-                
-                for animator in restoreCardsAnimators {
-                    animator.stopAnimation(true)
-                    animator.finishAnimation(at: .current)
-                }
-                
-                if let animator = activePanCardsAnimator {
-                    animator.stopAnimation(true)
-                    animator.finishAnimation(at: .current)
-                }
-                
-                let animator = UIViewPropertyAnimator(duration: Default.animationDuration,
-                                                      curve: .easeInOut,
-                                                      animations: {
-                    for model in self.cardModels {
-                        model.cardView.layer.transform = model.targetBasicInfo.transform3D
-                        model.cardView.alpha = model.targetBasicInfo.alpha
-                    }
-                })
-                activePanCardsAnimator = animator
-                
-            case .changed:
-                // rotate and translate
-                let horizontalFractionComplete = horizontalDragFraction(movement: movement)
-                
-                
-                if let animator = activePanCardsAnimator {
-                    animator.fractionComplete = horizontalFractionComplete
-                }
-                
-                if let currentHoldCardModel = currentHoldCardModel {
-                    let rotationAngle = rotationAngle(movement: movement)
-                    let translationTransform = CATransform3DTranslate(CATransform3DIdentity, translation.x, translation.y, .zero)
-                    let holdCardTransform = CATransform3DRotate(translationTransform, rotationAngle, 0, 0, 1)
-                    
-                    currentHoldCardModel.cardView.layer.transform = holdCardTransform
-                    
-                    currentHoldCardModel.dragOutMovement = movement
-                    
-                    delegateForMovementCard(model: currentHoldCardModel, translation: translation)
-                }
-            case .ended, .cancelled:
-                if shouldDragOut(movement: movement) {
-                    // Drag out
-                    if let animator = activePanCardsAnimator {
-                        let timingParameters = UICubicTimingParameters(animationCurve: .easeInOut)
-                        animator.continueAnimation(withTimingParameters: timingParameters, durationFactor: 1)
-                    }
-                    
-                    if let currentHoldCardModel = currentHoldCardModel {
-                        dragOutCardModels.append(currentHoldCardModel)
-                    }
-                    currentHoldCardModel = nil
-                    
-                    addPanGestureForTopCard()
-                    addTapGestureForTopCard()
-                    
-                    dragOut()
-                } else {
-                    // Restore
-                    restoreCard()
-                }
-            default:
-                break
-        }
-    }
-}
-
-extension CardEngine {
-    @objc private func handleTap(_ recognizer: TapGestureRecognizer) {
-        delegateForTapTopCard()
-    }
+    //    private func delegateForMovementCard(model: CardModel, translation: CGPoint) {
+    //        cardContainer.delegate?.dragCard(cardContainer,
+    //                                         movementCardAt: model.index,
+    //                                         translation: translation,
+    //                                         with: model.cardView)
+    //    }
 }

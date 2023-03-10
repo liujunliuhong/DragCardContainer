@@ -87,19 +87,19 @@ extension Direction: CustomStringConvertible {
     }
 }
 
-//extension Direction {
-//    public static func fromPoint(_ point: CGPoint) -> Direction {
-//        switch (point.x, point.y) {
-//            case let (x, y) where abs(x) >= abs(y) && x > 0:
-//                return .right
-//            case let (x, y) where abs(x) >= abs(y) && x < 0:
-//                return .left
-//            case let (x, y) where abs(x) < abs(y) && y < 0:
-//                return .up
-//            case let (x, y) where abs(x) < abs(y) && y > 0:
-//                return .down
-//            case (_, _):
-//                return .none
-//        }
-//    }
-//}
+extension Direction {
+    public static func fromPoint(_ point: CGPoint) -> Direction {
+        switch (point.x, point.y) {
+            case let (x, y) where abs(x) >= abs(y) && x > 0:
+                return .right
+            case let (x, y) where abs(x) >= abs(y) && x < 0:
+                return .left
+            case let (x, y) where abs(x) < abs(y) && y < 0:
+                return .up
+            case let (x, y) where abs(x) < abs(y) && y > 0:
+                return .down
+            case (_, _):
+                return .right
+        }
+    }
+}

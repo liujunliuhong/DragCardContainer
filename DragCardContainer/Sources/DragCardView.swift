@@ -8,12 +8,12 @@
 import Foundation
 import UIKit
 
-internal protocol CardDelegate {
+internal protocol CardDelegate: AnyObject {
     func cardDidBeginSwipe(_ card: DragCardView)
     func cardDidCancelSwipe(_ card: DragCardView)
     func cardDidContinueSwipe(_ card: DragCardView)
     func cardDidSwipe(_ card: DragCardView, withDirection direction: Direction)
-    
+    func cardDidDragout(_ card: DragCardView)
     func cardDidTap(_ card: DragCardView)
 }
 
@@ -53,10 +53,10 @@ open class DragCardView: UIView {
         }
     }
     
-    /// The total duration of the reverse swipe animation, measured in seconds.
-    public var totalReverseSwipeDuration: TimeInterval = 0.25 {
+    /// The total duration of the rewind animation, measured in seconds.
+    public var totalRewindDuration: TimeInterval = 0.3 {
         didSet {
-            totalReverseSwipeDuration = max(.leastNormalMagnitude, totalReverseSwipeDuration)
+            totalRewindDuration = max(.leastNormalMagnitude, totalRewindDuration)
         }
     }
     
@@ -64,6 +64,12 @@ open class DragCardView: UIView {
     public lazy var contentView: UIView = {
         let contentView = UIView()
         return contentView
+    }()
+    
+    private lazy var overlayContentView: UIView = {
+        let overlayContentView = UIView()
+        overlayContentView.setUserInteraction(false)
+        return overlayContentView
     }()
     
     /// The pan gesture recognizer attached to the view.
@@ -97,7 +103,9 @@ open class DragCardView: UIView {
         return min(UIScreen.main.bounds.width, UIScreen.main.bounds.height) / 4
     }
     
+    internal weak var delegate: CardDelegate?
     private var internalTouchLocation: CGPoint?
+    private var overlays: [Direction: UIView] = [:]
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -116,16 +124,21 @@ extension DragCardView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         contentView.frame = bounds
+        overlayContentView.frame = bounds
+        overlays.values.forEach { $0.frame = overlayContentView.bounds }
+        bringSubviewToFront(overlayContentView)
     }
 }
 
 extension DragCardView {
     private func initUI() {
-        
+        addPanGesture()
+        addTapGesture()
     }
     
     private func setupUI() {
         addSubview(contentView)
+        addSubview(overlayContentView)
     }
 }
 
@@ -157,8 +170,52 @@ extension DragCardView {
         let tapGesture = TapGestureRecognizer(target: self, action: #selector(handleTap(_:)))
         addGestureRecognizer(tapGesture)
     }
+}
+
+extension DragCardView {
+    internal func swipe(to direction: Direction) {
+        dragout(direction: direction, forced: true)
+    }
     
-    internal func swipeDuration(_ direction: Direction, forced: Bool) -> TimeInterval {
+    internal func rewind(from direction: Direction) {
+        setUserInteraction(false)
+        removeAllAnimations()
+        
+        let finalTransform = finalTransform(direction, forced: true)
+        
+        transform = finalTransform
+        
+        for _direction in allowedDirection.filter({ $0 != direction }) {
+            overlay(forDirection: _direction)?.alpha = 0.0
+        }
+        
+        let overlay = overlay(forDirection: direction)
+        overlay?.alpha = 1.0
+        
+        let relativeOverlayDuration = overlay != nil ? 0.1 : 0.0
+        
+        Animator.animateKeyFrames(withDuration: totalRewindDuration,
+                                  options: [.calculationModeLinear]) {
+            Animator.addKeyFrame(withRelativeStartTime: 0,
+                                 relativeDuration: 1 - relativeOverlayDuration) {
+                self.transform = .identity
+            }
+            Animator.addKeyFrame(withRelativeStartTime: 1 - relativeOverlayDuration,
+                                 relativeDuration: relativeOverlayDuration) {
+                overlay?.alpha = 0.0
+            }
+        } completion: { _ in
+            self.setUserInteraction(true)
+        }
+    }
+    
+    internal func removeAllAnimations() {
+        layer.removeAllAnimations()
+    }
+}
+
+extension DragCardView {
+    internal func finalDuration(_ direction: Direction, forced: Bool) -> TimeInterval {
         if forced {
             return totalSwipeDuration
         }
@@ -174,33 +231,114 @@ extension DragCardView {
         return 1.0 / TimeInterval(velocityFactor)
     }
     
-    internal func removeAllAnimations() {
-        layer.removeAllAnimations()
+    private func finalTransform(_ direction: Direction, forced: Bool) -> CGAffineTransform {
+        let dragTranslation = CGVector(to: panGestureRecognizer?.translation(in: superview) ?? .zero)
+        
+        let normalizedDragTranslation = forced ? direction.vector : dragTranslation.normalized
+        
+        let actualTranslation = CGPoint(finalTranslation(direction, directionVector: normalizedDragTranslation))
+        let actualRotationAngle = finalRotationAngle(direction: direction, forced: forced)
+        
+        let t1 = CGAffineTransform(translationX: actualTranslation.x, y: actualTranslation.y)
+        let t2 = t1.rotated(by: actualRotationAngle)
+        
+        return t2
     }
     
-    internal func swipeAction(direction: Direction, forced: Bool) {
-        isUserInteractionEnabled = false
+    private func finalTranslation(_ direction: Direction, directionVector: CGVector) -> CGVector {
+        let maxScreenLength = max(UIScreen.main.bounds.width, UIScreen.main.bounds.height)
+        let minimumOffscreenTranslation = CGVector(dx: maxScreenLength,
+                                                   dy: maxScreenLength)
+        return CGVector(dx: directionVector.dx * minimumOffscreenTranslation.dx,
+                        dy: directionVector.dy * minimumOffscreenTranslation.dy)
+    }
+    
+    private func finalRotationAngle(direction: Direction, forced: Bool) -> CGFloat {
+        if direction == .up || direction == .down { return .zero }
+        
+        let rotationDirectionY: CGFloat = direction == .left ? -1.0 : 1.0
+        
+        if forced {
+            return rotationDirectionY * maximumRotationAngle.radius
+        }
+        
+        guard let touchPoint = internalTouchLocation else {
+            return rotationDirectionY * maximumRotationAngle.radius
+        }
+        
+        if (direction == .left && touchPoint.y < bounds.height / 2.0) || (direction == .right && touchPoint.y >= bounds.height / 2) {
+            return -maximumRotationAngle.radius
+        }
+        return maximumRotationAngle.radius
+    }
+}
+
+extension DragCardView {
+    private func panForTransform() -> CGAffineTransform {
+        func panForRotationAngle() -> CGFloat {
+            let superviewTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
+            let percentage = min(abs(superviewTranslation.x) / UIScreen.main.bounds.width, 1)
+            
+            if superviewTranslation.x.isEqual(to: .zero) {
+                return .zero
+            }
+            
+            guard let touchPoint = internalTouchLocation else {
+                return .zero
+            }
+            
+            if (superviewTranslation.x.isLess(than: .zero) && touchPoint.y < bounds.height / 2.0) ||
+                (!superviewTranslation.x.isLessThanOrEqualTo(.zero) && touchPoint.y >= bounds.height / 2) {
+                return -percentage * maximumRotationAngle.radius
+            }
+            
+            return percentage * maximumRotationAngle.radius
+        }
+        
+        let dragTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
+        let translation = CGAffineTransform(translationX: dragTranslation.x,
+                                            y: dragTranslation.y)
+        return translation.rotated(by: panForRotationAngle())
+    }
+    
+    private func panForOverlayPercentage(_ direction: Direction) -> CGFloat {
+        if direction != activeDirection() { return 0 }
+        let totalPercentage = allowedDirection.reduce(0) { sum, direction in
+            return sum + dragPercentage(on: direction)
+        }
+        let actualPercentage = 2 * dragPercentage(on: direction) - totalPercentage
+        return max(0, min(actualPercentage, 1))
+    }
+    
+    private func dragout(direction: Direction, forced: Bool) {
+        setUserInteraction(false)
+        
         removeAllAnimations()
         
-        let duration = swipeDuration(direction, forced: forced)
+        let finalDuration = finalDuration(direction, forced: forced)
+        let finalTransform = finalTransform(direction, forced: forced)
         
-        Animator.animateKeyFrames(withDuration: duration,
+        let overlay = overlay(forDirection: direction)
+        
+        let relativeOverlayDuration = (forced && overlay != nil) ? 0.1 : 0.0
+        
+        Animator.animateKeyFrames(withDuration: finalDuration,
                                   options: [.calculationModeLinear]) {
-            
-        } completion: { _ in
-            
-        }
-
-        animator.animateSwipe(on: self,
-                              direction: direction,
-                              forced: forced) { [weak self] finished in
-            if let strongSelf = self, finished {
-                strongSelf.delegate?.cardDidFinishSwipeAnimation(strongSelf)
+            Animator.addKeyFrame(withRelativeStartTime: relativeOverlayDuration,
+                                 relativeDuration: 1 - relativeOverlayDuration) {
+                self.transform = finalTransform
             }
+            Animator.addKeyFrame(withRelativeStartTime: 0,
+                                 relativeDuration: relativeOverlayDuration) {
+                overlay?.alpha = 1
+            }
+            for _direction in self.allowedDirection.filter({ $0 != direction }) {
+                self.overlay(forDirection: _direction)?.alpha = 0.0
+            }
+        } completion: { _ in
+            self.delegate?.cardDidDragout(self)
         }
     }
-    
-    
 }
 
 extension DragCardView {
@@ -229,47 +367,25 @@ extension DragCardView {
 }
 
 extension DragCardView {
-    private func panForTransform() -> CGAffineTransform {
-        let dragTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
-        let translation = CGAffineTransform(translationX: dragTranslation.x,
-                                            y: dragTranslation.y)
-        let rotation = CGAffineTransform(rotationAngle: panForRotationAngle())
-        return translation.concatenating(rotation)
+    public func setOverlay(_ overlay: UIView?, forDirection direction: Direction) {
+        overlays[direction]?.removeFromSuperview()
+        overlays[direction] = overlay
+        
+        if let overlay = overlay {
+            overlayContentView.addSubview(overlay)
+            overlay.alpha = 0
+            overlay.setUserInteraction(false)
+        }
     }
     
-    private func panForRotationAngle() -> CGFloat {
-        let superviewTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
-        let percentage = min(abs(superviewTranslation.x) / UIScreen.main.bounds.width, 1)
-        
-        if superviewTranslation.x.isEqual(to: .zero) {
-            return .zero
+    public func setOverlays(_ overlays: [Direction: UIView]) {
+        for (direction, overlay) in overlays {
+            setOverlay(overlay, forDirection: direction)
         }
-        
-        guard let touchPoint = internalTouchLocation else {
-            return percentage * maximumRotationAngle.radius
-        }
-        
-        if (superviewTranslation.x.isLess(than: .zero) && touchPoint.y < bounds.height / 2.0) ||
-            (!superviewTranslation.x.isLessThanOrEqualTo(.zero) && touchPoint.y >= bounds.height / 2) {
-            return -percentage * maximumRotationAngle.radius
-        }
-        
-        return percentage * maximumRotationAngle.radius
     }
-}
-
-extension DragCardView {
-    private func finalRotationAngle(_ direction: Direction) -> CGFloat {
-        if direction == .up || direction == .down { return .zero }
-        
-        guard let touchPoint = internalTouchLocation else {
-            return maximumRotationAngle.radius
-        }
-        
-        if (direction == .left && touchPoint.y < bounds.height / 2.0) || (direction == .right && touchPoint.y >= bounds.height / 2) {
-            return -maximumRotationAngle.radius
-        }
-        return maximumRotationAngle.radius
+    
+    public func overlay(forDirection direction: Direction) -> UIView? {
+        return overlays[direction]
     }
 }
 
@@ -277,13 +393,21 @@ extension DragCardView {
     @objc private func handlePan(_ recognizer: PanGestureRecognizer) {
         switch recognizer.state {
             case .possible, .began:
+                removeAllAnimations()
                 internalTouchLocation = recognizer.location(in: self)
+                delegate?.cardDidBeginSwipe(self)
             case .changed:
                 transform = panForTransform()
+                for (direction, overlay) in overlays {
+                    overlay.alpha = panForOverlayPercentage(direction)
+                }
+                delegate?.cardDidContinueSwipe(self)
             case .ended, .cancelled:
                 if let direction = activeDirection() {
                     if dragSpeed(on: direction) >= minimumSwipeSpeed(on: direction) || dragPercentage(on: direction) >= 1 {
-                        // swipe
+                        // dragout
+                        dragout(direction: direction, forced: false)
+                        delegate?.cardDidSwipe(self, withDirection: direction)
                         return
                     }
                 }
@@ -293,7 +417,9 @@ extension DragCardView {
                                        usingSpringWithDamping: resetSpringDamping,
                                        options: [.curveLinear, .allowUserInteraction]) {
                     self.transform = .identity
+                    self.overlays.values.forEach{ $0.alpha = 0 }
                 }
+                delegate?.cardDidCancelSwipe(self)
             default:
                 break
         }
@@ -302,6 +428,6 @@ extension DragCardView {
 
 extension DragCardView {
     @objc private func handleTap(_ recognizer: TapGestureRecognizer) {
-        
+        delegate?.cardDidTap(self)
     }
 }

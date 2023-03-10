@@ -49,12 +49,9 @@
 import Foundation
 
 internal struct Default {
-    internal static let minimumTranslationInPercent: CGFloat = 0.25
-    internal static let minimumVelocityInPointPerSecond: CGFloat = 750
-    internal static let cardRotationMaximumAngle: CGFloat = 5.0
-    internal static let allowedDirection = Direction.horizontal
     internal static let infiniteLoop: Bool = false
     internal static let mode: Mode = ScaleMode.default
     internal static let visibleCount: Int = 3
-    internal static let animationDuration: TimeInterval = 0.5
+    internal static let cardAnchorPoint: CGPoint = CGPoint(x: 0.5, y: 0.5)
+    internal static let cardFrame: CGRect = .zero
 }

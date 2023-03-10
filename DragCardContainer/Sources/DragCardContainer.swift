@@ -55,14 +55,14 @@ public class DragCardContainer: UIView {
 #endif
     }
     
-    /// DataSource
+    /// DataSource.
     public weak var dataSource: DragCardDataSource? {
         didSet {
             reloadDataIfNeeded()
         }
     }
     
-    /// Delegate
+    /// Delegate.
     public weak var delegate: DragCardDelegate?
     
     /// Visible card count.
@@ -81,34 +81,6 @@ public class DragCardContainer: UIView {
     
     /// Allow infinite loop
     public var infiniteLoop: Bool = Default.infiniteLoop {
-        didSet {
-            reloadDataIfNeeded()
-        }
-    }
-    
-    /// Allowed direction
-    public var allowedDirection = Direction.horizontal {
-        didSet {
-            reloadDataIfNeeded()
-        }
-    }
-    
-    /// Minimum translation in percent base on container width or container height.
-    public var minimumTranslationInPercent: CGFloat = Default.minimumTranslationInPercent {
-        didSet {
-            reloadDataIfNeeded()
-        }
-    }
-    
-    /// Minimum velocity in point per second.
-    public var minimumVelocityInPointPerSecond: CGFloat = Default.minimumVelocityInPointPerSecond {
-        didSet {
-            reloadDataIfNeeded()
-        }
-    }
-    
-    /// The card maximum rotation angle.
-    public var cardRotationMaximumAngle: CGFloat = Default.cardRotationMaximumAngle {
         didSet {
             reloadDataIfNeeded()
         }
@@ -135,7 +107,7 @@ public class DragCardContainer: UIView {
         }
     }
     
-    /// Disable click action for top card.
+    /// Disable tap action for top card.
     public var disableTopCardClick: Bool = false {
         didSet {
             if disableTopCardClick {

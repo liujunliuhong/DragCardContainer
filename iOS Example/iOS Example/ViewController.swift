@@ -20,7 +20,6 @@ public final class ViewController: UIViewController {
         cardContainer.dataSource = self
         cardContainer.delegate = self
         cardContainer.visibleCount = 3
-        cardContainer.allowedDirection = [.left, .right, .up]
         return cardContainer
     }()
     
@@ -38,13 +37,24 @@ public final class ViewController: UIViewController {
         view.backgroundColor = .white
         navigationItem.title = "Demo"
         
+        
+//        let card = DragCardView()
+//        card.backgroundColor = RandomColor()
+//        view.addSubview(card)
+//
+//        card.snp.makeConstraints { make in
+//            make.centerX.equalToSuperview()
+//            make.centerY.equalToSuperview()
+//            make.width.equalTo(70)
+//            make.height.equalTo(100)
+//        }
+        
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            card.swipe(to: .right)
+//        }
+        
         view.addSubview(cardContainer)
         view.addSubview(bottmView)
-        
-        let s1 = CGVector(dx: 1, dy: 1)
-        let s2 = CGVector(dx: 1, dy: 1)
-        let s = s1 * s2
-        
         
         cardContainer.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -64,15 +74,15 @@ extension ViewController {
     @objc private func likeAction() {
         cardContainer.swipeTopCard(to: .right)
     }
-    
+
     @objc private func passAction() {
         cardContainer.swipeTopCard(to: .left)
     }
-    
+
     @objc private func superLikeAction() {
         cardContainer.swipeTopCard(to: .up)
     }
-    
+
     @objc private func refreshAction() {
         //cardContainer.reloadData(animation: true)
         cardContainer.rewind(from: .right)
@@ -83,13 +93,19 @@ extension ViewController: DragCardDataSource {
     public func numberOfCards(_ dragCard: DragCardContainer) -> Int {
         return 10
     }
-    
+
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView {
         let cardView = CardView()
-        cardView.overlayView.likeView.alpha = 0
-        cardView.overlayView.nopeView.alpha = 0
-        cardView.overlayView.superLikeView.alpha = 0
+        
+        let allowedDirection: [Direction] = [.left, .up, .right]
+        cardView.allowedDirection = allowedDirection
+        
+        for direction in allowedDirection {
+            cardView.setOverlay(CardOverlayView(direction: direction), forDirection: direction)
+        }
+        
         cardView.label.text = "\(index)"
+        
         return cardView
     }
 }
@@ -98,66 +114,66 @@ extension ViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with cardView: DragCardView) {
         print("displayTopCardAt: \(index)")
     }
-    
-    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with cardView: DragCardView) {
-        print("movementCardAt: \(index) - \(translation)")
-        
-        if let cardView = cardView as? CardView {
-            var horizontalRatio = abs(translation.x) / targetLength
-            if horizontalRatio >= 1.0 {
-                horizontalRatio = 1.0
-            }
-            if translation.x.isLess(than: .zero) {
-                cardView.overlayView.nopeView.alpha = horizontalRatio
-                cardView.overlayView.likeView.alpha = 0
-            } else if translation.x.isEqual(to: .zero) {
-                cardView.overlayView.nopeView.alpha = 0
-                cardView.overlayView.likeView.alpha = 0
-            } else {
-                cardView.overlayView.nopeView.alpha = 0
-                cardView.overlayView.likeView.alpha = horizontalRatio
-            }
 
-            var verticalRatio = abs(translation.y) / targetLength
-            verticalRatio = verticalRatio - horizontalRatio - horizontalRatio
-            if verticalRatio >= 1.0 {
-                verticalRatio = 1.0
-            } else if verticalRatio <= 0 {
-                verticalRatio = 0
-            }
-            if !translation.y.isLess(than: .zero) {
-                verticalRatio = 0.0
-            }
-            cardView.overlayView.superLikeView.alpha = verticalRatio
-            
-            
-            
-            let direction = Direction.fromPoint(translation)
-            switch direction {
-                case .right:
-                    let targetRatio = 1.5
-                    var newHorizontalRatio = horizontalRatio + 1
-                    
-                    if newHorizontalRatio > targetRatio {
-                        newHorizontalRatio = targetRatio - (newHorizontalRatio - targetRatio)
-                    }
-                    bottmView.passButton.transform = .identity
-                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
-                default:
-                    bottmView.passButton.transform = .identity
-                    bottmView.likeButton.transform = .identity
-            }
-        }
-    }
-    
+//    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with cardView: DragCardView) {
+//        print("movementCardAt: \(index) - \(translation)")
+//
+//        if let cardView = cardView as? CardView {
+//            var horizontalRatio = abs(translation.x) / targetLength
+//            if horizontalRatio >= 1.0 {
+//                horizontalRatio = 1.0
+//            }
+//            if translation.x.isLess(than: .zero) {
+//                cardView.overlayView.nopeView.alpha = horizontalRatio
+//                cardView.overlayView.likeView.alpha = 0
+//            } else if translation.x.isEqual(to: .zero) {
+//                cardView.overlayView.nopeView.alpha = 0
+//                cardView.overlayView.likeView.alpha = 0
+//            } else {
+//                cardView.overlayView.nopeView.alpha = 0
+//                cardView.overlayView.likeView.alpha = horizontalRatio
+//            }
+//
+//            var verticalRatio = abs(translation.y) / targetLength
+//            verticalRatio = verticalRatio - horizontalRatio - horizontalRatio
+//            if verticalRatio >= 1.0 {
+//                verticalRatio = 1.0
+//            } else if verticalRatio <= 0 {
+//                verticalRatio = 0
+//            }
+//            if !translation.y.isLess(than: .zero) {
+//                verticalRatio = 0.0
+//            }
+//            cardView.overlayView.superLikeView.alpha = verticalRatio
+//
+//
+//
+//            let direction = Direction.fromPoint(translation)
+//            switch direction {
+//                case .right:
+//                    let targetRatio = 1.5
+//                    var newHorizontalRatio = horizontalRatio + 1
+//
+//                    if newHorizontalRatio > targetRatio {
+//                        newHorizontalRatio = targetRatio - (newHorizontalRatio - targetRatio)
+//                    }
+//                    bottmView.passButton.transform = .identity
+//                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
+//                default:
+//                    bottmView.passButton.transform = .identity
+//                    bottmView.likeButton.transform = .identity
+//            }
+//        }
+//    }
+
     public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with cardView: DragCardView) {
         print("didRemovedTopCardAt: \(index)")
     }
-    
+
     public func dragCard(_ dragCard: DragCardContainer, didRemovedLast cardView: DragCardView) {
         print("didRemovedLast")
     }
-    
+
     public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
         print("didSelectTopCardAt: \(index)")
         let vc = DetailViewController()

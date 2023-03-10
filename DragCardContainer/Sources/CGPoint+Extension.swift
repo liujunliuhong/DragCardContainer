@@ -48,25 +48,22 @@
 
 import Foundation
 
-internal func *(lhs: CGPoint, rhs: CGFloat) -> CGPoint {
-    return CGPoint(x: lhs.x * rhs, y: lhs.y * rhs)
+extension CGPoint {
+    internal init(_ vector: CGVector) {
+        self = CGPoint(x: vector.dx, y: vector.dy)
+    }
 }
 
 extension CGPoint {
-    internal var normalized: CGPoint {
-        return CGPoint(x: x / magnitude, y: y / magnitude)
+    internal static func + (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        return CGPoint(x: lhs.x + rhs.x, y: lhs.y + rhs.y)
     }
     
-    internal var magnitude: CGFloat {
-        return CGFloat(sqrtf(powf(Float(x), 2) + powf(Float(y), 2)))
+    internal static func - (lhs: CGPoint, rhs: CGPoint) -> CGPoint {
+        return CGPoint(x: lhs.x - rhs.x, y: lhs.y - rhs.y)
     }
     
-//    internal static func areInSameTheDirection(_ p1: CGPoint, p2: CGPoint) -> Bool {
-//
-//        func signNum(_ n: CGFloat) -> Int {
-//            return (n < 0.0) ? -1 : (n > 0.0) ? +1 : 0
-//        }
-//
-//        return signNum(p1.x) == signNum(p2.x) && signNum(p1.y) == signNum(p2.y)
-//    }
+    static func * (point: CGPoint, scalar: CGFloat) -> CGPoint {
+        return CGPoint(x: point.x * scalar, y: point.y * scalar)
+    }
 }

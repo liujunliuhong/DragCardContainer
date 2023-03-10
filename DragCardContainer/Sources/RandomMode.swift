@@ -44,40 +44,51 @@
 //                                └───────────────────────────────────────┘
 
 
-import Foundation
-import QuartzCore
-
-public final class RandomMode {
-    
-    /// Maximum angle.
-    public var maximumAngle: CGFloat = 3.0
-    
-    public static let `default` = RandomMode()
-    
-    public init() {}
-}
-
-extension RandomMode: Mode {
-    public func basicInfos(visibleCount: Int, containerSize: CGSize) -> [BasicInfo] {
-        
-        let frame = CGRect(x: .zero,
-                           y: .zero,
-                           width: containerSize.width,
-                           height: containerSize.height)
-        
-        var basicInfos: [BasicInfo] = []
-        
-        let anchorPoint = CGPoint(x: 0.5, y: 0.5)
-        
-        for _ in 0..<visibleCount {
-            let radius = CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
-            let transform = CATransform3DRotate(CATransform3DIdentity, radius, 0, 0, 1)
-            
-            let basicInfo = BasicInfo(transform3D: transform,
-                                      frame: frame,
-                                      anchorPoint: anchorPoint)
-            basicInfos.append(basicInfo)
-        }
-        return basicInfos
-    }
-}
+//import Foundation
+//import QuartzCore
+//
+//public final class RandomMode {
+//    
+//    /// Maximum angle.
+//    public var maximumAngle: CGFloat = 3.0 {
+//        didSet {
+//            maximumAngle = max(0, min(maximumAngle, 90))
+//        }
+//    }
+//    
+//    public static let `default` = RandomMode()
+//    
+//    public init() {}
+//}
+//
+//extension RandomMode: Mode {
+//    public func cardAnchorPoint() -> CGPoint {
+//        return CGPoint(x: 0.5, y: 0.5)
+//    }
+//    
+//    public func cardFrame(visibleCount: Int, containerSize: CGSize) -> CGRect {
+//        return CGRect(x: .zero, y: .zero, width: containerSize.width, height: containerSize.height)
+//    }
+//    
+//    public func basicInfos(visibleCount: Int, containerSize: CGSize) -> [BasicInfo] {
+//        
+//        let frame = CGRect(x: .zero,
+//                           y: .zero,
+//                           width: containerSize.width,
+//                           height: containerSize.height)
+//        
+//        var basicInfos: [BasicInfo] = []
+//        
+//        
+//        for _ in 0..<visibleCount {
+//            let radius = CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
+//            let transform = CATransform3DRotate(CATransform3DIdentity, radius, 0, 0, 1)
+//            
+//            let basicInfo = BasicInfo(transform3D: transform,
+//                                      frame: frame,
+//                                      anchorPoint: anchorPoint)
+//            basicInfos.append(basicInfo)
+//        }
+//        return basicInfos
+//    }
+//}

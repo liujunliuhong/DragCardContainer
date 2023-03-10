@@ -13,7 +13,6 @@
 		D107965029B1B670003CC604 /* CardEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107964F29B1B670003CC604 /* CardEngine.swift */; };
 		D107965429B1C09A003CC604 /* RandomMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965329B1C09A003CC604 /* RandomMode.swift */; };
 		D107965A29B1D6BF003CC604 /* DragCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D107965929B1D6BF003CC604 /* DragCardView.swift */; };
-		D113EF4329B049B300BA78D5 /* DragOutStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4229B049B300BA78D5 /* DragOutStatus.swift */; };
 		D113EF4729B09D3200BA78D5 /* PanGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */; };
 		D113EF4929B09D5900BA78D5 /* TapGestureRecognizer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */; };
 		D15CD68A29A30A1000086A1B /* DragCardContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = D15CD68929A30A1000086A1B /* DragCardContainer.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -27,7 +26,6 @@
 		D185877A29AF01E8001FCBB5 /* BasicInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877929AF01E8001FCBB5 /* BasicInfo.swift */; };
 		D185877C29AF0239001FCBB5 /* Default.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185877B29AF0239001FCBB5 /* Default.swift */; };
 		D185878429AF39D0001FCBB5 /* Metrics.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185878329AF39D0001FCBB5 /* Metrics.swift */; };
-		D185878829AF53DD001FCBB5 /* Movement.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185878729AF53DD001FCBB5 /* Movement.swift */; };
 		D185878A29AF547E001FCBB5 /* CGPoint+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */; };
 		D185878C29AF5508001FCBB5 /* Direction.swift in Sources */ = {isa = PBXBuildFile; fileRef = D185878B29AF5508001FCBB5 /* Direction.swift */; };
 /* End PBXBuildFile section */
@@ -39,7 +37,6 @@
 		D107964F29B1B670003CC604 /* CardEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardEngine.swift; sourceTree = "<group>"; };
 		D107965329B1C09A003CC604 /* RandomMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RandomMode.swift; sourceTree = "<group>"; };
 		D107965929B1D6BF003CC604 /* DragCardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragCardView.swift; sourceTree = "<group>"; };
-		D113EF4229B049B300BA78D5 /* DragOutStatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DragOutStatus.swift; sourceTree = "<group>"; };
 		D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanGestureRecognizer.swift; sourceTree = "<group>"; };
 		D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TapGestureRecognizer.swift; sourceTree = "<group>"; };
 		D15CD68629A30A1000086A1B /* DragCardContainer.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = DragCardContainer.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -54,7 +51,6 @@
 		D185877929AF01E8001FCBB5 /* BasicInfo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BasicInfo.swift; sourceTree = "<group>"; };
 		D185877B29AF0239001FCBB5 /* Default.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Default.swift; sourceTree = "<group>"; };
 		D185878329AF39D0001FCBB5 /* Metrics.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Metrics.swift; sourceTree = "<group>"; };
-		D185878729AF53DD001FCBB5 /* Movement.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movement.swift; sourceTree = "<group>"; };
 		D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGPoint+Extension.swift"; sourceTree = "<group>"; };
 		D185878B29AF5508001FCBB5 /* Direction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Direction.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -102,24 +98,22 @@
 				D107964F29B1B670003CC604 /* CardEngine.swift */,
 				D15CD69A29A30A8000086A1B /* DragCardDataSource.swift */,
 				D15CD69329A30A8000086A1B /* DragCardDelegate.swift */,
-				D185877729AEFFC4001FCBB5 /* CardModel.swift */,
-				D185877929AF01E8001FCBB5 /* BasicInfo.swift */,
 				D185878329AF39D0001FCBB5 /* Metrics.swift */,
-				D185878729AF53DD001FCBB5 /* Movement.swift */,
 				D185878B29AF5508001FCBB5 /* Direction.swift */,
 				D107965929B1D6BF003CC604 /* DragCardView.swift */,
-				D113EF4229B049B300BA78D5 /* DragOutStatus.swift */,
-				D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */,
-				8559819229AFA79300365130 /* CGFloat+Extension.swift */,
 				D185877B29AF0239001FCBB5 /* Default.swift */,
 				D113EF4629B09D3200BA78D5 /* PanGestureRecognizer.swift */,
 				D113EF4829B09D5900BA78D5 /* TapGestureRecognizer.swift */,
+				D185877729AEFFC4001FCBB5 /* CardModel.swift */,
+				D185877929AF01E8001FCBB5 /* BasicInfo.swift */,
 				D107964929B19689003CC604 /* Mode.swift */,
 				D107964D29B19C9F003CC604 /* ScaleMode.swift */,
 				D107965329B1C09A003CC604 /* RandomMode.swift */,
 				D1740C5829B9CC77002DBAD8 /* Animator.swift */,
 				D1740C5A29B9CD32002DBAD8 /* UIView+Extension.swift */,
 				D1740C5C29B9D537002DBAD8 /* CGVector+Extension.swift */,
+				D185878929AF547E001FCBB5 /* CGPoint+Extension.swift */,
+				8559819229AFA79300365130 /* CGFloat+Extension.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -214,7 +208,6 @@
 				D185877829AEFFC4001FCBB5 /* CardModel.swift in Sources */,
 				D15CD6A229A30A8000086A1B /* DragCardContainer.swift in Sources */,
 				D185878C29AF5508001FCBB5 /* Direction.swift in Sources */,
-				D185878829AF53DD001FCBB5 /* Movement.swift in Sources */,
 				D107964E29B19C9F003CC604 /* ScaleMode.swift in Sources */,
 				D107964A29B19689003CC604 /* Mode.swift in Sources */,
 				D113EF4729B09D3200BA78D5 /* PanGestureRecognizer.swift in Sources */,
@@ -223,7 +216,6 @@
 				D107965A29B1D6BF003CC604 /* DragCardView.swift in Sources */,
 				D185878A29AF547E001FCBB5 /* CGPoint+Extension.swift in Sources */,
 				D185877C29AF0239001FCBB5 /* Default.swift in Sources */,
-				D113EF4329B049B300BA78D5 /* DragOutStatus.swift in Sources */,
 				D107965029B1B670003CC604 /* CardEngine.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

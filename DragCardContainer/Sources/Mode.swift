@@ -49,5 +49,7 @@
 import Foundation
 
 public protocol Mode {
+    func cardAnchorPoint() -> CGPoint
+    func cardFrame(visibleCount: Int, containerSize: CGSize) -> CGRect
     func basicInfos(visibleCount: Int, containerSize: CGSize) -> [BasicInfo]
 }

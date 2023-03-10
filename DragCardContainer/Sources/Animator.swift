@@ -45,4 +45,16 @@ struct Animator {
                        animations: animations,
                        completion: completion)
     }
+    
+    internal static func animate(withDuration duration: TimeInterval,
+                                 delay: TimeInterval = 0.0,
+                                 options: UIView.AnimationOptions,
+                                 animations: @escaping () -> Void,
+                                 completion: ((Bool) -> Void)? = nil) {
+        UIView.animate(withDuration: duration,
+                       delay: delay,
+                       options: options,
+                       animations: animations,
+                       completion: completion)
+    }
 }

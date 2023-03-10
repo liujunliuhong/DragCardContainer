@@ -9,5 +9,7 @@ import Foundation
 import UIKit
 
 extension UIView {
-    
+    internal func setUserInteraction(_ isEnabled: Bool) {
+        isUserInteractionEnabled = isEnabled
+    }
 }

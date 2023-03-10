@@ -25,28 +25,34 @@ public final class CardOverlayView: UIView {
     
     public private(set) lazy var superLikeView: OverlayLabelView = {
         let superLikeView = OverlayLabelView(withTitle: "SUPER\nLIKE",
-                                        color: UIColor(red: 52 / 255, green: 154 / 255, blue: 254 / 255, alpha: 1))
+                                             color: UIColor(red: 52 / 255, green: 154 / 255, blue: 254 / 255, alpha: 1))
         return superLikeView
     }()
     
-    public override init(frame: CGRect) {
-        super.init(frame: frame)
+    public init(direction: Direction) {
+        super.init(frame: .zero)
         
-        addSubview(likeView)
-        addSubview(nopeView)
-        addSubview(superLikeView)
-        
-        likeView.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(20)
-            make.left.equalToSuperview().offset(20)
-        }
-        nopeView.snp.makeConstraints { make in
-            make.right.equalToSuperview().offset(-20)
-            make.top.equalToSuperview().offset(20)
-        }
-        superLikeView.snp.makeConstraints { make in
-            make.bottom.equalToSuperview().offset(-20)
-            make.centerX.equalToSuperview()
+        switch direction {
+            case .left:
+                addSubview(nopeView)
+                nopeView.snp.makeConstraints { make in
+                    make.right.equalToSuperview().offset(-20)
+                    make.top.equalToSuperview().offset(20)
+                }
+            case .up:
+                addSubview(superLikeView)
+                superLikeView.snp.makeConstraints { make in
+                    make.bottom.equalToSuperview().offset(-20)
+                    make.centerX.equalToSuperview()
+                }
+            case .right:
+                addSubview(likeView)
+                likeView.snp.makeConstraints { make in
+                    make.top.equalToSuperview().offset(20)
+                    make.left.equalToSuperview().offset(20)
+                }
+            default:
+                break
         }
     }
     

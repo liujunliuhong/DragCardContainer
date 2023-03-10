@@ -51,12 +51,10 @@ import UIKit
 
 internal final class Metrics {
     internal let visibleCount: Int
-    internal let mode: Mode
     internal let infiniteLoop: Bool
-    internal let allowedDirection: Direction
-    internal let minimumTranslationInPercent: CGFloat
-    internal let minimumVelocityInPointPerSecond: CGFloat
-    internal let cardRotationMaximumAngle: CGFloat
+    
+    internal let cardAnchorPoint: CGPoint
+    internal let cardFrame: CGRect
     
     internal let numberOfCards: Int
     internal let basicInfos: [BasicInfo]
@@ -80,43 +78,32 @@ internal final class Metrics {
         assert(visibleCount > 0, "`visibleCount` must be greater than 0")
         self.visibleCount = visibleCount
         
-        self.mode = engine.cardContainer.mode
+        let mode = engine.cardContainer.mode
         self.infiniteLoop = engine.cardContainer.infiniteLoop
-        self.allowedDirection = engine.cardContainer.allowedDirection
-        self.minimumTranslationInPercent = engine.cardContainer.minimumTranslationInPercent
-        self.minimumVelocityInPointPerSecond = engine.cardContainer.minimumVelocityInPointPerSecond
-        self.cardRotationMaximumAngle = engine.cardContainer.cardRotationMaximumAngle
         
         self.basicInfos = mode.basicInfos(visibleCount: visibleCount,
                                           containerSize: engine.cardContainer.bounds.size)
+        self.cardAnchorPoint = mode.cardAnchorPoint()
+        self.cardFrame = mode.cardFrame(visibleCount: visibleCount, containerSize: engine.cardContainer.bounds.size)
     }
     
     internal static let `default` = Metrics(visibleCount: Default.visibleCount,
-                                            mode: Default.mode,
                                             infiniteLoop: Default.infiniteLoop,
-                                            allowedDirection: Default.allowedDirection,
-                                            minimumTranslationInPercent: Default.minimumTranslationInPercent,
-                                            minimumVelocityInPointPerSecond: Default.minimumVelocityInPointPerSecond,
-                                            cardRotationMaximumAngle: Default.cardRotationMaximumAngle,
+                                            cardAnchorPoint: Default.cardAnchorPoint,
+                                            cardFrame: Default.cardFrame,
                                             numberOfCards: 0,
                                             basicInfos: [])
     
     private init(visibleCount: Int,
-                 mode: Mode,
                  infiniteLoop: Bool,
-                 allowedDirection: Direction,
-                 minimumTranslationInPercent: CGFloat,
-                 minimumVelocityInPointPerSecond: CGFloat,
-                 cardRotationMaximumAngle: CGFloat,
+                 cardAnchorPoint: CGPoint,
+                 cardFrame: CGRect,
                  numberOfCards: Int,
                  basicInfos: [BasicInfo]) {
         self.visibleCount = visibleCount
-        self.mode = mode
         self.infiniteLoop = infiniteLoop
-        self.allowedDirection = allowedDirection
-        self.minimumTranslationInPercent = minimumTranslationInPercent
-        self.minimumVelocityInPointPerSecond = minimumVelocityInPointPerSecond
-        self.cardRotationMaximumAngle = cardRotationMaximumAngle
+        self.cardAnchorPoint = cardAnchorPoint
+        self.cardFrame = cardFrame
         self.numberOfCards = numberOfCards
         self.basicInfos = basicInfos
     }
