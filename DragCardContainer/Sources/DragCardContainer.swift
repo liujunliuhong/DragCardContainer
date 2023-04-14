@@ -151,8 +151,8 @@ extension DragCardContainer {
 }
 
 extension DragCardContainer {
-    public func reloadData(animation: Bool = false) {
-        engine.start(forceReset: true, animation: animation)
+    public func reloadData(forceReset: Bool, animation: Bool = false) {
+        engine.start(forceReset: forceReset, animation: animation)
     }
     
     public func rewind(from: Direction) {

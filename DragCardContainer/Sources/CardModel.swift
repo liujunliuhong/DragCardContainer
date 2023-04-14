@@ -58,10 +58,17 @@ internal final class CardModel {
     internal var currentBasicInfo: BasicInfo = .default
     internal var targetBasicInfo: BasicInfo = .default
     
+    internal var resetTag: Bool = false
+    
     internal init(cardView: DragCardView, index: Int) {
         self.cardView = cardView
         self.index = index
     }
 }
 
+extension CardModel: Equatable {
+    internal static func == (lhs: CardModel, rhs: CardModel) -> Bool {
+        return lhs.identifier == rhs.identifier
+    }
+}
 

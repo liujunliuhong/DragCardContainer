@@ -65,7 +65,8 @@ internal final class CardEngine {
     
     private var cardModels: [CardModel] = []
     
-    private var currentHoldCardModel: CardModel?
+    private var currentResetCardModel: CardModel?
+    private var willOutModels: [CardModel] = []
     
     private var metrics: Metrics = .default
     
@@ -85,14 +86,14 @@ internal final class CardEngine {
     
     internal var cardContainer: DragCardContainer {
         guard let cardContainer = weakCardContainer else {
-            fatalError("")
+            fatalError("`cardContainer` is `nil`")
         }
         return cardContainer
     }
     
     internal var cardDataSource: DragCardDataSource {
         guard let cardDataSource = cardContainer.dataSource else {
-            fatalError("")
+            fatalError("`cardDataSource` is `nil`")
         }
         return cardDataSource
     }
@@ -116,7 +117,7 @@ extension CardEngine {
         if forceReset {
             displayCardIndex = 0
         } else {
-            displayCardIndex = _topIndex ?? 0
+            displayCardIndex = topIndex ?? 0
         }
         //
         flush()
@@ -136,17 +137,20 @@ extension CardEngine {
             model.cardView.removeAllAnimations()
         }
         
-        if animation {
-            Animator.animate(withDuration: 0.2,
-                             options: [.curveLinear]) {
-                for model in self.cardModels {
-                    model.cardView.transform = model.targetBasicInfo.transform
-                }
-            }
-        } else {
+        func final() {
             for model in cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
             }
+        }
+        
+        if animation {
+            UIView.animate(withDuration: 0.2,
+                           delay: 0,
+                           options: .curveLinear) {
+                final()
+            }
+        } else {
+            final()
         }
         
         addPanGestureForTopCard()
@@ -159,8 +163,11 @@ extension CardEngine {
     internal func swipeTopCard(to: Direction) {
         guard let topModel = cardModels.last else { return }
         
-        let duration = topModel.cardView.finalDuration(to, forced: true)
+        willOutModels.append(topModel)
         
+        let duration = swipeDuration(for: topModel.cardView, direction: to, forced: true)
+        
+        topModel.cardView.isOld = true
         topModel.cardView.swipe(to: to)
         
         delegateForRemoveTopCard(model: topModel, direction: to)
@@ -168,7 +175,6 @@ extension CardEngine {
         
         removePanGesture(topModel.cardView)
         removeTapGesture(topModel.cardView)
-        topModel.cardView.setUserInteraction(false)
         
         updateAllCardModelsCurrentBasicInfo()
         
@@ -189,8 +195,11 @@ extension CardEngine {
             model.cardView.removeAllAnimations()
         }
         
-        Animator.animate(withDuration: duration / 2.0,
-                         options: [.curveLinear, .allowUserInteraction]) {
+        let delay = swipeDelay(for: topModel.cardView, forced: true)
+        
+        UIView.animate(withDuration: duration,
+                       delay: delay,
+                       options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
             }
@@ -229,7 +238,6 @@ extension CardEngine {
         cardView.frame = metrics.cardFrame
         cardView.transform = .identity
         cardView.delegate = self
-        cardView.setUserInteraction(false)
         cardContainer.containerView.addSubview(cardView)
         
         cardView.rewind(from: from)
@@ -237,7 +245,7 @@ extension CardEngine {
         let cardModel = CardModel(cardView: cardView, index: index)
         cardModel.currentBasicInfo = metrics.maximumBasicInfo
         
-        currentHoldCardModel = cardModel
+        currentResetCardModel = cardModel
         
         restoreAllCards()
     }
@@ -246,7 +254,7 @@ extension CardEngine {
 extension CardEngine {
     internal func setUserInteractionForTopCard(_ isEnabled: Bool) {
         guard let topModel = cardModels.last else { return }
-        topModel.cardView.setUserInteraction(isEnabled)
+        topModel.cardView.isUserInteractionEnabled = isEnabled
     }
     
     internal func addPanGestureForTopCard() {
@@ -296,11 +304,15 @@ extension CardEngine {
         }
         cardModels.removeAll()
         //
-        if let currentHoldCardModel = currentHoldCardModel {
-            currentHoldCardModel.cardView.removeAllAnimations()
-            currentHoldCardModel.cardView.removeFromSuperview()
+        if let currentResetCardModel = currentResetCardModel {
+            currentResetCardModel.cardView.isOld = true
         }
-        currentHoldCardModel = nil
+        currentResetCardModel = nil
+        //
+        willOutModels.forEach { model in
+            model.cardView.isOld = true
+        }
+        willOutModels.removeAll()
     }
     
     private func installNextCard() {
@@ -316,7 +328,7 @@ extension CardEngine {
         cardView.frame = metrics.cardFrame
         cardView.transform = metrics.minimumBasicInfo.transform
         cardView.delegate = self
-        cardView.setUserInteraction(false)
+        cardView.isUserInteractionEnabled = false
         cardContainer.containerView.insertSubview(cardView, at: 0)
         
         let cardModel = CardModel(cardView: cardView, index: index)
@@ -325,14 +337,14 @@ extension CardEngine {
     }
     
     private func restoreAllCards() {
-        guard let currentHoldCardModel = currentHoldCardModel else {
+        guard let currentResetCardModel = currentResetCardModel else {
             return
         }
         if !canRestoreCard() {
             return
         }
         
-        let duration = currentHoldCardModel.cardView.totalRewindDuration
+        let duration = currentResetCardModel.cardView.totalRewindDuration / 2.0
         
         removePanGestureForTopCard()
         removeTapGestureForTopCard()
@@ -342,23 +354,38 @@ extension CardEngine {
         
         updateAllCardModelsCurrentBasicInfo()
         
-        cardModels.append(currentHoldCardModel)
+        cardModels.append(currentResetCardModel)
         
         updateAllCardModelsTargetBasicInfo()
         
         for model in cardModels {
-            if model.identifier != currentHoldCardModel.identifier {
+            if model != currentResetCardModel {
                 model.cardView.removeAllAnimations()
             }
         }
         
-        Animator.animate(withDuration: duration / 2.0,
-                         options: [.curveLinear, .allowUserInteraction]) {
+        UIView.animate(withDuration: duration,
+                       delay: 0,
+                       options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
-                if model.identifier != currentHoldCardModel.identifier {
+                if model != currentResetCardModel {
                     model.cardView.transform = model.targetBasicInfo.transform
                 }
             }
+        } completion: { finished in
+            if !finished { return }
+            if self.cardModels.count > self.metrics.visibleCount {
+                
+                let tmpModels = Array(self.cardModels.suffix(self.metrics.visibleCount))
+                
+                let willRemoveModels = Array(self.cardModels.prefix(self.cardModels.count - self.metrics.visibleCount))
+                for model in willRemoveModels {
+                    model.cardView.removeFromSuperview()
+                }
+                
+                self.cardModels = tmpModels
+            }
+            self.currentResetCardModel = nil
         }
         
         addPanGestureForTopCard()
@@ -389,6 +416,17 @@ extension CardEngine {
             model.targetBasicInfo = metrics.basicInfos[i]
         }
     }
+    
+    private func swipeDelay(for card: DragCardView, forced: Bool) -> TimeInterval {
+        let duration = card.totalSwipeDuration
+        let relativeOverlayDuration = card.relativeSwipeOverlayFadeDuration
+        let delay = duration * TimeInterval(relativeOverlayDuration)
+        return forced ? delay : 0
+    }
+    
+    private func swipeDuration(for card: DragCardView, direction: Direction, forced: Bool) -> TimeInterval {
+        return card.finalDuration(direction, forced: forced) / 2.0
+    }
 }
 
 extension CardEngine {
@@ -418,9 +456,9 @@ extension CardEngine {
                 displayCardIndex = displayCardIndex - 1
             }
         } else {
-            if displayCardIndex > 0 && displayCardIndex <= metrics.numberOfCards - 1 {
+//            if displayCardIndex > 0 && displayCardIndex <= metrics.numberOfCards - 1 {
                 displayCardIndex = displayCardIndex - 1
-            }
+//            }
         }
     }
     
@@ -448,9 +486,14 @@ extension CardEngine {
 
 extension CardEngine: CardDelegate {
     internal func cardDidBeginSwipe(_ card: DragCardView) {
+        if cardModels.isEmpty { return }
+        
+        if card.isOld { return }
+        
         updateAllCardModelsCurrentBasicInfo()
         
-        currentHoldCardModel = cardModels.last
+        currentResetCardModel = cardModels.last
+        
         cardModels.removeLast() // remove last
         
         incrementDisplayIndex()
@@ -464,6 +507,8 @@ extension CardEngine: CardDelegate {
     }
     
     internal func cardDidContinueSwipe(_ card: DragCardView) {
+        if card.isOld { return }
+        
         let panTranslation = card.panGestureRecognizer?.translation(in: card.superview) ?? .zero
         let minimumSideLength = min(cardContainer.bounds.width, cardContainer.bounds.height)
         let percentage = min(abs(panTranslation.x) / minimumSideLength, 1)
@@ -480,18 +525,23 @@ extension CardEngine: CardDelegate {
     }
     
     internal func cardDidCancelSwipe(_ card: DragCardView) {
+        if card.isOld { return }
+        
         restoreAllCards()
     }
     
     internal func cardDidSwipe(_ card: DragCardView, withDirection direction: Direction) {
-        let duration = card.finalDuration(direction, forced: false)
+        if card.isOld { return }
+        
+        let duration = swipeDuration(for: card, direction: direction, forced: false)
         
         for model in cardModels {
             model.cardView.removeAllAnimations()
         }
         
-        Animator.animate(withDuration: duration / 2.0,
-                         options: [.curveLinear, .allowUserInteraction]) {
+        UIView.animate(withDuration: duration,
+                       delay: 0,
+                       options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
             }
@@ -499,10 +549,13 @@ extension CardEngine: CardDelegate {
         
         delegateForDisplayTopCard()
         
-        if let currentHoldCardModel = currentHoldCardModel {
-            delegateForRemoveTopCard(model: currentHoldCardModel, direction: direction)
-            delegateForFinishRemoveLastCard(model: currentHoldCardModel)
+        if let currentResetCardModel = currentResetCardModel {
+            delegateForRemoveTopCard(model: currentResetCardModel, direction: direction)
+            delegateForFinishRemoveLastCard(model: currentResetCardModel)
+            
+            willOutModels.append(currentResetCardModel)
         }
+        currentResetCardModel = nil
         
         addPanGestureForTopCard()
         addTapGestureForTopCard()
@@ -510,10 +563,20 @@ extension CardEngine: CardDelegate {
     }
     
     internal func cardDidDragout(_ card: DragCardView) {
-        card.removeFromSuperview()
+        for (index, model) in willOutModels.enumerated() {
+            if model.cardView.identifier == card.identifier {
+                card.removeFromSuperview()
+                willOutModels.remove(at: index)
+                break
+            }
+        }
+        
+        print("😄\(displayCardIndex)")
     }
     
     internal func cardDidTap(_ card: DragCardView) {
+        if card.isOld { return }
+        
         delegateForTapTopCard()
     }
 }
@@ -546,11 +609,4 @@ extension CardEngine {
                                          direction: direction,
                                          with: model.cardView)
     }
-    
-    //    private func delegateForMovementCard(model: CardModel, translation: CGPoint) {
-    //        cardContainer.delegate?.dragCard(cardContainer,
-    //                                         movementCardAt: model.index,
-    //                                         translation: translation,
-    //                                         with: model.cardView)
-    //    }
 }

@@ -4,6 +4,45 @@
 //
 //  Created by dfsx6 on 2023/3/3.
 //
+//
+//
+//                              ┌───────────────────────────────────────────┐
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              │*******************************************│
+//                              └┬─────────────────────────────────────────┬┘
+//                               └┬───────────────────────────────────────┬┘
+//                                └───────────────────────────────────────┘
 
 import Foundation
 import UIKit
@@ -13,12 +52,22 @@ internal protocol CardDelegate: AnyObject {
     func cardDidCancelSwipe(_ card: DragCardView)
     func cardDidContinueSwipe(_ card: DragCardView)
     func cardDidSwipe(_ card: DragCardView, withDirection direction: Direction)
+    
     func cardDidDragout(_ card: DragCardView)
+    
     func cardDidTap(_ card: DragCardView)
 }
 
 
+/// A wrapper over `UIView`.
 open class DragCardView: UIView {
+    deinit {
+#if DEBUG
+        print("\(self.classForCoder) deinit")
+#endif
+    }
+
+    internal let identifier: String = UUID().uuidString
     
     /// The swipe directions to be detected by the view.
     /// Set this variable to ignore certain directions.
@@ -39,6 +88,26 @@ open class DragCardView: UIView {
         }
     }
     
+    /// The duration of the fade animation applied to the overlays after the reverse swipe translation.
+    /// Measured relative to the total reverse swipe duration.
+    ///
+    /// Defined as a value in the range `[0, 1]`.
+    public var relativeReverseSwipeOverlayFadeDuration: Double = 0.15 {
+        didSet {
+            relativeReverseSwipeOverlayFadeDuration = max(0, min(relativeReverseSwipeOverlayFadeDuration, 1))
+        }
+    }
+    
+    /// The duration of the fade animation applied to the overlays before the swipe translation.
+    /// Measured relative to the total swipe duration.
+    ///
+    /// Defined as a value in the range `[0, 1]`.
+    public var relativeSwipeOverlayFadeDuration: Double = 0.15 {
+        didSet {
+            relativeSwipeOverlayFadeDuration = max(0, min(relativeSwipeOverlayFadeDuration, 1))
+        }
+    }
+    
     /// The damping coefficient of the spring-like animation applied when a swipe is canceled.
     public var resetSpringDamping: CGFloat = 0.5 {
         didSet {
@@ -54,7 +123,7 @@ open class DragCardView: UIView {
     }
     
     /// The total duration of the rewind animation, measured in seconds.
-    public var totalRewindDuration: TimeInterval = 0.3 {
+    public var totalRewindDuration: TimeInterval = 0.4 {
         didSet {
             totalRewindDuration = max(.leastNormalMagnitude, totalRewindDuration)
         }
@@ -66,10 +135,11 @@ open class DragCardView: UIView {
         return contentView
     }()
     
-    private lazy var overlayContentView: UIView = {
-        let overlayContentView = UIView()
-        overlayContentView.setUserInteraction(false)
-        return overlayContentView
+    /// The overlay content view.
+    private lazy var alphaOverlayContentView: UIView = {
+        let alphaOverlayContentView = UIView()
+        alphaOverlayContentView.isUserInteractionEnabled = false
+        return alphaOverlayContentView
     }()
     
     /// The pan gesture recognizer attached to the view.
@@ -104,6 +174,9 @@ open class DragCardView: UIView {
     }
     
     internal weak var delegate: CardDelegate?
+    
+    internal var isOld: Bool = false
+    
     private var internalTouchLocation: CGPoint?
     private var overlays: [Direction: UIView] = [:]
     
@@ -124,9 +197,9 @@ extension DragCardView {
     open override func layoutSubviews() {
         super.layoutSubviews()
         contentView.frame = bounds
-        overlayContentView.frame = bounds
-        overlays.values.forEach { $0.frame = overlayContentView.bounds }
-        bringSubviewToFront(overlayContentView)
+        alphaOverlayContentView.frame = bounds
+        overlays.values.forEach { $0.frame = alphaOverlayContentView.bounds }
+        bringSubviewToFront(alphaOverlayContentView)
     }
 }
 
@@ -138,7 +211,7 @@ extension DragCardView {
     
     private func setupUI() {
         addSubview(contentView)
-        addSubview(overlayContentView)
+        addSubview(alphaOverlayContentView)
     }
 }
 
@@ -173,44 +246,54 @@ extension DragCardView {
 }
 
 extension DragCardView {
-    internal func swipe(to direction: Direction) {
+    public func swipe(to direction: Direction) {
         dragout(direction: direction, forced: true)
     }
     
-    internal func rewind(from direction: Direction) {
-        setUserInteraction(false)
+    public func rewind(from direction: Direction) {
+        isUserInteractionEnabled = false
+        
         removeAllAnimations()
         
         let finalTransform = finalTransform(direction, forced: true)
         
         transform = finalTransform
         
-        for _direction in allowedDirection.filter({ $0 != direction }) {
+        for _direction in (allowedDirection.filter { $0 != direction }) {
             overlay(forDirection: _direction)?.alpha = 0.0
         }
         
         let overlay = overlay(forDirection: direction)
         overlay?.alpha = 1.0
         
-        let relativeOverlayDuration = overlay != nil ? 0.1 : 0.0
+        let relativeOverlayDuration = overlay != nil ? relativeReverseSwipeOverlayFadeDuration : 0.0
         
-        Animator.animateKeyFrames(withDuration: totalRewindDuration,
-                                  options: [.calculationModeLinear]) {
-            Animator.addKeyFrame(withRelativeStartTime: 0,
-                                 relativeDuration: 1 - relativeOverlayDuration) {
+        UIView.animateKeyframes(withDuration: totalRewindDuration,
+                                delay: 0,
+                                options: [.calculationModeLinear]) {
+            UIView.addKeyframe(withRelativeStartTime: 0,
+                               relativeDuration: 1.0 - relativeOverlayDuration) {
                 self.transform = .identity
             }
-            Animator.addKeyFrame(withRelativeStartTime: 1 - relativeOverlayDuration,
-                                 relativeDuration: relativeOverlayDuration) {
+            UIView.addKeyframe(withRelativeStartTime: 1.0 - relativeOverlayDuration,
+                               relativeDuration: relativeOverlayDuration) {
                 overlay?.alpha = 0.0
             }
-        } completion: { _ in
-            self.setUserInteraction(true)
+        } completion: { finished in
+            if !finished { return }
+            self.isUserInteractionEnabled = true
+            
+            if self.isOld {
+                self.removeFromSuperview()
+            }
         }
     }
     
-    internal func removeAllAnimations() {
+    public func removeAllAnimations() {
         layer.removeAllAnimations()
+        for o in overlays.values {
+            o.layer.removeAllAnimations()
+        }
     }
 }
 
@@ -296,8 +379,7 @@ extension DragCardView {
         }
         
         let dragTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
-        let translation = CGAffineTransform(translationX: dragTranslation.x,
-                                            y: dragTranslation.y)
+        let translation = CGAffineTransform(translationX: dragTranslation.x, y: dragTranslation.y)
         return translation.rotated(by: panForRotationAngle())
     }
     
@@ -311,7 +393,7 @@ extension DragCardView {
     }
     
     private func dragout(direction: Direction, forced: Bool) {
-        setUserInteraction(false)
+        isUserInteractionEnabled = false
         
         removeAllAnimations()
         
@@ -320,23 +402,30 @@ extension DragCardView {
         
         let overlay = overlay(forDirection: direction)
         
-        let relativeOverlayDuration = (forced && overlay != nil) ? 0.1 : 0.0
+        let relativeOverlayDuration = (forced && overlay != nil) ? relativeSwipeOverlayFadeDuration : 0.0
         
-        Animator.animateKeyFrames(withDuration: finalDuration,
-                                  options: [.calculationModeLinear]) {
-            Animator.addKeyFrame(withRelativeStartTime: relativeOverlayDuration,
-                                 relativeDuration: 1 - relativeOverlayDuration) {
-                self.transform = finalTransform
-            }
-            Animator.addKeyFrame(withRelativeStartTime: 0,
-                                 relativeDuration: relativeOverlayDuration) {
-                overlay?.alpha = 1
-            }
+        UIView.animateKeyframes(withDuration: finalDuration,
+                                delay: 0,
+                                options: [.calculationModeLinear]) {
             for _direction in self.allowedDirection.filter({ $0 != direction }) {
                 self.overlay(forDirection: _direction)?.alpha = 0.0
             }
-        } completion: { _ in
+            UIView.addKeyframe(withRelativeStartTime: 0,
+                               relativeDuration: relativeOverlayDuration) {
+                overlay?.alpha = 1
+            }
+            UIView.addKeyframe(withRelativeStartTime: relativeOverlayDuration,
+                               relativeDuration: 1.0 - relativeOverlayDuration) {
+                self.transform = finalTransform
+            }
+        } completion: { finished in
+            if !finished { return }
+            self.isUserInteractionEnabled = true
             self.delegate?.cardDidDragout(self)
+            
+            if self.isOld {
+                self.removeFromSuperview()
+            }
         }
     }
 }
@@ -372,9 +461,9 @@ extension DragCardView {
         overlays[direction] = overlay
         
         if let overlay = overlay {
-            overlayContentView.addSubview(overlay)
+            alphaOverlayContentView.addSubview(overlay)
             overlay.alpha = 0
-            overlay.setUserInteraction(false)
+            overlay.isUserInteractionEnabled = false
         }
     }
     
@@ -406,20 +495,28 @@ extension DragCardView {
                 if let direction = activeDirection() {
                     if dragSpeed(on: direction) >= minimumSwipeSpeed(on: direction) || dragPercentage(on: direction) >= 1 {
                         // dragout
-                        dragout(direction: direction, forced: false)
                         delegate?.cardDidSwipe(self, withDirection: direction)
+                        dragout(direction: direction, forced: false)
                         return
                     }
                 }
                 // reset
                 removeAllAnimations()
-                Animator.animateSpring(withDuration: totalResetDuration,
-                                       usingSpringWithDamping: resetSpringDamping,
-                                       options: [.curveLinear, .allowUserInteraction]) {
+                delegate?.cardDidCancelSwipe(self)
+                
+                UIView.animate(withDuration: totalResetDuration,
+                               delay: 0,
+                               usingSpringWithDamping: resetSpringDamping,
+                               initialSpringVelocity: 0,
+                               options: [.curveLinear, .allowUserInteraction]) {
                     self.transform = .identity
                     self.overlays.values.forEach{ $0.alpha = 0 }
+                } completion: { finished in
+                    if !finished { return }
+                    if self.isOld {
+                        self.removeFromSuperview()
+                    }
                 }
-                delegate?.cardDidCancelSwipe(self)
             default:
                 break
         }

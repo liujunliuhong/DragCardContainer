@@ -16,20 +16,20 @@ public final class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
-        cardContainer.infiniteLoop = true
+        cardContainer.infiniteLoop = false
         cardContainer.dataSource = self
         cardContainer.delegate = self
         cardContainer.visibleCount = 3
         return cardContainer
     }()
     
-    private lazy var bottmView: BottomView = {
-        let bottmView = BottomView()
-        bottmView.likeButton.addTarget(self, action: #selector(likeAction), for: .touchUpInside)
-        bottmView.passButton.addTarget(self, action: #selector(passAction), for: .touchUpInside)
-        bottmView.superLikeButton.addTarget(self, action: #selector(superLikeAction), for: .touchUpInside)
-        bottmView.refreshButton.addTarget(self, action: #selector(refreshAction), for: .touchUpInside)
-        return bottmView
+    private lazy var bottomView: BottomView = {
+        let bottomView = BottomView()
+        bottomView.likeButton.addTarget(self, action: #selector(likeAction), for: .touchUpInside)
+        bottomView.passButton.addTarget(self, action: #selector(passAction), for: .touchUpInside)
+        bottomView.superLikeButton.addTarget(self, action: #selector(superLikeAction), for: .touchUpInside)
+        bottomView.refreshButton.addTarget(self, action: #selector(refreshAction), for: .touchUpInside)
+        return bottomView
     }()
     
     public override func viewDidLoad() {
@@ -54,7 +54,7 @@ public final class ViewController: UIViewController {
 //        }
         
         view.addSubview(cardContainer)
-        view.addSubview(bottmView)
+        view.addSubview(bottomView)
         
         cardContainer.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
@@ -62,7 +62,7 @@ public final class ViewController: UIViewController {
             make.top.equalToSuperview().offset(150)
             make.bottom.equalToSuperview().offset(-150)
         }
-        bottmView.snp.makeConstraints { make in
+        bottomView.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
             make.top.equalTo(cardContainer.snp.bottom).offset(35)
             make.height.equalTo(50)
@@ -86,6 +86,7 @@ extension ViewController {
     @objc private func refreshAction() {
         //cardContainer.reloadData(animation: true)
         cardContainer.rewind(from: .right)
+        //cardContainer.reloadData(forceReset: false, animation: true)
     }
 }
 
@@ -157,11 +158,11 @@ extension ViewController: DragCardDelegate {
 //                    if newHorizontalRatio > targetRatio {
 //                        newHorizontalRatio = targetRatio - (newHorizontalRatio - targetRatio)
 //                    }
-//                    bottmView.passButton.transform = .identity
-//                    bottmView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
+//                    bottomView.passButton.transform = .identity
+//                    bottomView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
 //                default:
-//                    bottmView.passButton.transform = .identity
-//                    bottmView.likeButton.transform = .identity
+//                    bottomView.passButton.transform = .identity
+//                    bottomView.likeButton.transform = .identity
 //            }
 //        }
 //    }

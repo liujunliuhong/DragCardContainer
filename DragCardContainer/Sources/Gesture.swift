@@ -1,8 +1,8 @@
 //
-//  PanGestureRecognizer.swift
+//  Gesture.swift
 //  DragCardContainer
 //
-//  Created by dfsx6 on 2023/3/2.
+//  Created by dfsx6 on 2023/4/14.
 //
 //
 //
@@ -44,9 +44,9 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
-
 import Foundation
 import UIKit
 
 public final class PanGestureRecognizer: UIPanGestureRecognizer { }
+
+public final class TapGestureRecognizer: UITapGestureRecognizer { }
