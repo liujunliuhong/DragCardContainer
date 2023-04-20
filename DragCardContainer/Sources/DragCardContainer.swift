@@ -44,15 +44,15 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
 import Foundation
 import UIKit
 
 public class DragCardContainer: UIView {
+    
     deinit {
-#if DEBUG
-        print("\(self.classForCoder) deinit")
-#endif
+        if Log.enableLog {
+            print("\(self.classForCoder) deinit")
+        }
     }
     
     /// DataSource.
@@ -115,6 +115,16 @@ public class DragCardContainer: UIView {
             } else {
                 engine.addTapGestureForTopCard()
             }
+        }
+    }
+    
+    /// Enable Log.
+    public var enableLog: Bool {
+        get {
+            return Log.enableLog
+        }
+        set {
+            Log.enableLog = newValue
         }
     }
     

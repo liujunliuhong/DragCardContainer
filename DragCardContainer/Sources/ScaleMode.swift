@@ -44,8 +44,6 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
-
 import Foundation
 import QuartzCore
 
@@ -82,7 +80,6 @@ public final class ScaleMode {
     
     public init() {}
 }
-
 
 extension ScaleMode: Mode {
     public func cardAnchorPoint() -> CGPoint {
@@ -125,7 +122,6 @@ extension ScaleMode: Mode {
             case .center:
                 let normalCardWidth = containerSize.width
                 let normalCardHeight = containerSize.height
-                let normalCardSize = CGSize(width: normalCardWidth, height: normalCardHeight)
                 let normalCardFrame = CGRect(x: .zero, y: .zero, width: normalCardWidth, height: normalCardHeight)
                 return normalCardFrame
         }

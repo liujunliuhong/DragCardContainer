@@ -44,8 +44,6 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
-
 import Foundation
 
 public enum Direction: Int, CaseIterable {

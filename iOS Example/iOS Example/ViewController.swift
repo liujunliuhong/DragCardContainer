@@ -16,10 +16,13 @@ public final class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
-        cardContainer.infiniteLoop = false
+        cardContainer.infiniteLoop = true
         cardContainer.dataSource = self
         cardContainer.delegate = self
         cardContainer.visibleCount = 3
+        cardContainer.enableLog = true
+        cardContainer.disableTopCardDrag = false
+        cardContainer.disableTopCardClick = true
         return cardContainer
     }()
     
@@ -85,8 +88,10 @@ extension ViewController {
 
     @objc private func refreshAction() {
         //cardContainer.reloadData(animation: true)
-        cardContainer.rewind(from: .right)
+//        cardContainer.rewind(from: .right)
         //cardContainer.reloadData(forceReset: false, animation: true)
+        
+        cardContainer.currentTopIndex = 3
     }
 }
 
@@ -105,7 +110,7 @@ extension ViewController: DragCardDataSource {
             cardView.setOverlay(CardOverlayView(direction: direction), forDirection: direction)
         }
         
-        cardView.label.text = "\(index)"
+        cardView.label.text = "Index: \(index)"
         
         return cardView
     }
@@ -168,15 +173,15 @@ extension ViewController: DragCardDelegate {
 //    }
 
     public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with cardView: DragCardView) {
-        print("didRemovedTopCardAt: \(index)")
+        //print("didRemovedTopCardAt: \(index)")
     }
 
     public func dragCard(_ dragCard: DragCardContainer, didRemovedLast cardView: DragCardView) {
-        print("didRemovedLast")
+        //print("didRemovedLast")
     }
 
     public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
-        print("didSelectTopCardAt: \(index)")
+        //print("didSelectTopCardAt: \(index)")
         let vc = DetailViewController()
         vc.index = index
         navigationController?.pushViewController(vc, animated: true)

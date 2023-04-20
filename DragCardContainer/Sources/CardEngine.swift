@@ -44,8 +44,6 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
-
 import Foundation
 import UIKit
 import QuartzCore
@@ -53,9 +51,9 @@ import QuartzCore
 internal final class CardEngine {
     
     deinit {
-#if DEBUG
-        print("\(self) deinit")
-#endif
+        if Log.enableLog {
+            print("\(self) deinit")
+        }
         flush()
     }
     
@@ -79,8 +77,10 @@ internal final class CardEngine {
         set {
             if let newValue = newValue, newValue >= 0 && newValue <= metrics.numberOfCards - 1 {
                 _topIndex = newValue
-                start(forceReset: false, animation: false)
+            } else {
+                _topIndex = 0
             }
+            start(forceReset: false, animation: false)
         }
     }
     
@@ -117,7 +117,7 @@ extension CardEngine {
         if forceReset {
             displayCardIndex = 0
         } else {
-            displayCardIndex = topIndex ?? 0
+            displayCardIndex = _topIndex ?? 0
         }
         //
         flush()
@@ -153,14 +153,24 @@ extension CardEngine {
             final()
         }
         
-        addPanGestureForTopCard()
-        addTapGestureForTopCard()
+        if cardContainer.disableTopCardDrag {
+            removePanGestureForTopCard()
+        } else {
+            addPanGestureForTopCard()
+        }
+        if cardContainer.disableTopCardClick {
+            removeTapGestureForTopCard()
+        } else {
+            addTapGestureForTopCard()
+        }
+        
         setUserInteractionForTopCard(true)
         
         delegateForDisplayTopCard()
     }
     
     internal func swipeTopCard(to: Direction) {
+        
         guard let topModel = cardModels.last else { return }
         
         willOutModels.append(topModel)
@@ -180,16 +190,24 @@ extension CardEngine {
         
         cardModels.removeLast()
         
-        addPanGestureForTopCard()
-        addTapGestureForTopCard()
-        setUserInteractionForTopCard(true)
-        
         incrementDisplayIndex()
         installNextCard()
         
+        updateAllCardModelsTargetBasicInfo()
+        
         delegateForDisplayTopCard()
         
-        updateAllCardModelsTargetBasicInfo()
+        if cardContainer.disableTopCardDrag {
+            removePanGestureForTopCard()
+        } else {
+            addPanGestureForTopCard()
+        }
+        if cardContainer.disableTopCardClick {
+            removeTapGestureForTopCard()
+        } else {
+            addTapGestureForTopCard()
+        }
+        setUserInteractionForTopCard(true)
         
         for model in cardModels {
             model.cardView.removeAllAnimations()
@@ -350,13 +368,13 @@ extension CardEngine {
         removeTapGestureForTopCard()
         setUserInteractionForTopCard(false)
         
-        restoreDisplayIndex()
-        
         updateAllCardModelsCurrentBasicInfo()
         
         cardModels.append(currentResetCardModel)
         
         updateAllCardModelsTargetBasicInfo()
+        
+        restoreDisplayIndex()
         
         for model in cardModels {
             if model != currentResetCardModel {
@@ -388,8 +406,17 @@ extension CardEngine {
             self.currentResetCardModel = nil
         }
         
-        addPanGestureForTopCard()
-        addTapGestureForTopCard()
+        if cardContainer.disableTopCardDrag {
+            removePanGestureForTopCard()
+        } else {
+            addPanGestureForTopCard()
+        }
+        if cardContainer.disableTopCardClick {
+            removeTapGestureForTopCard()
+        } else {
+            addTapGestureForTopCard()
+        }
+        
         setUserInteractionForTopCard(true)
         
         delegateForDisplayTopCard()
@@ -430,6 +457,16 @@ extension CardEngine {
 }
 
 extension CardEngine {
+    private func canInstallNextCard() -> Bool {
+        if metrics.infiniteLoop {
+            return true
+        }
+        if displayCardIndex >= 0 && displayCardIndex <= metrics.numberOfCards - 1 {
+            return true
+        }
+        return false
+    }
+    
     private func incrementDisplayIndex() {
         if !canInstallNextCard() {
             return
@@ -445,23 +482,6 @@ extension CardEngine {
         }
     }
     
-    private func restoreDisplayIndex() {
-        if !canRestoreCard() {
-            return
-        }
-        if metrics.infiniteLoop {
-            if displayCardIndex <= 0 {
-                displayCardIndex = metrics.numberOfCards - 1
-            } else {
-                displayCardIndex = displayCardIndex - 1
-            }
-        } else {
-//            if displayCardIndex > 0 && displayCardIndex <= metrics.numberOfCards - 1 {
-                displayCardIndex = displayCardIndex - 1
-//            }
-        }
-    }
-    
     private func canRestoreCard() -> Bool {
         if metrics.infiniteLoop {
             return true
@@ -473,14 +493,23 @@ extension CardEngine {
         }
     }
     
-    private func canInstallNextCard() -> Bool {
+    private func restoreDisplayIndex() {
+        if !canRestoreCard() {
+            return
+        }
         if metrics.infiniteLoop {
-            return true
+            if displayCardIndex <= 0 {
+                displayCardIndex = metrics.numberOfCards - 1
+            } else {
+                displayCardIndex = displayCardIndex - 1
+            }
+        } else {
+            if displayCardIndex > 0, let bottomModel = cardModels.first, let topModel = cardModels.last {
+                if bottomModel.index - topModel.index >= metrics.visibleCount - 1 {
+                    displayCardIndex = displayCardIndex - 1
+                }
+            }
         }
-        if displayCardIndex >= 0 && displayCardIndex <= metrics.numberOfCards - 1 {
-            return true
-        }
-        return false
     }
 }
 
@@ -511,16 +540,16 @@ extension CardEngine: CardDelegate {
         
         let panTranslation = card.panGestureRecognizer?.translation(in: card.superview) ?? .zero
         let minimumSideLength = min(cardContainer.bounds.width, cardContainer.bounds.height)
-        let percentage = min(abs(panTranslation.x) / minimumSideLength, 1)
+        let percentage = min(CGVector(to: panTranslation).length / minimumSideLength, 1)
         
         for model in cardModels {
             let scale = model.currentBasicInfo.scale + (model.targetBasicInfo.scale - model.currentBasicInfo.scale) * percentage
             let translation = model.currentBasicInfo.translation + (model.targetBasicInfo.translation - model.currentBasicInfo.translation) * percentage
             
-            let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
-            let t2 = t1.scaledBy(x: scale, y: scale)
+            let t1 =  CGAffineTransform(translationX: translation.x, y: translation.y)
+            let t2 = CGAffineTransform(scaleX: scale, y: scale)
             
-            model.cardView.transform = t2
+            model.cardView.transform = t1.concatenating(t2)
         }
     }
     
@@ -557,8 +586,17 @@ extension CardEngine: CardDelegate {
         }
         currentResetCardModel = nil
         
-        addPanGestureForTopCard()
-        addTapGestureForTopCard()
+        if cardContainer.disableTopCardDrag {
+            removePanGestureForTopCard()
+        } else {
+            addPanGestureForTopCard()
+        }
+        if cardContainer.disableTopCardClick {
+            removeTapGestureForTopCard()
+        } else {
+            addTapGestureForTopCard()
+        }
+        
         setUserInteractionForTopCard(true)
     }
     
@@ -570,13 +608,10 @@ extension CardEngine: CardDelegate {
                 break
             }
         }
-        
-        print("😄\(displayCardIndex)")
     }
     
     internal func cardDidTap(_ card: DragCardView) {
         if card.isOld { return }
-        
         delegateForTapTopCard()
     }
 }
@@ -591,6 +626,7 @@ extension CardEngine {
     
     private func delegateForDisplayTopCard() {
         guard let topModel = cardModels.last else { return }
+        _topIndex = topModel.index
         cardContainer.delegate?.dragCard(cardContainer,
                                          displayTopCardAt: topModel.index,
                                          with: topModel.cardView)

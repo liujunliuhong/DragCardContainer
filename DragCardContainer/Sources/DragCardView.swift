@@ -62,9 +62,9 @@ internal protocol CardDelegate: AnyObject {
 /// A wrapper over `UIView`.
 open class DragCardView: UIView {
     deinit {
-#if DEBUG
-        print("\(self.classForCoder) deinit")
-#endif
+        if Log.enableLog {
+            print("\(self.classForCoder) deinit")
+        }
     }
 
     internal let identifier: String = UUID().uuidString

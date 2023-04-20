@@ -44,8 +44,6 @@
 //                               └┬───────────────────────────────────────┬┘
 //                                └───────────────────────────────────────┘
 
-
-
 import Foundation
 import QuartzCore
 
@@ -54,9 +52,9 @@ public struct BasicInfo {
     public let scale: CGFloat
     
     public var transform: CGAffineTransform {
-        let t1 =  CGAffineTransform(translationX: translation.x, y: translation.y)
-        let t2 = t1.scaledBy(x: scale, y: scale)
-        return t2
+        let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
+        let t2 = CGAffineTransform(scaleX: scale, y: scale)
+        return t1.concatenating(t2)
     }
     
     public init(translation: CGPoint, scale: CGFloat) {

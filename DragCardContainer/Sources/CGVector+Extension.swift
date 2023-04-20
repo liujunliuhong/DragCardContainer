@@ -46,7 +46,6 @@
 
 import Foundation
 
-
 extension CGVector {
     internal init(from origin: CGPoint = .zero, to target: CGPoint) {
         self = CGVector(dx: target.x - origin.x,
