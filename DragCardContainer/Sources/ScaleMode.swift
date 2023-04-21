@@ -73,6 +73,13 @@ public final class ScaleMode {
         }
     }
     
+    /// Maximum angle.
+    public var maximumAngle: CGFloat = 45 {
+        didSet {
+            maximumAngle = max(0, min(maximumAngle, 90))
+        }
+    }
+    
     /// Scale direction.
     public var direction: ScaleMode.Direction = .bottom
     
@@ -140,36 +147,41 @@ extension ScaleMode: Mode {
         switch direction {
             case .bottom:
                 for i in 0..<visibleCount {
+                    let radius = maximumAngle.isZero ? 0.0 : CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let translation = CGPoint(x: .zero, y: cardSpacing * CGFloat(i))
-                    let basicInfo = BasicInfo(translation: translation, scale: scale)
+                    let basicInfo = BasicInfo(translation: translation, scale: scale, rotationAngle: radius)
                     basicInfos.append(basicInfo)
                 }
             case .top:
                 for i in 0..<visibleCount {
+                    let radius = maximumAngle.isZero ? 0.0 : CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let translation = CGPoint(x: .zero, y: -cardSpacing * CGFloat(i))
-                    let basicInfo = BasicInfo(translation: translation, scale: scale)
+                    let basicInfo = BasicInfo(translation: translation, scale: scale, rotationAngle: radius)
                     basicInfos.append(basicInfo)
                 }
             case .left:
                 for i in 0..<visibleCount {
+                    let radius = maximumAngle.isZero ? 0.0 : CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let translation = CGPoint(x: -cardSpacing * CGFloat(i), y: .zero)
-                    let basicInfo = BasicInfo(translation: translation, scale: scale)
+                    let basicInfo = BasicInfo(translation: translation, scale: scale, rotationAngle: radius)
                     basicInfos.append(basicInfo)
                 }
             case .right:
                 for i in 0..<visibleCount {
+                    let radius = maximumAngle.isZero ? 0.0 : CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
                     let translation = CGPoint(x: cardSpacing * CGFloat(i), y: .zero)
-                    let basicInfo = BasicInfo(translation: translation, scale: scale)
+                    let basicInfo = BasicInfo(translation: translation, scale: scale, rotationAngle: radius)
                     basicInfos.append(basicInfo)
                 }
             case .center:
                 for i in 0..<visibleCount {
+                    let radius = maximumAngle.isZero ? 0.0 : CGFloat(CGFloat.random(in: Range(uncheckedBounds: (-maximumAngle, maximumAngle)))).radius
                     let scale = 1.0 - magnitudeScale * CGFloat(i)
-                    let basicInfo = BasicInfo(translation: .zero, scale: scale)
+                    let basicInfo = BasicInfo(translation: .zero, scale: scale, rotationAngle: radius)
                     basicInfos.append(basicInfo)
                 }
         }

@@ -177,6 +177,7 @@ extension CardEngine {
         
         let duration = swipeDuration(for: topModel.cardView, direction: to, forced: true)
         
+        topModel.cardView.initialInfo = topModel.currentBasicInfo
         topModel.cardView.isOld = true
         topModel.cardView.swipe(to: to)
         
@@ -264,6 +265,8 @@ extension CardEngine {
         cardModel.currentBasicInfo = metrics.maximumBasicInfo
         
         currentResetCardModel = cardModel
+        
+        cardView.initialInfo = currentResetCardModel?.currentBasicInfo ?? .default
         
         restoreAllCards()
     }
@@ -523,6 +526,8 @@ extension CardEngine: CardDelegate {
         
         currentResetCardModel = cardModels.last
         
+        card.initialInfo = currentResetCardModel?.currentBasicInfo ?? .default
+        
         cardModels.removeLast() // remove last
         
         incrementDisplayIndex()
@@ -545,11 +550,13 @@ extension CardEngine: CardDelegate {
         for model in cardModels {
             let scale = model.currentBasicInfo.scale + (model.targetBasicInfo.scale - model.currentBasicInfo.scale) * percentage
             let translation = model.currentBasicInfo.translation + (model.targetBasicInfo.translation - model.currentBasicInfo.translation) * percentage
+            let rotationAngle = model.currentBasicInfo.rotationAngle + (model.targetBasicInfo.rotationAngle - model.currentBasicInfo.rotationAngle) * percentage
             
             let t1 =  CGAffineTransform(translationX: translation.x, y: translation.y)
             let t2 = CGAffineTransform(scaleX: scale, y: scale)
+            let t3 = CGAffineTransform(rotationAngle: rotationAngle)
             
-            model.cardView.transform = t1.concatenating(t2)
+            model.cardView.transform = t1.concatenating(t2).concatenating(t3)
         }
     }
     

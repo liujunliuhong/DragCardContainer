@@ -175,6 +175,8 @@ open class DragCardView: UIView {
     
     internal weak var delegate: CardDelegate?
     
+    internal var initialInfo: BasicInfo = .default
+    
     internal var isOld: Bool = false
     
     private var internalTouchLocation: CGPoint?
@@ -322,10 +324,11 @@ extension DragCardView {
         let actualTranslation = CGPoint(finalTranslation(direction, directionVector: normalizedDragTranslation))
         let actualRotationAngle = finalRotationAngle(direction: direction, forced: forced)
         
-        let t1 = CGAffineTransform(translationX: actualTranslation.x, y: actualTranslation.y)
-        let t2 = t1.rotated(by: actualRotationAngle)
+        let t1 = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
+        let t2 = CGAffineTransform(rotationAngle: actualRotationAngle + initialInfo.rotationAngle)
+        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
         
-        return t2
+        return t1.concatenating(t2).concatenating(t3)
     }
     
     private func finalTranslation(_ direction: Direction, directionVector: CGVector) -> CGVector {
@@ -379,8 +382,12 @@ extension DragCardView {
         }
         
         let dragTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
-        let translation = CGAffineTransform(translationX: dragTranslation.x, y: dragTranslation.y)
-        return translation.rotated(by: panForRotationAngle())
+        
+        let t1 = CGAffineTransform(translationX: dragTranslation.x + initialInfo.translation.x, y: dragTranslation.y + initialInfo.translation.y)
+        let t2 = CGAffineTransform(rotationAngle: panForRotationAngle() + initialInfo.rotationAngle)
+        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
+        
+        return t1.concatenating(t2).concatenating(t3)
     }
     
     private func panForOverlayPercentage(_ direction: Direction) -> CGFloat {
@@ -509,7 +516,7 @@ extension DragCardView {
                                usingSpringWithDamping: resetSpringDamping,
                                initialSpringVelocity: 0,
                                options: [.curveLinear, .allowUserInteraction]) {
-                    self.transform = .identity
+                    self.transform = self.initialInfo.transform
                     self.overlays.values.forEach{ $0.alpha = 0 }
                 } completion: { finished in
                     if !finished { return }
