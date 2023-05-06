@@ -552,10 +552,13 @@ extension CardEngine: CardDelegate {
             let translation = model.currentBasicInfo.translation + (model.targetBasicInfo.translation - model.currentBasicInfo.translation) * percentage
             let rotationAngle = model.currentBasicInfo.rotationAngle + (model.targetBasicInfo.rotationAngle - model.currentBasicInfo.rotationAngle) * percentage
             
-            let t1 =  CGAffineTransform(translationX: translation.x, y: translation.y)
+            // This code result abnormal UI.
+//            let transform = CGAffineTransform(translationX: translation.x, y: translation.y)
+//            model.cardView.transform = transform.rotated(by: rotationAngle).scaledBy(x: scale, y: scale)
+            
+            let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
             let t2 = CGAffineTransform(scaleX: scale, y: scale)
             let t3 = CGAffineTransform(rotationAngle: rotationAngle)
-            
             model.cardView.transform = t1.concatenating(t2).concatenating(t3)
         }
     }

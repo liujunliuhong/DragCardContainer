@@ -135,7 +135,7 @@ open class DragCardView: UIView {
         return contentView
     }()
     
-    /// The overlay content view.
+    /// The overlay alpha content view.
     private lazy var alphaOverlayContentView: UIView = {
         let alphaOverlayContentView = UIView()
         alphaOverlayContentView.isUserInteractionEnabled = false
@@ -324,11 +324,14 @@ extension DragCardView {
         let actualTranslation = CGPoint(finalTranslation(direction, directionVector: normalizedDragTranslation))
         let actualRotationAngle = finalRotationAngle(direction: direction, forced: forced)
         
-        let t1 = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
-        let t2 = CGAffineTransform(rotationAngle: actualRotationAngle + initialInfo.rotationAngle)
-        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
+        let transform = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
+        return transform.rotated(by: actualRotationAngle + initialInfo.rotationAngle).scaledBy(x: initialInfo.scale, y: initialInfo.scale)
         
-        return t1.concatenating(t2).concatenating(t3)
+        // This code result abnormal UI.
+//        let t1 = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
+//        let t2 = CGAffineTransform(rotationAngle: actualRotationAngle + initialInfo.rotationAngle)
+//        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
+//        return t1.concatenating(t2).concatenating(t3)
     }
     
     private func finalTranslation(_ direction: Direction, directionVector: CGVector) -> CGVector {

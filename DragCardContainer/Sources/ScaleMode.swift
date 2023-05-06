@@ -73,8 +73,8 @@ public final class ScaleMode {
         }
     }
     
-    /// Maximum angle.
-    public var maximumAngle: CGFloat = 45 {
+    /// Maximum rotaion angle.
+    public var maximumAngle: CGFloat = 0 {
         didSet {
             maximumAngle = max(0, min(maximumAngle, 90))
         }

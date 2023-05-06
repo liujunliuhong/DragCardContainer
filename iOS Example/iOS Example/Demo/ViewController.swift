@@ -10,19 +10,40 @@ import SnapKit
 import DragCardContainer
 import CoreGraphics
 
-private let targetLength: CGFloat = 150.0
+private let titles: [String] = ["水星", "金星", "地球", "火星", "木星", "土星", "天王星", "海王星", "木卫一", "土卫一"]
+private let allowedDirection: [Direction] = [.left, .up, .right]
 
 public final class ViewController: UIViewController {
 
     private lazy var cardContainer: DragCardContainer = {
         let cardContainer = DragCardContainer()
-        cardContainer.infiniteLoop = true
+        // 是否可以无限滑动
+        cardContainer.infiniteLoop = false
+        // 数据源
         cardContainer.dataSource = self
+        // 代理
         cardContainer.delegate = self
+        // 可见卡片数量
         cardContainer.visibleCount = 3
+        // 是否可以打印日志
         cardContainer.enableLog = true
+        // 是否禁用卡片拖动
         cardContainer.disableTopCardDrag = false
-        cardContainer.disableTopCardClick = true
+        // 是否禁用卡片点击
+        cardContainer.disableTopCardClick = false
+        
+        let mode = ScaleMode()
+        // 卡片之间间距
+        mode.cardSpacing = 10
+        // 方向（可以运行Demo，修改该参数看实际效果）
+        mode.direction = .bottom
+        // 最小缩放比例
+        mode.minimumScale = 0.7
+        // 卡片最大旋转角度
+        mode.maximumAngle = 0
+        // 赋值mode
+        cardContainer.mode = mode
+        
         return cardContainer
     }()
     
@@ -38,23 +59,6 @@ public final class ViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        navigationItem.title = "Demo"
-        
-        
-//        let card = DragCardView()
-//        card.backgroundColor = RandomColor()
-//        view.addSubview(card)
-//
-//        card.snp.makeConstraints { make in
-//            make.centerX.equalToSuperview()
-//            make.centerY.equalToSuperview()
-//            make.width.equalTo(70)
-//            make.height.equalTo(100)
-//        }
-        
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-//            card.swipe(to: .right)
-//        }
         
         view.addSubview(cardContainer)
         view.addSubview(bottomView)
@@ -87,30 +91,25 @@ extension ViewController {
     }
 
     @objc private func refreshAction() {
-        //cardContainer.reloadData(animation: true)
-//        cardContainer.rewind(from: .right)
-        //cardContainer.reloadData(forceReset: false, animation: true)
-        
-        cardContainer.currentTopIndex = 3
+        cardContainer.reloadData(forceReset: true, animation: true)
     }
 }
 
 extension ViewController: DragCardDataSource {
     public func numberOfCards(_ dragCard: DragCardContainer) -> Int {
-        return 10
+        return titles.count
     }
 
     public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView {
         let cardView = CardView()
         
-        let allowedDirection: [Direction] = [.left, .up, .right]
         cardView.allowedDirection = allowedDirection
         
         for direction in allowedDirection {
             cardView.setOverlay(CardOverlayView(direction: direction), forDirection: direction)
         }
         
-        cardView.label.text = "Index: \(index)"
+        cardView.label.text = "Index: \(index)\n\(titles[index])"
         
         return cardView
     }
@@ -119,71 +118,22 @@ extension ViewController: DragCardDataSource {
 extension ViewController: DragCardDelegate {
     public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with cardView: DragCardView) {
         print("displayTopCardAt: \(index)")
+        navigationItem.title = "Index: \(index)"
     }
-
-//    public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with cardView: DragCardView) {
-//        print("movementCardAt: \(index) - \(translation)")
-//
-//        if let cardView = cardView as? CardView {
-//            var horizontalRatio = abs(translation.x) / targetLength
-//            if horizontalRatio >= 1.0 {
-//                horizontalRatio = 1.0
-//            }
-//            if translation.x.isLess(than: .zero) {
-//                cardView.overlayView.nopeView.alpha = horizontalRatio
-//                cardView.overlayView.likeView.alpha = 0
-//            } else if translation.x.isEqual(to: .zero) {
-//                cardView.overlayView.nopeView.alpha = 0
-//                cardView.overlayView.likeView.alpha = 0
-//            } else {
-//                cardView.overlayView.nopeView.alpha = 0
-//                cardView.overlayView.likeView.alpha = horizontalRatio
-//            }
-//
-//            var verticalRatio = abs(translation.y) / targetLength
-//            verticalRatio = verticalRatio - horizontalRatio - horizontalRatio
-//            if verticalRatio >= 1.0 {
-//                verticalRatio = 1.0
-//            } else if verticalRatio <= 0 {
-//                verticalRatio = 0
-//            }
-//            if !translation.y.isLess(than: .zero) {
-//                verticalRatio = 0.0
-//            }
-//            cardView.overlayView.superLikeView.alpha = verticalRatio
-//
-//
-//
-//            let direction = Direction.fromPoint(translation)
-//            switch direction {
-//                case .right:
-//                    let targetRatio = 1.5
-//                    var newHorizontalRatio = horizontalRatio + 1
-//
-//                    if newHorizontalRatio > targetRatio {
-//                        newHorizontalRatio = targetRatio - (newHorizontalRatio - targetRatio)
-//                    }
-//                    bottomView.passButton.transform = .identity
-//                    bottomView.likeButton.transform = CGAffineTransformScale(.identity, newHorizontalRatio, newHorizontalRatio)
-//                default:
-//                    bottomView.passButton.transform = .identity
-//                    bottomView.likeButton.transform = .identity
-//            }
-//        }
-//    }
-
+    
     public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with cardView: DragCardView) {
-        //print("didRemovedTopCardAt: \(index)")
+        print("didRemovedTopCardAt: \(index)")
     }
 
     public func dragCard(_ dragCard: DragCardContainer, didRemovedLast cardView: DragCardView) {
-        //print("didRemovedLast")
+        print("didRemovedLast")
     }
 
     public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
-        //print("didSelectTopCardAt: \(index)")
+        print("didSelectTopCardAt: \(index)")
+        
         let vc = DetailViewController()
-        vc.index = index
+        vc.label.text = titles[index]
         navigationController?.pushViewController(vc, animated: true)
     }
 }

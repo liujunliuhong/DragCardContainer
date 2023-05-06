@@ -133,7 +133,7 @@ public class DragCardContainer: UIView {
         return engine
     }()
     
-    internal lazy var containerView = UIView()
+    internal lazy var containerView = ContainerView()
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -179,5 +179,18 @@ extension DragCardContainer {
         if dataSource != nil {
             engine.start(forceReset: false, animation: false)
         }
+    }
+}
+
+extension DragCardContainer {
+    public override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        return true
+    }
+}
+
+
+internal class ContainerView: UIView {
+    override func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        return true
     }
 }

@@ -23,7 +23,7 @@ I refer some third-party libraries:
 
 ## Preview
 
-<img src="GIF/example.gif" width="350">
+<img src="GIF/example.gif">
 
 ## Getting Start
 
@@ -51,15 +51,50 @@ pod 'DragCardContainer', :git => "https://github.com/liujunliuhong/DragCardConta
 
 #### Setting up the card view
 
-Create your own card by either subclassing `DragCardContainer` and setting its properties directly.
+Create your own card container and setting its properties directly.
 
 ```swift
 let cardContainer = DragCardContainer()
+// 是否可以无限滑动
 cardContainer.infiniteLoop = false
+// 数据源
 cardContainer.dataSource = self
+// 代理
 cardContainer.delegate = self
+// 可见卡片数量
 cardContainer.visibleCount = 3
-cardContainer.allowedDirection = .horizontal
+// 是否可以打印日志
+cardContainer.enableLog = true
+// 是否禁用卡片拖动
+cardContainer.disableTopCardDrag = false
+// 是否禁用卡片点击
+cardContainer.disableTopCardClick = false
+```
+
+#### Mode
+
+You can custom `mode`. `Mode` is a protocol, `ScaleMode` implements the `Mode` protocol.
+
+```swift
+let mode = ScaleMode()
+// 卡片之间间距
+mode.cardSpacing = 10
+// 方向（可以运行Demo，修改该参数看实际效果）
+mode.direction = .bottom
+// 最小缩放比例
+mode.minimumScale = 0.7
+// 卡片最大旋转角度
+mode.maximumAngle = 0
+// 赋值mode
+cardContainer.mode = mode
+```
+
+#### Configuring the card
+
+Custom Card, inherited from `DragCardView`.
+
+```swift
+public final class CardView: DragCardView { }
 ```
 
 #### Configuring the datasource
@@ -71,9 +106,10 @@ public func numberOfCards(_ dragCard: DragCardContainer) -> Int {
     return 10
 }
 
-public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> UIView {
-    let view = UIView()
-    return view
+public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> DragCardView {
+    let cardView = CardView()
+    cardView.allowedDirection = [.left, .right]
+    return cardView
 }
 ```
 
@@ -82,28 +118,24 @@ public func dragCard(_ dragCard: DragCardContainer, viewForCard index: Int) -> U
 The protocol `DragCardDelegate` is optional.
 
 ```swift
-public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with card: UIView) {
+public func dragCard(_ dragCard: DragCardContainer, displayTopCardAt index: Int, with cardView: DragCardView) {
     print("displayTopCardAt: \(index)")
 }
 
-public func dragCard(_ dragCard: DragCardContainer, movementCardAt index: Int, translation: CGPoint, with card: UIView) {
-    print("movementCardAt: \(index) - \(translation)")
-}
-
-public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with card: UIView) {
+public func dragCard(_ dragCard: DragCardContainer, didRemovedTopCardAt index: Int, direction: Direction, with cardView: DragCardView) {
     print("didRemovedTopCardAt: \(index)")
 }
 
-public func dragCard(_ dragCard: DragCardContainer, didRemovedLast card: UIView) {
+public func dragCard(_ dragCard: DragCardContainer, didRemovedLast cardView: DragCardView) {
     print("didRemovedLast")
 }
 
-public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with card: UIView) {
+public func dragCard(_ dragCard: DragCardContainer, didSelectTopCardAt index: Int, with cardView: DragCardView) {
     print("didSelectTopCardAt: \(index)")
 }
 ```
 
-#### Removing Views
+#### Moving Views
 
 ##### Swiping programmatically
 
@@ -119,6 +151,14 @@ Returns the most recently swiped card to the top of the card stack.
 
 ```swift
 cardContainer.rewind(from: .right)
+```
+
+#### Set top level card index
+
+You can set top level card index.
+
+```swift
+cardContainer.currentTopIndex = 2
 ```
 
 ### Author

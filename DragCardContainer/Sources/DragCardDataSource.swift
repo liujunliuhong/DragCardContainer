@@ -46,6 +46,7 @@
 
 import Foundation
 import UIKit
+import ObjectiveC
 
 public protocol DragCardDataSource: NSObjectProtocol {
     func numberOfCards(_ dragCard: DragCardContainer) -> Int
