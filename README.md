@@ -23,7 +23,7 @@ I refer some third-party libraries:
 
 ## Preview
 
-<img src="GIF/example.gif">
+<img src="GIF/example.gif" width="300">
 
 ## Getting Start
 
