@@ -53,14 +53,13 @@ public struct BasicInfo {
     public let rotationAngle: CGFloat
     
     public var transform: CGAffineTransform {
-        // This code result abnormal UI.
-//        let transform = CGAffineTransform(translationX: translation.x, y: translation.y)
-//        return transform.rotated(by: rotationAngle).scaledBy(x: scale, y: scale)
+        let transform = CGAffineTransform(translationX: translation.x, y: translation.y)
+        return transform.rotated(by: rotationAngle).scaledBy(x: scale, y: scale)
         
-        let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
-        let t2 = CGAffineTransform(scaleX: scale, y: scale)
-        let t3 = CGAffineTransform(rotationAngle: rotationAngle)
-        return t1.concatenating(t2).concatenating(t3)
+//        let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
+//        let t2 = CGAffineTransform(scaleX: scale, y: scale)
+//        let t3 = CGAffineTransform(rotationAngle: rotationAngle)
+//        return t1.concatenating(t2).concatenating(t3)
     }
     
     public init(translation: CGPoint, scale: CGFloat, rotationAngle: CGFloat) {

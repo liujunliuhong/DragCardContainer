@@ -327,7 +327,6 @@ extension DragCardView {
         let transform = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
         return transform.rotated(by: actualRotationAngle + initialInfo.rotationAngle).scaledBy(x: initialInfo.scale, y: initialInfo.scale)
         
-        // This code result abnormal UI.
 //        let t1 = CGAffineTransform(translationX: actualTranslation.x + initialInfo.translation.x, y: actualTranslation.y + initialInfo.translation.y)
 //        let t2 = CGAffineTransform(rotationAngle: actualRotationAngle + initialInfo.rotationAngle)
 //        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
@@ -386,11 +385,13 @@ extension DragCardView {
         
         let dragTranslation = panGestureRecognizer?.translation(in: superview) ?? .zero
         
-        let t1 = CGAffineTransform(translationX: dragTranslation.x + initialInfo.translation.x, y: dragTranslation.y + initialInfo.translation.y)
-        let t2 = CGAffineTransform(rotationAngle: panForRotationAngle() + initialInfo.rotationAngle)
-        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
+        let transform = CGAffineTransform(translationX: dragTranslation.x + initialInfo.translation.x, y: dragTranslation.y + initialInfo.translation.y)
+        return transform.rotated(by: panForRotationAngle() + initialInfo.rotationAngle).scaledBy(x: initialInfo.scale, y: initialInfo.scale)
         
-        return t1.concatenating(t2).concatenating(t3)
+//        let t1 = CGAffineTransform(translationX: dragTranslation.x + initialInfo.translation.x, y: dragTranslation.y + initialInfo.translation.y)
+//        let t2 = CGAffineTransform(rotationAngle: panForRotationAngle() + initialInfo.rotationAngle)
+//        let t3 = CGAffineTransform(scaleX: initialInfo.scale, y: initialInfo.scale)
+//        return t1.concatenating(t2).concatenating(t3)
     }
     
     private func panForOverlayPercentage(_ direction: Direction) -> CGFloat {
