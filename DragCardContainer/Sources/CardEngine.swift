@@ -140,6 +140,7 @@ extension CardEngine {
         func final() {
             for model in cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
         }
         
@@ -222,6 +223,7 @@ extension CardEngine {
                        options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
         }
     }
@@ -257,6 +259,7 @@ extension CardEngine {
         cardView.layer.anchorPoint = metrics.cardAnchorPoint
         cardView.frame = metrics.cardFrame
         cardView.transform = .identity
+        cardView.alpha = 1.0
         cardView.delegate = self
         cardContainer.containerView.addSubview(cardView)
         
@@ -349,6 +352,7 @@ extension CardEngine {
         cardView.layer.anchorPoint = metrics.cardAnchorPoint
         cardView.frame = metrics.cardFrame
         cardView.transform = metrics.minimumBasicInfo.transform
+        cardView.alpha = metrics.minimumBasicInfo.alpha
         cardView.delegate = self
         cardView.isUserInteractionEnabled = false
         cardContainer.containerView.insertSubview(cardView, at: 0)
@@ -392,6 +396,7 @@ extension CardEngine {
             for model in self.cardModels {
                 if model != currentResetCardModel {
                     model.cardView.transform = model.targetBasicInfo.transform
+                    model.cardView.alpha = model.targetBasicInfo.alpha
                 }
             }
         } completion: { finished in
@@ -550,12 +555,13 @@ extension CardEngine: CardDelegate {
         
         for model in cardModels {
             let scale = model.currentBasicInfo.scale + (model.targetBasicInfo.scale - model.currentBasicInfo.scale) * percentage
+            let alpha = model.currentBasicInfo.alpha + (model.targetBasicInfo.alpha - model.currentBasicInfo.alpha) * percentage
             let translation = model.currentBasicInfo.translation + (model.targetBasicInfo.translation - model.currentBasicInfo.translation) * percentage
             let rotationAngle = model.currentBasicInfo.rotationAngle + (model.targetBasicInfo.rotationAngle - model.currentBasicInfo.rotationAngle) * percentage
             
             let transform = CGAffineTransform(translationX: translation.x, y: translation.y)
             model.cardView.transform = transform.rotated(by: rotationAngle).scaledBy(x: scale, y: scale)
-            
+            model.cardView.alpha = alpha
 //            let t1 = CGAffineTransform(translationX: translation.x, y: translation.y)
 //            let t2 = CGAffineTransform(scaleX: scale, y: scale)
 //            let t3 = CGAffineTransform(rotationAngle: rotationAngle)
@@ -583,6 +589,7 @@ extension CardEngine: CardDelegate {
                        options: [.curveLinear, .allowUserInteraction]) {
             for model in self.cardModels {
                 model.cardView.transform = model.targetBasicInfo.transform
+                model.cardView.alpha = model.targetBasicInfo.alpha
             }
         }
         

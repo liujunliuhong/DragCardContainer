@@ -50,6 +50,7 @@ import QuartzCore
 public struct BasicInfo {
     public let translation: CGPoint
     public let scale: CGFloat
+    public let alpha: CGFloat
     public let rotationAngle: CGFloat
     
     public var transform: CGAffineTransform {
@@ -62,11 +63,15 @@ public struct BasicInfo {
 //        return t1.concatenating(t2).concatenating(t3)
     }
     
-    public init(translation: CGPoint, scale: CGFloat, rotationAngle: CGFloat) {
+    public init(translation: CGPoint, scale: CGFloat, alpha: CGFloat, rotationAngle: CGFloat) {
         self.translation = translation
         self.scale = scale
+        self.alpha = alpha
         self.rotationAngle = rotationAngle
     }
     
-    public static let `default` = BasicInfo(translation: .zero, scale: 1, rotationAngle: 0)
+    public static let `default` = BasicInfo(translation: .zero,
+                                            scale: 1,
+                                            alpha: 1.0,
+                                            rotationAngle: 0)
 }
